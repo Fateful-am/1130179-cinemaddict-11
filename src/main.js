@@ -1,3 +1,12 @@
+import {createExtraFilmsTemplate} from "./components/extra-films.js";
+import {createFilmCardTemplate} from "./components/film-card.js";
+import {createFilmsTemplate} from "./components/films.js";
+import {createFooterStatisticsTemplate} from "./components/footer-statistics.js";
+import {createMainMenuTemplate} from "./components/main-menu.js";
+import {createProfileRatingTemplate} from "./components/profile-rating";
+import {createShowMoreButtonTemplate} from "./components/show-more-button.js";
+import {createSortMenuTemplate} from "./components/sort-menu.js";
+
 
 const FILM_CARDS_COUNT = 5;
 const EXTRA_FILM_CARDS_COUNT = 2;
