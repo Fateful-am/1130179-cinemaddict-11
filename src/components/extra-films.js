@@ -1,14 +1,13 @@
+import {createFilmsListTemplate} from "./films-list.js";
+
 /**
  * Компонент - Экстра контент-контейнер
  * @param {String} header заголовок блока
  * @return {string}
  */
 export const createExtraFilmsTemplate = (header) => {
+  const filmsList = createFilmsListTemplate(true, header);
   return (
-    `<section class="films-list--extra">
-       <h2 class="films-list__title">${header}</h2>
-       <div class="films-list__container">
-       </div>
-     </section>`
+    `${filmsList}`
   );
 };
