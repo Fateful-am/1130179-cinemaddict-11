@@ -1,20 +1,10 @@
 /**
  * Компонент - Карточка фильма
+ * @param {Object} filmCard Объект с данными карточки фильма
  * @return {string} Разметка карточки
  */
-export const createFilmCardTemplate = () => {
-  // const {} = filmCard;
-  const title = `The Dance of Life`;
-  const rating = `8.3`;
-  const year = 1929;
-  const duration = `1h 55m`;
-  const genre = `Musical`;
-  const poster = `the-dance-of-life.jpg`;
-  const description = `Burlesque comic Ralph "Skid" Johnson (Skelly), and specialty dancer Bonny Lee King (Carroll), end up together on a cold, rainy night at a tr…`;
-  const commentsCount = 5;
-  const addedToWatchlist = false;
-  const markedAsWatched = false;
-  const addedToFavorite = true;
+export const createFilmCardTemplate = (filmCard) => {
+  const {title, rating, year, duration, genre, poster, description, commentsCount, addedToWatchlist, markedAsWatched, addedToFavorite} = filmCard;
 
   const ITEM_ACTIVE_CLASS = `film-card__controls-item--active`;
   const addToWatchlistActiveClass = addedToWatchlist ? ITEM_ACTIVE_CLASS : ``;
