@@ -6,12 +6,13 @@ import {createMainMenuTemplate} from './components/main-menu.js';
 import {createProfileRatingTemplate} from './components/profile-rating';
 import {createShowMoreButtonTemplate} from './components/show-more-button.js';
 import {createSortMenuTemplate} from './components/sort-menu.js';
+import {createFilmPopupCardTemplate} from './components/film-popup.js';
 import {generateFilmCards} from './mock/film-card.js';
 
 
 const FILM_CARDS_COUNT = 5;
 const EXTRA_FILM_CARDS_COUNT = 2;
-const SHOWING_FILM_CARDS_COUNT_ON_START = 5;
+const SHOWING_FILM_CARDS_COUNT_ON_START = 15;
 const EXTRA_FILM_SECTION_COUNT = 2;
 
 /**
@@ -20,7 +21,7 @@ const EXTRA_FILM_SECTION_COUNT = 2;
  * @param {String} template HTML-компонент для вставки
  * @param {InsertPosition} place Место вставки
  */
-const render = (container, template, place) => {
+export const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
@@ -70,3 +71,7 @@ extraFilmCards.slice(EXTRA_FILM_CARDS_COUNT, EXTRA_FILM_CARDS_COUNT * EXTRA_FILM
 
 const footerStatisticsElement = document.querySelector(`.footer__statistics`);
 render(footerStatisticsElement, createFooterStatisticsTemplate(), `beforeend`);
+
+const bodyElement = document.querySelector(`body`);
+// отрисовка подробностей о фильме
+render(bodyElement, createFilmPopupCardTemplate(filmCards[0]), `beforeend`);

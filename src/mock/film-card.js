@@ -124,7 +124,7 @@ const MAX_RANDOM_GENRES_COUNT = 5;
 // Минимальная случайная продолжительность фильма
 const MIN_RANDOM_FILM_DURATION = 5;
 // Максимальная случайная продолжительность фильма
-const MAX_RANDOM_FILM_DURATION = 199;
+const MAX_RANDOM_FILM_DURATION = 119;
 // Минимальный случайный год выхода фильма
 const MIN_RANDOM_FILM_YEAR_RELEASE = 1929;
 // Максимальный случайный год выхода фильма
@@ -163,7 +163,7 @@ const getRandomSDescription = () => {
  * @return {string}
  */
 const getRandomWriters = () => {
-  return getJoinRandomArrayElements(filmWriters, 1, MAX_RANDOM_WRITERS_COUNT, `,`);
+  return getJoinRandomArrayElements(filmWriters, 2, MAX_RANDOM_WRITERS_COUNT, `,`);
 };
 
 /**
@@ -220,7 +220,7 @@ const generateFilmCard = ()=> {
     country: getRandomArrayItem(filmCountry),
     genres: getRandomGenres(),
     poster: filmPosters[filmIndex],
-    description: getRandomSDescription(),
+    description: `${getRandomSDescription()}.`,
     comments: generateFilmComments(getRandomIntegerNumber(MIN_RANDOM_COMMENTS_COUNT, MAX_RANDOM_COMMENTS_COUNT)),
     addedToWatchlist: Math.random() > 0.5,
     markedAsWatched: Math.random() > 0.5,
