@@ -8,13 +8,8 @@ import {createShowMoreButtonTemplate} from './components/show-more-button.js';
 import {createSortMenuTemplate} from './components/sort-menu.js';
 import {createFilmPopupCardTemplate} from './components/film-popup.js';
 import {generateFilmCards} from './mock/film-card.js';
+import * as appConst from './const.js';
 
-
-const FILM_CARDS_COUNT = 19;
-const EXTRA_FILM_CARDS_COUNT = 2;
-const SHOWING_FILM_CARDS_COUNT_ON_START = 5;
-const SHOWING_FILM_CARDS_COUNT_BY_BUTTON = 5;
-const EXTRA_FILM_SECTION_COUNT = 2;
 
 /**
  * Функция рендеренга компонентов
@@ -22,7 +17,7 @@ const EXTRA_FILM_SECTION_COUNT = 2;
  * @param {String} template HTML-компонент для вставки
  * @param {InsertPosition} place Место вставки
  */
-export const render = (container, template, place) => {
+const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
@@ -45,9 +40,9 @@ const filmsElement = siteMainElement.querySelector(`.films`);
 const filmsListElement = filmsElement.querySelector(`.films-list`);
 const filmListContainerElement = filmsListElement.querySelector(`.films-list__container`);
 
-const filmCards = generateFilmCards(FILM_CARDS_COUNT);
+const filmCards = generateFilmCards(appConst.FILM_CARDS_COUNT);
 
-let showingFilmCardsCount = SHOWING_FILM_CARDS_COUNT_ON_START;
+let showingFilmCardsCount = appConst.SHOWING_FILM_CARDS_COUNT_ON_START;
 
 // Отрисовка карточек фильмов
 filmCards.slice(0, showingFilmCardsCount)
@@ -59,7 +54,7 @@ render(filmsListElement, createShowMoreButtonTemplate(), `beforeend`);
 const loadMoreButton = filmsListElement.querySelector(`.films-list__show-more`);
 loadMoreButton.addEventListener(`click`, () => {
   const prevTasksCount = showingFilmCardsCount;
-  showingFilmCardsCount = showingFilmCardsCount + SHOWING_FILM_CARDS_COUNT_BY_BUTTON;
+  showingFilmCardsCount = showingFilmCardsCount + appConst.SHOWING_FILM_CARDS_COUNT_BY_BUTTON;
   filmCards.slice(prevTasksCount, showingFilmCardsCount)
     .forEach((filmCard) => render(filmListContainerElement, createFilmCardTemplate(filmCard), `beforeend`));
   if (showingFilmCardsCount >= filmCards.length) {
@@ -74,18 +69,18 @@ render(filmsElement, createExtraFilmsTemplate(`Most commented`), `beforeend`);
 const topRatedContainerElement = filmsElement.querySelector(`.films-list--extra:nth-last-child(2) .films-list__container`);
 const mostCommentedContainerElement = filmsElement.querySelector(`.films-list--extra:nth-last-child(1) .films-list__container`);
 
-const extraFilmCards = generateFilmCards(EXTRA_FILM_CARDS_COUNT * EXTRA_FILM_SECTION_COUNT);
+const extraFilmCards = generateFilmCards(appConst.EXTRA_FILM_CARDS_COUNT * appConst.EXTRA_FILM_SECTION_COUNT);
 
 // Отрисовка карточек фильмов Top rated
-extraFilmCards.slice(0, EXTRA_FILM_CARDS_COUNT)
+extraFilmCards.slice(0, appConst.EXTRA_FILM_CARDS_COUNT)
   .forEach((filmCard) => render(topRatedContainerElement, createFilmCardTemplate(filmCard), `beforeend`));
 
 // Отрисовка карточек фильмов Most commented
-extraFilmCards.slice(EXTRA_FILM_CARDS_COUNT, EXTRA_FILM_CARDS_COUNT * EXTRA_FILM_SECTION_COUNT)
+extraFilmCards.slice(appConst.EXTRA_FILM_CARDS_COUNT, appConst.EXTRA_FILM_CARDS_COUNT * appConst.EXTRA_FILM_SECTION_COUNT)
   .forEach((filmCard) => render(mostCommentedContainerElement, createFilmCardTemplate(filmCard), `beforeend`));
 
 const footerStatisticsElement = document.querySelector(`.footer__statistics`);
-render(footerStatisticsElement, createFooterStatisticsTemplate(), `beforeend`);
+render(footerStatisticsElement, createFooterStatisticsTemplate(appConst.MOVIE_COUNT), `beforeend`);
 
 const bodyElement = document.querySelector(`body`);
 // отрисовка подробностей о фильме
