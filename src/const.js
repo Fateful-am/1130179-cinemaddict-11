@@ -1,5 +1,5 @@
 // Жанры фильмов
-const GENRES = [`Musical`, `Western`, `Drama`, `Comedy`, `Cartoon`, `Mystery`, `Film-Noir`];
+const GENRES = [`Musical`, `Western`, `Drama`, `Comedy`, `Cartoon`, `Mystery`, `Film-Noir`, `Sci-Fi`];
 // Максимальная длина описания фильма
 const MAX_DESCRIPTION_LENGTH = 140;
 

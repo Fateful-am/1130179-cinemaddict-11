@@ -10,9 +10,10 @@ import {createFilmPopupCardTemplate} from './components/film-popup.js';
 import {generateFilmCards} from './mock/film-card.js';
 
 
-const FILM_CARDS_COUNT = 5;
+const FILM_CARDS_COUNT = 19;
 const EXTRA_FILM_CARDS_COUNT = 2;
-const SHOWING_FILM_CARDS_COUNT_ON_START = 15;
+const SHOWING_FILM_CARDS_COUNT_ON_START = 5;
+const SHOWING_FILM_CARDS_COUNT_BY_BUTTON = 5;
 const EXTRA_FILM_SECTION_COUNT = 2;
 
 /**
@@ -45,12 +46,26 @@ const filmsListElement = filmsElement.querySelector(`.films-list`);
 const filmListContainerElement = filmsListElement.querySelector(`.films-list__container`);
 
 const filmCards = generateFilmCards(FILM_CARDS_COUNT);
+
+let showingFilmCardsCount = SHOWING_FILM_CARDS_COUNT_ON_START;
+
 // Отрисовка карточек фильмов
-filmCards.slice(0, SHOWING_FILM_CARDS_COUNT_ON_START)
+filmCards.slice(0, showingFilmCardsCount)
   .forEach((filmCard) => render(filmListContainerElement, createFilmCardTemplate(filmCard), `beforeend`));
 
 // Отрисовка компонента - Кнопка «Show more»
 render(filmsListElement, createShowMoreButtonTemplate(), `beforeend`);
+
+const loadMoreButton = filmsListElement.querySelector(`.films-list__show-more`);
+loadMoreButton.addEventListener(`click`, () => {
+  const prevTasksCount = showingFilmCardsCount;
+  showingFilmCardsCount = showingFilmCardsCount + SHOWING_FILM_CARDS_COUNT_BY_BUTTON;
+  filmCards.slice(prevTasksCount, showingFilmCardsCount)
+    .forEach((filmCard) => render(filmListContainerElement, createFilmCardTemplate(filmCard), `beforeend`));
+  if (showingFilmCardsCount >= filmCards.length) {
+    loadMoreButton.remove();
+  }
+});
 
 // Отрисовка компонента - Экстра контент-контейнер
 render(filmsElement, createExtraFilmsTemplate(`Top rated`), `beforeend`);

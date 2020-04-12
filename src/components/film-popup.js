@@ -1,5 +1,10 @@
 import {formatDateDDMMMMYYYY} from "../utils.js";
 
+/**
+ * Возвращает шаблон отрисовки комментариев
+ * @param {object} comment
+ * @return {string}
+ */
 const createCommentItemTemplate = (comment) => {
   const {text, emoji, author, date} = comment;
   return `
@@ -17,19 +22,34 @@ const createCommentItemTemplate = (comment) => {
       </div>
     </li>`;
 };
+
+/**
+ * Возвращает шаблон отрисовки жакра фильма
+ * @param {String} genre
+ * @return {string}
+ */
 const createGenreItemTemplate = (genre) => {
   return `<span class="film-details__genre">${genre}</span>`;
 };
 
+/**
+ * Отрисовывыет все жанры
+ * @param {Array} genres
+ * @return {string}
+ */
 const renderGenres = (genres) => {
   const outArray = [];
   genres.forEach((genre) => {
     outArray.push(createGenreItemTemplate(genre));
   });
   return outArray.join(`\n`);
-
 };
 
+/**
+ * Отрисовывает все комментарии
+ * @param {Array} comments
+ * @return {string}
+ */
 const renderComments = (comments) => {
   const outArray = [];
   comments.forEach((comment) => {
@@ -38,11 +58,16 @@ const renderComments = (comments) => {
   return outArray.join(`\n`);
 };
 
+/**
+ * Возвращает шаблон отрисовки подробной информации о фильме
+ * @param {object} filmCard карточка с данными о фильме
+ * @return {string}
+ */
 export const createFilmPopupCardTemplate = (filmCard) => {
   const {title, originTitle, rating, director, writers, actors, releaseDate, duration, country, genres, poster, description, comments, age} = filmCard;
 
   return (
-    `<section class="film-details">
+    `<section class="film-details visually-hidden">
       <form class="film-details__inner" action="" method="get">
         <div class="form-details__top-container">
           <div class="film-details__close">

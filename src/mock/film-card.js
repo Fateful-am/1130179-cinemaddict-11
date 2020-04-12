@@ -221,7 +221,14 @@ const generateFilmCard = ()=> {
     genres: getRandomGenres(),
     poster: filmPosters[filmIndex],
     description: `${getRandomSDescription()}.`,
-    comments: generateFilmComments(getRandomIntegerNumber(MIN_RANDOM_COMMENTS_COUNT, MAX_RANDOM_COMMENTS_COUNT)),
+    comments: generateFilmComments(getRandomIntegerNumber(MIN_RANDOM_COMMENTS_COUNT, MAX_RANDOM_COMMENTS_COUNT))
+                .sort((a, b) => {
+                  if (a.date < b.date) {
+                    return 1;
+                  } if (a.date > b.date) {
+                    return -1;
+                  } return 0;
+                }),
     addedToWatchlist: Math.random() > 0.5,
     markedAsWatched: Math.random() > 0.5,
     addedToFavorite: Math.random() > 0.5,
