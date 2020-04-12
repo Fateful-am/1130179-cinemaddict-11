@@ -239,8 +239,7 @@ const generateFilmCard = ()=> {
 /**
  * Генерация карточек фильмов
  * @param {number} count Количество карточек
- * @return {{duration: string, year: *, addedToFavorite: boolean, commentsCount: number, markedAsWatched: boolean,
- * rating: string, genre: *, description: string, addedToWatchlist: boolean, title: string, poster: string}[]}
+ * @return {{country: *, comments: {date: string, emoji: *, author: *, text: *}[], releaseDate: Date, director: *, markedAsWatched: boolean, rating: string, description: string, addedToWatchlist: boolean, writers: string, title: string, originTitle: string, duration: string, actors: string, addedToFavorite: boolean, genres: string, poster: string, age: *}[]}
  */
 const generateFilmCards = (count)=> {
   return new Array(count)

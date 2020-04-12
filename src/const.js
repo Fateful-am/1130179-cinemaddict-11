@@ -14,6 +14,8 @@ export const SHOWING_FILM_CARDS_COUNT_BY_BUTTON = 5;
 export const EXTRA_FILM_SECTION_COUNT = 2;
 // количество крточек фильмов на сервере
 export const MOVIE_COUNT = 130291;
+// Количество просотренных пользователем фильмов
+export const USER_WATCHED_COUNT = 25;
 // именованные месяцы
 export const MONTH_NAMES = [
   `January`,
@@ -30,3 +32,9 @@ export const MONTH_NAMES = [
   `December`,
 ];
 
+export const RANK_RATINGS = [
+  {rank: ``, minWatchCount: 0},
+  {rank: `novice`, minWatchCount: 10},
+  {rank: `fan`, minWatchCount: 20},
+  {rank: `movie buff`, minWatchCount: 21}
+];

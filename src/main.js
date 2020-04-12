@@ -25,7 +25,7 @@ const render = (container, template, place) => {
 const siteHeaderElement = document.querySelector(`.header`);
 
 // Отрисовка компонента - Звание пользователя
-render(siteHeaderElement, createProfileRatingTemplate(), `beforeend`);
+render(siteHeaderElement, createProfileRatingTemplate(appConst.USER_WATCHED_COUNT), `beforeend`);
 
 const siteMainElement = document.querySelector(`.main`);
 
@@ -51,6 +51,7 @@ filmCards.slice(0, showingFilmCardsCount)
 // Отрисовка компонента - Кнопка «Show more»
 render(filmsListElement, createShowMoreButtonTemplate(), `beforeend`);
 
+// Событие клика по кнопке
 const loadMoreButton = filmsListElement.querySelector(`.films-list__show-more`);
 loadMoreButton.addEventListener(`click`, () => {
   const prevTasksCount = showingFilmCardsCount;
