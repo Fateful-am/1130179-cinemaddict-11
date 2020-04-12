@@ -1,4 +1,4 @@
-import {MAX_DESCRIPTION_LENGTH} from "../const.js";
+import {MAX_DESCRIPTION_LENGTH} from '../const.js';
 /**
  * Компонент - Карточка фильма
  * @param {Object} filmCard Объект с данными карточки фильма

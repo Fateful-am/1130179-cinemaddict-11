@@ -1,6 +1,6 @@
-import {getRandomArrayIndex, getRandomIntegerNumber, getRandomArrayItem} from "../utils.js";
+import {getRandomArrayIndex, getRandomIntegerNumber, getRandomArrayItem} from '../utils.js';
 import {generateFilmComments} from './comment';
-import {GENRES} from "../const";
+import {GENRES} from '../const';
 
 // Массив названий фильмов
 const filmTitles = [
@@ -13,7 +13,7 @@ const filmTitles = [
   `The Man with the Golden Arm`
 ];
 
-// Согласованный с filmTitles массив постеров к фильмам
+// Согласованный с filmTitles массив картинок файлов постеров к фильмам
 const filmPosters = [
   `made-for-each-other.png`,
   `popeye-meets-sinbad.png`,
@@ -47,7 +47,7 @@ const filmDirectors = [
   `Daniels Robert`
 ];
 
-// Случайные имена сценапистов. Источник http://megagenerator.ru/namefio/
+// Случайные имена сценаристов. Источник http://megagenerator.ru/namefio/
 const filmWriters = [
   `Jefferson Collin`,
   `Potter Harold`,
@@ -90,7 +90,7 @@ const filmActors = [
   `Ferguson Jeffry`
 ];
 
-// Сдучайные страны выпустившие фильм. Источник https://ciox.ru/country-generator
+// Случайные страны выпустившие фильм. Источник https://ciox.ru/country-generator
 const filmCountry = [
   `Korea`,
   `Chad`,
@@ -133,13 +133,14 @@ const MAX_RANDOM_FILM_YEAR_RELEASE = 1964;
 const MIN_RANDOM_FILM_RATE = 1;
 // Максимальный случайный рейтинг фильма
 const MAX_RANDOM_FILM_RATE = 10;
+
 /**
- * Возвращает склеенную из масссива строку с разделителем в диапазоне значений
- * @param {Array} array входной массив
- * @param {number} rangeCountMin минимальное количество элементов массива на выходе
- * @param {number} rangeCountMax максимальное количество элементов массива на выходе
- * @param {string} joinDelimiter разделитель
- * @return {string}
+ * Генерация склеенной из масссива строки с разделителем
+ * @param {Array} array Входной массив
+ * @param {number} rangeCountMin Минимальное количество элементов массива на выходе
+ * @param {number} rangeCountMax Максимальное количество элементов массива на выходе
+ * @param {string} joinDelimiter Разделитель
+ * @return {string} Склееная строка из входного массива
  */
 const getJoinRandomArrayElements = (array, rangeCountMin, rangeCountMax, joinDelimiter) => {
   const memberCount = getRandomIntegerNumber(rangeCountMin, rangeCountMax);
@@ -151,42 +152,42 @@ const getJoinRandomArrayElements = (array, rangeCountMin, rangeCountMax, joinDel
 };
 
 /**
- * Возвращает случайно сгенерированную строку описания фильма (для моки)
- * @return {string}
+ * Генерация описания фильма
+ * @return {string} Описание фильма, разделитель - точка
  */
 const getRandomSDescription = () => {
   return getJoinRandomArrayElements(filmDescriptions, MIN_RANDOM_DESCRIPTION_SENTENCES_COUNT, MAX_RANDOM_DESCRIPTION_SENTENCES_COUNT, `.`);
 };
 
 /**
- * Возвращает случайно сгенерированный состав сценаристов фильма
- * @return {string}
+ * Генерация сценаристов фильма
+ * @return {string} Сценаристы, разделитель - запятая
  */
 const getRandomWriters = () => {
   return getJoinRandomArrayElements(filmWriters, 2, MAX_RANDOM_WRITERS_COUNT, `,`);
 };
 
 /**
- * Возвращает случайно сгенерированный актерский состав фильма
- * @return {string}
+ * Генерация актерского состава фильма
+ * @return {string} Актерский состав, разделитель - запятая
  */
 const getRandomActors = () => {
   return getJoinRandomArrayElements(filmActors, MIN_RANDOM_ACTORS_COUNT, MAX_RANDOM_ACTORS_COUNT, `,`);
 };
 
 /**
- * Возвращает случайно сгенерированный набор жанров фильма
- * @return {string}
+ * Генерация набора жанров фильма
+ * @return {string} Жанры фильмов, разделитель - пробел
  */
 const getRandomGenres = () => {
   return getJoinRandomArrayElements(GENRES, 1, MAX_RANDOM_GENRES_COUNT, ``);
 };
 
 /**
- * Возвращает случайно сгененрированную дату выхода фильма согласно аргументам
- * @param {number} yearFrom минимальный год выхода фильма
- * @param {number} yearTo максимальный год выхода фильма
- * @return {Date}
+ * Генерация даты выхода фильма
+ * @param {number} yearFrom Минимальный год выхода фильма
+ * @param {number} yearTo Максимальный год выхода фильма
+ * @return {Date} Дата выхода фильма
  */
 const getRandomReleaseDate = (yearFrom, yearTo) => {
   const targetDate = new Date();
@@ -195,9 +196,9 @@ const getRandomReleaseDate = (yearFrom, yearTo) => {
 };
 
 /**
- * Возвращает отформатированную строку с продолжительностью фильма
+ * Форматирование продолжительности фильма
  * @param {number} duration Продолжительность фильма в минутах
- * @return {string}
+ * @return {string} Отформатированная строка с продолжительностью фильма
  */
 const formatDuration = (duration) => {
   const hour = Math.trunc(duration / 60);
@@ -205,32 +206,44 @@ const formatDuration = (duration) => {
   return `${hour === 0 ? `` : `${hour}h`}${minute === 0 ? `` : ` ${minute}m`}`;
 };
 
-
+/**
+ * Генератор карточки фильма
+ * @return {{country: string, comments: {date: string, emoji: string, author: string, text: string}[],
+ * releaseDate: Date, director: string, markedAsWatched: boolean, rating: string, description: string,
+ * addedToWatchlist: boolean, writers: string, title: string, originTitle: string, duration: string,
+ * actors: string, addedToFavorite: boolean, genres: string, poster: string, age: number}} Объект карточки фильма:
+ * country - Страна, comments - Отсортированный по дате массив коментариев,
+ * releaseDate - Дата и год релиза в формате день месяц год, director - Режиссёр, markedAsWatched - Признак просмотра,
+ * rating - Рейтинг, description - Полное описание, addedToWatchlist - Признак фильм к просомтру,
+ * writers - Сценаристы, title - Название фильма, originTitle - Оригинальное название фильма,
+ * duration - Продолжительность , actors - Актёрский состав, addedToFavorite - Признак любимый фильм,
+ * genres - Жанр, poster - имя файла картинки постера, age - Возрастной рейтинг
+ */
 const generateFilmCard = ()=> {
   const filmIndex = getRandomArrayIndex(filmTitles);
   return {
+    country: getRandomArrayItem(filmCountry),
+    comments: generateFilmComments(getRandomIntegerNumber(MIN_RANDOM_COMMENTS_COUNT, MAX_RANDOM_COMMENTS_COUNT))
+      .sort((a, b) => {
+        if (a.date < b.date) {
+          return 1;
+        } if (a.date > b.date) {
+          return -1;
+        } return 0;
+      }),
+    releaseDate: getRandomReleaseDate(MIN_RANDOM_FILM_YEAR_RELEASE, MAX_RANDOM_FILM_YEAR_RELEASE),
+    director: getRandomArrayItem(filmDirectors),
+    markedAsWatched: Math.random() > 0.5,
+    rating: `${getRandomIntegerNumber(MIN_RANDOM_FILM_RATE, MAX_RANDOM_FILM_RATE - 1)}.${getRandomIntegerNumber(0, 9)}`,
     title: filmTitles[filmIndex],
     originTitle: filmTitles[filmIndex],
-    rating: `${getRandomIntegerNumber(MIN_RANDOM_FILM_RATE, MAX_RANDOM_FILM_RATE - 1)}.${getRandomIntegerNumber(0, 9)}`,
-    director: getRandomArrayItem(filmDirectors),
     writers: getRandomWriters(),
     actors: getRandomActors(),
-    releaseDate: getRandomReleaseDate(MIN_RANDOM_FILM_YEAR_RELEASE, MAX_RANDOM_FILM_YEAR_RELEASE),
     duration: formatDuration(getRandomIntegerNumber(MIN_RANDOM_FILM_DURATION, MAX_RANDOM_FILM_DURATION)),
-    country: getRandomArrayItem(filmCountry),
     genres: getRandomGenres(),
     poster: filmPosters[filmIndex],
     description: `${getRandomSDescription()}.`,
-    comments: generateFilmComments(getRandomIntegerNumber(MIN_RANDOM_COMMENTS_COUNT, MAX_RANDOM_COMMENTS_COUNT))
-                .sort((a, b) => {
-                  if (a.date < b.date) {
-                    return 1;
-                  } if (a.date > b.date) {
-                    return -1;
-                  } return 0;
-                }),
     addedToWatchlist: Math.random() > 0.5,
-    markedAsWatched: Math.random() > 0.5,
     addedToFavorite: Math.random() > 0.5,
     age: getRandomIntegerNumber(0, 18)
   };
@@ -239,7 +252,10 @@ const generateFilmCard = ()=> {
 /**
  * Генерация карточек фильмов
  * @param {number} count Количество карточек
- * @return {{country: *, comments: {date: string, emoji: *, author: *, text: *}[], releaseDate: Date, director: *, markedAsWatched: boolean, rating: string, description: string, addedToWatchlist: boolean, writers: string, title: string, originTitle: string, duration: string, actors: string, addedToFavorite: boolean, genres: string, poster: string, age: *}[]}
+ * @return {{country: string, comments: {date: string, emoji: string, author: string, text: string}[],
+ * releaseDate: Date, director: string, markedAsWatched: boolean, rating: string, description: string,
+ * addedToWatchlist: boolean, writers: string, title: string, originTitle: string, duration: string,
+ * actors: string, addedToFavorite: boolean, genres: string, poster: string, age: number}[]} Массив карточек фильмов
  */
 const generateFilmCards = (count)=> {
   return new Array(count)

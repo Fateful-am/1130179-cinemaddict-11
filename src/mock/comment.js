@@ -1,7 +1,7 @@
 import {getRandomArrayItem, getRandomIntegerNumber} from '../utils';
 
 // Число возможных дней до текущей даты для даты комментария
-const commenetPastDate = 365;
+const COMMENTS_PAST_DAYS = 365;
 
 // имена файлов с эмоджи
 const emojis = [
@@ -40,9 +40,9 @@ const commentTexts = [
 ];
 
 /**
- * Возвращает случайную дату-время в периоде указанной в аргументе
+ * Генерация случайной даты в прошлом
  * @param {number} pastSinceDays Сколько захватить дней до текущей даты
- * @return {Date}
+ * @return {Date} Дата в прошлом
  */
 const getRandomCommentDateTime = (pastSinceDays) => {
   const targetDate = new Date();
@@ -52,33 +52,42 @@ const getRandomCommentDateTime = (pastSinceDays) => {
 };
 
 /**
- *
- * @param {number} number Входное число для добавления при необходимости ведущего нуля
- * @return {string}
+ * Добавление 0 для цифр меньше 10
+ * @param {number} number Входное число
+ * @return {string} Отфарматированнное число
  */
 const addLeadZero = (number) => {
   return number < 10 ? `0${number}` : number;
 };
 
 /**
- * Форматирование даты согласно ТЗ
+ * Форматирование даты комментария
  * @param {Date} dateTime Дата для форматирования
- * @return {string}
+ * @return {string} Отформатированная дата комментария
  */
 const formatCommentDateTime = (dateTime) => {
   return `${dateTime.getFullYear()}/${addLeadZero(dateTime.getMonth() + 1)}/${addLeadZero(dateTime.getDate())} ${addLeadZero(dateTime.getHours())}:${addLeadZero(dateTime.getMinutes())}`;
 };
 
-
+/**
+ * Генерация комментария к фильму
+ * @return {{date: string, emoji: string, author: string, text: string}} date - отфармотированная дата комментария,
+ * emoji - название эмоджи (файл), author - автор, text - текст
+ */
 const generateFilmComment = ()=> {
   return {
     text: getRandomArrayItem(commentTexts),
     emoji: getRandomArrayItem(emojis),
     author: getRandomArrayItem(commentAuthors),
-    date: formatCommentDateTime(getRandomCommentDateTime(commenetPastDate)),
+    date: formatCommentDateTime(getRandomCommentDateTime(COMMENTS_PAST_DAYS)),
   };
 };
 
+/**
+ * Генерация массива комментариев
+ * @param {number} count Количество коментариев
+ * @return {{date: string, emoji: string, author: string, text: string}[]} Массив комментариев
+ */
 const generateFilmComments = (count)=> {
   return new Array(count)
     .fill(``)

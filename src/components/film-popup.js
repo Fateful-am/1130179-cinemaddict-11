@@ -1,4 +1,4 @@
-import {formatDateDDMMMMYYYY} from "../utils.js";
+import {formatDateDDMMMMYYYY} from '../utils.js';
 
 /**
  * Возвращает шаблон отрисовки комментариев

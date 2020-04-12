@@ -1,22 +1,24 @@
+// Список имен фильтров
+export const FILTER_NAMES = [`All movies`, `Watchlist`, `History`, `Favorites`];
 // Жанры фильмов
 export const GENRES = [`Musical`, `Western`, `Drama`, `Comedy`, `Cartoon`, `Mystery`, `Film-Noir`, `Sci-Fi`];
 // Максимальная длина описания фильма
 export const MAX_DESCRIPTION_LENGTH = 140;
-// количество карточек фильмов в экстра контейнере
+// Количество карточек фильмов в экстра контейнере
 export const EXTRA_FILM_CARDS_COUNT = 2;
-// общее количество карточек фильмов
+// Общее количество карточек фильмов
 export const FILM_CARDS_COUNT = 19;
-// количество карточек фильмов показываемых при старте
+// Количество карточек фильмов показываемых при старте
 export const SHOWING_FILM_CARDS_COUNT_ON_START = 5;
-// количество карточек фильмов добавляемых при нажатии на кнопку "Load More"
+// Количество карточек фильмов добавляемых при нажатии на кнопку "Load More"
 export const SHOWING_FILM_CARDS_COUNT_BY_BUTTON = 5;
-// количество экстра секций
+// Количество экстра секций
 export const EXTRA_FILM_SECTION_COUNT = 2;
-// количество крточек фильмов на сервере
+// Количество крточек фильмов на сервере
 export const MOVIE_COUNT = 130291;
 // Количество просотренных пользователем фильмов
 export const USER_WATCHED_COUNT = 25;
-// именованные месяцы
+// Именованные месяцы
 export const MONTH_NAMES = [
   `January`,
   `February`,
@@ -32,6 +34,7 @@ export const MONTH_NAMES = [
   `December`,
 ];
 
+// Массив объектов с званием пользователя
 export const RANK_RATINGS = [
   {rank: ``, minWatchCount: 0},
   {rank: `novice`, minWatchCount: 10},

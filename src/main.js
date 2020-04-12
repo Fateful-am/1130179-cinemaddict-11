@@ -8,11 +8,12 @@ import {createShowMoreButtonTemplate} from './components/show-more-button.js';
 import {createSortMenuTemplate} from './components/sort-menu.js';
 import {createFilmPopupCardTemplate} from './components/film-popup.js';
 import {generateFilmCards} from './mock/film-card.js';
+import {generateFilters} from './mock/filter.js';
 import * as appConst from './const.js';
 
 
 /**
- * Функция рендеренга компонентов
+ * Рендеренг компонентов
  * @param {Element} container Контейнер для шаблона
  * @param {String} template HTML-компонент для вставки
  * @param {InsertPosition} place Место вставки
@@ -21,6 +22,18 @@ const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
+/**
+ * Рендеринг карточек фильмов
+ * @param {Array} films Массив с карточками фильмов
+ * @param {Element} container Когтейнер для генерации разметки карточек фильмов
+ * @param {InsertPosition} place Место вставки
+ * @param {number} fromIndex Стартовый индекс массива
+ * @param {number} toIndex Конечный индекс массива
+ */
+const createFilmCards = (films, container, place, fromIndex, toIndex) => {
+  films.slice(fromIndex, toIndex)
+    .forEach((filmCard) => render(container, createFilmCardTemplate(filmCard), place));
+};
 
 const siteHeaderElement = document.querySelector(`.header`);
 
@@ -30,7 +43,7 @@ render(siteHeaderElement, createProfileRatingTemplate(appConst.USER_WATCHED_COUN
 const siteMainElement = document.querySelector(`.main`);
 
 // Отрисовка компонента - Меню
-render(siteMainElement, createMainMenuTemplate(), `beforeend`);
+render(siteMainElement, createMainMenuTemplate(generateFilters()), `beforeend`);
 // Отрисовка компонента - Меню сортировки
 render(siteMainElement, createSortMenuTemplate(), `beforeend`);
 // Отрисовка компонента - Контент-контейнер
@@ -42,22 +55,24 @@ const filmListContainerElement = filmsListElement.querySelector(`.films-list__co
 
 const filmCards = generateFilmCards(appConst.FILM_CARDS_COUNT);
 
+// Переменная счетчик показанных карточек фильмов
 let showingFilmCardsCount = appConst.SHOWING_FILM_CARDS_COUNT_ON_START;
 
 // Отрисовка карточек фильмов
-filmCards.slice(0, showingFilmCardsCount)
-  .forEach((filmCard) => render(filmListContainerElement, createFilmCardTemplate(filmCard), `beforeend`));
+createFilmCards(filmCards, filmListContainerElement, `beforeend`, 0, showingFilmCardsCount);
 
 // Отрисовка компонента - Кнопка «Show more»
 render(filmsListElement, createShowMoreButtonTemplate(), `beforeend`);
 
-// Событие клика по кнопке
 const loadMoreButton = filmsListElement.querySelector(`.films-list__show-more`);
+
+// Событие клика по кнопке
 loadMoreButton.addEventListener(`click`, () => {
   const prevTasksCount = showingFilmCardsCount;
   showingFilmCardsCount = showingFilmCardsCount + appConst.SHOWING_FILM_CARDS_COUNT_BY_BUTTON;
-  filmCards.slice(prevTasksCount, showingFilmCardsCount)
-    .forEach((filmCard) => render(filmListContainerElement, createFilmCardTemplate(filmCard), `beforeend`));
+
+  createFilmCards(filmCards, filmListContainerElement, `beforeend`, prevTasksCount, showingFilmCardsCount);
+
   if (showingFilmCardsCount >= filmCards.length) {
     loadMoreButton.remove();
   }
@@ -73,12 +88,11 @@ const mostCommentedContainerElement = filmsElement.querySelector(`.films-list--e
 const extraFilmCards = generateFilmCards(appConst.EXTRA_FILM_CARDS_COUNT * appConst.EXTRA_FILM_SECTION_COUNT);
 
 // Отрисовка карточек фильмов Top rated
-extraFilmCards.slice(0, appConst.EXTRA_FILM_CARDS_COUNT)
-  .forEach((filmCard) => render(topRatedContainerElement, createFilmCardTemplate(filmCard), `beforeend`));
+createFilmCards(extraFilmCards, topRatedContainerElement, `beforeend`, 0, appConst.EXTRA_FILM_CARDS_COUNT);
 
 // Отрисовка карточек фильмов Most commented
-extraFilmCards.slice(appConst.EXTRA_FILM_CARDS_COUNT, appConst.EXTRA_FILM_CARDS_COUNT * appConst.EXTRA_FILM_SECTION_COUNT)
-  .forEach((filmCard) => render(mostCommentedContainerElement, createFilmCardTemplate(filmCard), `beforeend`));
+createFilmCards(extraFilmCards, mostCommentedContainerElement, `beforeend`,
+    appConst.EXTRA_FILM_CARDS_COUNT, appConst.EXTRA_FILM_CARDS_COUNT * appConst.EXTRA_FILM_SECTION_COUNT);
 
 const footerStatisticsElement = document.querySelector(`.footer__statistics`);
 render(footerStatisticsElement, createFooterStatisticsTemplate(appConst.MOVIE_COUNT), `beforeend`);

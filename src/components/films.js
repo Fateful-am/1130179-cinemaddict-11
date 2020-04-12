@@ -1,4 +1,4 @@
-import {createFilmsListTemplate} from "./films-list.js";
+import {createFilmsListTemplate} from './films-list.js';
 /**
  * Компонент - Контент-контейнер
  * @return {string}

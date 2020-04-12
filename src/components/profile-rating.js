@@ -6,13 +6,13 @@ import {RANK_RATINGS} from '../const.js';
  * @return {string}
  */
 const getProfileRating = (watchedCount) => {
-  return RANK_RATINGS.filter((el, i, arr) => {
+  return RANK_RATINGS.filter((it, i, array) => {
     if (i === 0) {
-      return watchedCount === el.minWatchCount;
+      return watchedCount === it.minWatchCount;
     }
-    return i < arr.length - 1
-      ? watchedCount > arr[i - 1].minWatchCount && watchedCount <= el.minWatchCount
-      : watchedCount >= el.minWatchCount;
+    return i < array.length - 1
+      ? watchedCount > array[i - 1].minWatchCount && watchedCount <= it.minWatchCount
+      : watchedCount >= it.minWatchCount;
   })[0].rank;
 };
 
