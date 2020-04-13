@@ -1,10 +1,11 @@
 /**
  * Компонент - Количество фильмов
+ * @param {number} movieCount количество фильмов в библиотеке
  * @return {string}
  */
-export const createFooterStatisticsTemplate = () => {
+export const createFooterStatisticsTemplate = (movieCount) => {
   return (
-    `<p>130 291 movies inside</p>`
+    `<p>${movieCount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1 `)} movies inside</p>`
   );
 };
 
