@@ -14,16 +14,6 @@ import {render} from "./utils.js";
 
 
 /**
- * Рендеренг компонентов
- * @param {Element} container Контейнер для шаблона
- * @param {String} template HTML-компонент для вставки
- * @param {InsertPosition} place Место вставки
- */
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
-/**
  * Рендеринг карточек фильмов
  * @param {Array} films Массив с карточками фильмов
  * @param {Element} container Когтейнер для генерации разметки карточек фильмов
