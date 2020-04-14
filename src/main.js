@@ -10,6 +10,7 @@ import {createFilmPopupCardTemplate} from './components/film-popup.js';
 import {generateFilmCards} from './mock/film-card.js';
 import {generateFilters} from './mock/filter.js';
 import * as appConst from './const.js';
+import {render} from "./utils.js";
 
 
 /**
