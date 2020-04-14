@@ -1,4 +1,4 @@
-import {createFilmsListTemplate} from './films-list.js';
+import FilmsListComponent from './films-list.js';
 import {createElement} from "../utils.js";
 
 /**
@@ -7,7 +7,7 @@ import {createElement} from "../utils.js";
  * @return {string}
  */
 const createExtraFilmsTemplate = (header) => {
-  const filmsList = createFilmsListTemplate(true, header);
+  const filmsList = new FilmsListComponent(true, header).getTemplate();
   return (
     `${filmsList}`
   );

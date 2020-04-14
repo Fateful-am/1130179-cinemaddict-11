@@ -1,4 +1,4 @@
-import {createFilmsListTemplate} from './films-list.js';
+import FilmsListComponent from './films-list.js';
 import {createElement} from "../utils.js";
 
 /**
@@ -6,7 +6,7 @@ import {createElement} from "../utils.js";
  * @return {string}
  */
 const createFilmsTemplate = () => {
-  const filmsList = createFilmsListTemplate(false, `All movies. Upcoming`);
+  const filmsList = new FilmsListComponent(false, `All movies. Upcoming`).getTemplate();
   return (
     `<section class="films">
       ${filmsList}
