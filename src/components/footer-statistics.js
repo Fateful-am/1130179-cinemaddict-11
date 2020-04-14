@@ -11,7 +11,7 @@ const createFooterStatisticsTemplate = (movieCount) => {
   );
 };
 
-export default class FooterStatistic {
+export default class FooterStatisticComponent {
   constructor(movieCount) {
     this._movieCount = movieCount;
 

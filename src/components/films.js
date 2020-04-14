@@ -14,7 +14,7 @@ const createFilmsTemplate = () => {
   );
 };
 
-export default class FilmsBoard {
+export default class FilmsBoardComponent {
   constructor() {
     this._element = null;
   }

@@ -18,7 +18,7 @@ const createFilmsListTemplate = (isExtra, title) => {
   );
 };
 
-export default class FilmsList {
+export default class FilmsListComponent {
   constructor(isExtra, title) {
     this._isExtra = isExtra;
     this._title = title;

@@ -31,7 +31,7 @@ const createProfileRatingTemplate = (watchedCount) => {
   );
 };
 
-export default class ProfileRating {
+export default class ProfileRatingComponent {
   constructor(watchedCount) {
     this._watchedCount = watchedCount;
 

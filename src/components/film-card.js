@@ -40,7 +40,7 @@ const createFilmCardTemplate = (filmCard) => {
   );
 };
 
-export default class FilmCard {
+export default class FilmCardComponent {
   constructor(filmCard) {
     this._filmCard = filmCard;
 

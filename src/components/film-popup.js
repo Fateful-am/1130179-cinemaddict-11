@@ -178,7 +178,7 @@ const createFilmPopupCardTemplate = (filmCard) => {
   );
 };
 
-export default class FilmPopup {
+export default class FilmPopupComponent {
   constructor(filmCard) {
     this._filmCard = filmCard;
 

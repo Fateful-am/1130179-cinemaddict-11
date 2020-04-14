@@ -32,7 +32,7 @@ const createMainMenuTemplate = (filters) => {
   );
 };
 
-export default class MainMenu {
+export default class MainMenuComponent {
   constructor(filters) {
     this._filters = filters;
 

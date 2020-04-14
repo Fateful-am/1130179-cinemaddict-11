@@ -13,7 +13,7 @@ const createExtraFilmsTemplate = (header) => {
   );
 };
 
-export default class ExtraFilmsBoard {
+export default class ExtraFilmsBoardComponent {
   constructor(header) {
     this._header = header;
 
