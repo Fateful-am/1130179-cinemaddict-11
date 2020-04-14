@@ -38,5 +38,16 @@ const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
+/**
+ * Функция для создания DOM-элемента
+ * @param {String} template Шаблон разметки
+ * @return {ChildNode} DOM-элемент созданный по шаблону
+ */
+const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
 
-export {getRandomArrayItem, getRandomIntegerNumber, getRandomArrayIndex, formatDateDDMMMMYYYY};
+  return newElement.firstChild;
+};
+
+export {getRandomArrayItem, getRandomIntegerNumber, getRandomArrayIndex, formatDateDDMMMMYYYY, createElement};
