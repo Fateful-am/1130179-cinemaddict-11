@@ -1,4 +1,4 @@
-import {formatDateDDMMMMYYYY} from '../utils.js';
+import {createElement, formatDateDDMMMMYYYY} from '../utils.js';
 
 /**
  * Возвращает шаблон отрисовки комментариев
@@ -63,7 +63,7 @@ const renderComments = (comments) => {
  * @param {object} filmCard карточка с данными о фильме
  * @return {string}
  */
-export const createFilmPopupCardTemplate = (filmCard) => {
+const createFilmPopupCardTemplate = (filmCard) => {
   const {title, originTitle, rating, director, writers, actors, releaseDate, duration, country, genres, poster, description, comments, age} = filmCard;
 
   return (
@@ -178,3 +178,26 @@ export const createFilmPopupCardTemplate = (filmCard) => {
   );
 };
 
+export default class FilmPopup {
+  constructor(filmCard) {
+    this._filmCard = filmCard;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmPopupCardTemplate(this._filmCard);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

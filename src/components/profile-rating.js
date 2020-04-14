@@ -1,4 +1,5 @@
 import {RANK_RATINGS} from '../const.js';
+import {createElement} from "../utils.js";
 
 /**
  * возвращает звание пользователя
@@ -21,7 +22,7 @@ const getProfileRating = (watchedCount) => {
  * @param {number} watchedCount количество просмотров пользователя
  * @return {string}
  */
-export const createProfileRatingTemplate = (watchedCount) => {
+const createProfileRatingTemplate = (watchedCount) => {
   return (
     `<section class="header__profile profile">
       <p class="profile__rating">${getProfileRating(watchedCount)}</p>
@@ -29,3 +30,27 @@ export const createProfileRatingTemplate = (watchedCount) => {
     </section>`
   );
 };
+
+export default class ProfileRating {
+  constructor(watchedCount) {
+    this._watchedCount = watchedCount;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createProfileRatingTemplate(this._watchedCount);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

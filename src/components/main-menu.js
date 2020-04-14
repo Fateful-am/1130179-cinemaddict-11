@@ -1,3 +1,5 @@
+import {createElement} from "../utils.js";
+
 /**
  * Генерирует разметку пункта меню фильтра
  * @param {{name: string, count: number}} filter Объект с параметрамерами фильтра
@@ -17,7 +19,7 @@ const createFilterMarkup = (filter, isActive) => {
  * @param {{name: string, count: number}[]} filters Массив фильтров
  * @return {string} Разметка меню фильтров
  */
-export const createMainMenuTemplate = (filters) => {
+const createMainMenuTemplate = (filters) => {
   const filterMarkup = filters.slice(1).map((it) => createFilterMarkup(it, false)).join(`\n`);
   return (
     `<nav class="main-navigation">
@@ -30,4 +32,26 @@ export const createMainMenuTemplate = (filters) => {
   );
 };
 
+export default class MainMenu {
+  constructor(filters) {
+    this._filters = filters;
 
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMainMenuTemplate(this._filters);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,8 +1,10 @@
+import {createElement} from "../utils.js";
+
 /**
  * Компонент - Меню сортировки
  * @return {string}
  */
-export const createSortMenuTemplate = () => {
+const createSortMenuTemplate = () => {
   return (
     `<ul class="sort">
        <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
@@ -11,3 +13,26 @@ export const createSortMenuTemplate = () => {
     </ul>`
   );
 };
+
+
+export default class SortMenu {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createSortMenuTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
