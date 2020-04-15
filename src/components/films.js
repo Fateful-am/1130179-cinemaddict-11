@@ -1,26 +1,12 @@
-import FilmsListComponent from './films-list.js';
 import {createElement} from "../utils.js";
 
-/**
- * Компонент - Контент-контейнер
- * @return {string}
- */
-const createFilmsTemplate = () => {
-  const filmsList = new FilmsListComponent(false, `All movies. Upcoming`).getTemplate();
-  return (
-    `<section class="films">
-      ${filmsList}
-    </section>`
-  );
-};
-
-export default class FilmsBoardComponent {
+export default class FilmsComponent {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createFilmsTemplate();
+    return `<section class="films"></section>`;
   }
 
   getElement() {

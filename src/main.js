@@ -1,6 +1,6 @@
-import ExtraFilmsBoardComponent from './components/extra-films.js';
+import FilmsListComponent from './components/films-list.js';
 import FilmCardComponent from './components/film-card.js';
-import FilmsBoardComponent from './components/films.js';
+import FilmsComponent from './components/films.js';
 import FooterStatisticComponent from './components/footer-statistics.js';
 import MainMenuComponent from './components/main-menu.js';
 import ProfileRatingComponent from './components/profile-rating';
@@ -15,16 +15,65 @@ import {render} from "./utils.js";
 
 /**
  * Рендеринг карточек фильмов
- * @param {Array} films Массив с карточками фильмов
  * @param {Element} container Когтейнер для генерации разметки карточек фильмов
- * @param {InsertPosition} place Место вставки
+ * @param {Array} films Массив с карточками фильмов
  * @param {number} fromIndex Стартовый индекс массива
  * @param {number} toIndex Конечный индекс массива
+ * @param {InsertPosition} place Место вставки
  */
-const createFilmCards = (films, container, place, fromIndex, toIndex) => {
+const renderFilmCards = (container, films, fromIndex, toIndex, place) => {
   films.slice(fromIndex, toIndex)
     .forEach((filmCard) => render(container, new FilmCardComponent(filmCard).getElement(), place));
 };
+
+const renderFilmsList = (container, isExtra, header) => {
+  const filmsListComponent = new FilmsListComponent(isExtra, header);
+  render(container, filmsListComponent.getElement(), appConst.RenderPosition.BEFOREEND);
+
+  if (!isExtra) {
+    // Отрисовка компонента - Кнопка «Show more»
+    const showMoreButtonComponent = new ShowMoreButtonComponent();
+    render(filmsListComponent.getElement(), showMoreButtonComponent.getElement(), appConst.RenderPosition.BEFOREEND);
+
+    // Событие клика по кнопке
+    showMoreButtonComponent.getElement().addEventListener(`click`, () => {
+      const prevTasksCount = showingFilmCardsCount;
+      showingFilmCardsCount = showingFilmCardsCount + appConst.SHOWING_FILM_CARDS_COUNT_BY_BUTTON;
+
+      renderFilmCards(filmsListComponent.cardContainer, filmCards, prevTasksCount, showingFilmCardsCount, appConst.RenderPosition.BEFOREEND);
+
+      if (showingFilmCardsCount >= filmCards.length) {
+        showMoreButtonComponent.getElement().remove();
+      }
+    });
+  }
+
+  return filmsListComponent;
+};
+
+const renderFilms = () =>{
+// Отрисовка компонента - Контент-контейнер
+  const filmsElement = new FilmsComponent().getElement();
+
+  render(siteMainElement, filmsElement, appConst.RenderPosition.BEFOREEND);
+
+  const mainFilmsListComponent = renderFilmsList(filmsElement, false, `All movies. Upcoming`);
+  renderFilmCards(mainFilmsListComponent.cardContainer, filmCards, 0, showingFilmCardsCount, appConst.RenderPosition.BEFOREEND);
+
+  const topRatedFilmsListComponent = renderFilmsList(filmsElement, true, `Top rated`);
+  renderFilmCards(topRatedFilmsListComponent.cardContainer, extraFilmCards, 0, appConst.EXTRA_FILM_CARDS_COUNT, appConst.RenderPosition.BEFOREEND);
+
+  const mostCommentedFilmsListComponent = renderFilmsList(filmsElement, true, `Most commented`);
+  renderFilmCards(mostCommentedFilmsListComponent.cardContainer, extraFilmCards, appConst.EXTRA_FILM_CARDS_COUNT,
+      appConst.EXTRA_FILM_CARDS_COUNT * appConst.EXTRA_FILM_SECTION_COUNT, appConst.RenderPosition.BEFOREEND);
+};
+
+// Генерация карточек (Моки)
+const filmCards = generateFilmCards(appConst.FILM_CARDS_COUNT);
+const extraFilmCards = generateFilmCards(appConst.EXTRA_FILM_CARDS_COUNT * appConst.EXTRA_FILM_SECTION_COUNT);
+
+// Переменная счетчик показанных карточек фильмов
+let showingFilmCardsCount = appConst.SHOWING_FILM_CARDS_COUNT_ON_START;
 
 const siteHeaderElement = document.querySelector(`.header`);
 
@@ -37,53 +86,8 @@ const siteMainElement = document.querySelector(`.main`);
 render(siteMainElement, new MainMenuComponent(generateFilters()).getElement(), appConst.RenderPosition.BEFOREEND);
 // Отрисовка компонента - Меню сортировки
 render(siteMainElement, new SortMenuComponent().getElement(), appConst.RenderPosition.BEFOREEND);
-// Отрисовка компонента - Контент-контейнер
-render(siteMainElement, new FilmsBoardComponent().getElement(), appConst.RenderPosition.BEFOREEND);
 
-const filmsElement = siteMainElement.querySelector(`.films`);
-const filmsListElement = filmsElement.querySelector(`.films-list`);
-const filmListContainerElement = filmsListElement.querySelector(`.films-list__container`);
-
-const filmCards = generateFilmCards(appConst.FILM_CARDS_COUNT);
-
-// Переменная счетчик показанных карточек фильмов
-let showingFilmCardsCount = appConst.SHOWING_FILM_CARDS_COUNT_ON_START;
-
-// Отрисовка карточек фильмов
-createFilmCards(filmCards, filmListContainerElement, appConst.RenderPosition.BEFOREEND, 0, showingFilmCardsCount);
-
-// Отрисовка компонента - Кнопка «Show more»
-render(filmsListElement, new ShowMoreButtonComponent().getElement(), appConst.RenderPosition.BEFOREEND);
-
-const loadMoreButton = filmsListElement.querySelector(`.films-list__show-more`);
-
-// Событие клика по кнопке
-loadMoreButton.addEventListener(`click`, () => {
-  const prevTasksCount = showingFilmCardsCount;
-  showingFilmCardsCount = showingFilmCardsCount + appConst.SHOWING_FILM_CARDS_COUNT_BY_BUTTON;
-
-  createFilmCards(filmCards, filmListContainerElement, appConst.RenderPosition.BEFOREEND, prevTasksCount, showingFilmCardsCount);
-
-  if (showingFilmCardsCount >= filmCards.length) {
-    loadMoreButton.remove();
-  }
-});
-
-// Отрисовка компонента - Экстра контент-контейнер
-render(filmsElement, new ExtraFilmsBoardComponent(`Top rated`).getElement(), appConst.RenderPosition.BEFOREEND);
-render(filmsElement, new ExtraFilmsBoardComponent(`Most commented`).getElement(), appConst.RenderPosition.BEFOREEND);
-
-const topRatedContainerElement = filmsElement.querySelector(`.films-list--extra:nth-last-child(2) .films-list__container`);
-const mostCommentedContainerElement = filmsElement.querySelector(`.films-list--extra:nth-last-child(1) .films-list__container`);
-
-const extraFilmCards = generateFilmCards(appConst.EXTRA_FILM_CARDS_COUNT * appConst.EXTRA_FILM_SECTION_COUNT);
-
-// Отрисовка карточек фильмов Top rated
-createFilmCards(extraFilmCards, topRatedContainerElement, appConst.RenderPosition.BEFOREEND, 0, appConst.EXTRA_FILM_CARDS_COUNT);
-
-// Отрисовка карточек фильмов Most commented
-createFilmCards(extraFilmCards, mostCommentedContainerElement, appConst.RenderPosition.BEFOREEND,
-    appConst.EXTRA_FILM_CARDS_COUNT, appConst.EXTRA_FILM_CARDS_COUNT * appConst.EXTRA_FILM_SECTION_COUNT);
+renderFilms();
 
 const footerStatisticsElement = document.querySelector(`.footer__statistics`);
 render(footerStatisticsElement, new FooterStatisticComponent(appConst.MOVIE_COUNT).getElement(), appConst.RenderPosition.BEFOREEND);
