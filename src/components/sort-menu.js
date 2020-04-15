@@ -1,27 +1,18 @@
 import {createElement} from "../utils.js";
 
-/**
- * Компонент - Меню сортировки
- * @return {string}
- */
-const createSortMenuTemplate = () => {
-  return (
-    `<ul class="sort">
-       <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
-       <li><a href="#" class="sort__button">Sort by date</a></li>
-       <li><a href="#" class="sort__button">Sort by rating</a></li>
-    </ul>`
-  );
-};
-
-
 export default class SortMenuComponent {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createSortMenuTemplate();
+    return (
+      `<ul class="sort">
+       <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
+       <li><a href="#" class="sort__button">Sort by date</a></li>
+       <li><a href="#" class="sort__button">Sort by rating</a></li>
+    </ul>`
+    );
   }
 
   getElement() {

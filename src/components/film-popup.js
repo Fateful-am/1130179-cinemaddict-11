@@ -1,13 +1,20 @@
 import {createElement, formatDateDDMMMMYYYY} from '../utils.js';
 
-/**
- * Возвращает шаблон отрисовки комментариев
- * @param {object} comment
- * @return {string}
- */
-const createCommentItemTemplate = (comment) => {
-  const {text, emoji, author, date} = comment;
-  return `
+export default class FilmPopupComponent {
+  constructor(filmCard) {
+    this._filmCard = filmCard;
+
+    this._element = null;
+  }
+
+  /**
+   * Возвращает шаблон отрисовки комментариев
+   * @param {object} comment
+   * @return {string}
+   */
+  _createCommentItemTemplate(comment) {
+    const {text, emoji, author, date} = comment;
+    return `
     <li class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${emoji}" width="55" height="55" alt="emoji-smile">
@@ -21,53 +28,53 @@ const createCommentItemTemplate = (comment) => {
         </p>
       </div>
     </li>`;
-};
+  }
 
-/**
- * Возвращает шаблон отрисовки жакра фильма
- * @param {String} genre
- * @return {string}
- */
-const createGenreItemTemplate = (genre) => {
-  return `<span class="film-details__genre">${genre}</span>`;
-};
+  /**
+   * Возвращает шаблон отрисовки жакра фильма
+   * @param {String} genre
+   * @return {string}
+   */
+  _createGenreItemTemplate(genre) {
+    return `<span class="film-details__genre">${genre}</span>`;
+  }
 
-/**
- * Отрисовывыет все жанры
- * @param {Array} genres
- * @return {string}
- */
-const renderGenres = (genres) => {
-  const outArray = [];
-  genres.forEach((genre) => {
-    outArray.push(createGenreItemTemplate(genre));
-  });
-  return outArray.join(`\n`);
-};
+  /**
+   * Отрисовывыет все жанры
+   * @param {Array} genres
+   * @return {string}
+   */
+  _renderGenres(genres) {
+    const outArray = [];
+    genres.forEach((genre) => {
+      outArray.push(this._createGenreItemTemplate(genre));
+    });
+    return outArray.join(`\n`);
+  }
 
-/**
- * Отрисовывает все комментарии
- * @param {Array} comments
- * @return {string}
- */
-const renderComments = (comments) => {
-  const outArray = [];
-  comments.forEach((comment) => {
-    outArray.push(createCommentItemTemplate(comment));
-  });
-  return outArray.join(`\n`);
-};
+  /**
+   * Отрисовывает все комментарии
+   * @param {Array} comments
+   * @return {string}
+   */
+  _renderComments(comments) {
+    const outArray = [];
+    comments.forEach((comment) => {
+      outArray.push(this._createCommentItemTemplate(comment));
+    });
+    return outArray.join(`\n`);
+  }
 
-/**
- * Возвращает шаблон отрисовки подробной информации о фильме
- * @param {object} filmCard карточка с данными о фильме
- * @return {string}
- */
-const createFilmPopupCardTemplate = (filmCard) => {
-  const {title, originTitle, rating, director, writers, actors, releaseDate, duration, country, genres, poster, description, comments, age} = filmCard;
+  getTemplate() {
+    const {title, originTitle, rating, director, writers, actors, releaseDate, duration, country, genres, poster, description, comments, age} = this._filmCard;
+    const genreSuffix = genres.split(` `).length === 1 ? `` : `s`;
+    const releaseDateString = formatDateDDMMMMYYYY(releaseDate);
+    const genresString = this._renderGenres(genres.split(` `));
+    const commentsString = this._renderComments(comments);
+    const filmDetailsCommentsCount = comments.length;
 
-  return (
-    `<section class="film-details">
+    return (
+      `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
         <div class="form-details__top-container">
           <div class="film-details__close">
@@ -103,7 +110,7 @@ const createFilmPopupCardTemplate = (filmCard) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${formatDateDDMMMMYYYY(releaseDate)}</td>
+                  <td class="film-details__cell">${releaseDateString}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
@@ -114,9 +121,9 @@ const createFilmPopupCardTemplate = (filmCard) => {
                   <td class="film-details__cell">${country}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Genre${genres.split(` `).length === 1 ? `` : `s`}</td>
+                  <td class="film-details__term">Genre${genreSuffix}</td>
                   <td class="film-details__cell">
-                    ${renderGenres(genres.split(` `))}
+                    ${genresString}
                 </tr>
               </table>
               <p class="film-details__film-description">
@@ -137,9 +144,9 @@ const createFilmPopupCardTemplate = (filmCard) => {
         </div>
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${filmDetailsCommentsCount}</span></h3>
             <ul class="film-details__comments-list">
-              ${renderComments(comments)}
+              ${commentsString}
             </ul>
 
             <div class="film-details__new-comment">
@@ -175,18 +182,7 @@ const createFilmPopupCardTemplate = (filmCard) => {
         </div>
       </form>
     </section>`
-  );
-};
-
-export default class FilmPopupComponent {
-  constructor(filmCard) {
-    this._filmCard = filmCard;
-
-    this._element = null;
-  }
-
-  getTemplate() {
-    return createFilmPopupCardTemplate(this._filmCard);
+    );
   }
 
   getElement() {

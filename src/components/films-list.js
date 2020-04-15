@@ -1,23 +1,5 @@
 import {createElement} from "../utils.js";
 
-/**
- * Шаблон списка фильмов
- * @param {boolean} isExtra Если true указывает на дополнительный список фильмов
- * @param {string} header Заголовок списка
- * @return {string}
- */
-const createFilmsListTemplate = (isExtra, header) => {
-  const filmsListClass = isExtra ? `--extra` : ``;
-  const filmsListTitleClass = isExtra ? `` : `visually-hidden`;
-  return (
-    `<section class="films-list${filmsListClass}">
-      <h2 class="films-list__title ${filmsListTitleClass}">${header}</h2>
-      <div class="films-list__container">
-      </div>
-    </section>`
-  );
-};
-
 export default class FilmsListComponent {
   constructor(isExtra, header) {
     this._isExtra = isExtra;
@@ -27,7 +9,15 @@ export default class FilmsListComponent {
   }
 
   getTemplate() {
-    return createFilmsListTemplate(this._isExtra, this._header);
+    const [filmsListClass, filmsListTitleClass] = this._isExtra ? [`--extra`, ``] : [``, `visually-hidden`];
+    const filmsListHeader = this._header;
+    return (
+      `<section class="films-list${filmsListClass}">
+      <h2 class="films-list__title ${filmsListTitleClass}">${filmsListHeader}</h2>
+      <div class="films-list__container">
+      </div>
+    </section>`
+    );
   }
 
   getElement() {
