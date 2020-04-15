@@ -12,10 +12,51 @@ import {generateFilters} from './mock/filter.js';
 import * as appConst from './const.js';
 import {render} from "./utils.js";
 
+/**
+ * Отрисовка карточки фильма
+ * @param {Element} container Контейнер для генерации разметки карточки фильма
+ * @param {Object} filmCard Карточка фильма
+ * @param {InsertPosition} place Куда вставлять
+ */
+const renderFilmCard = (container, filmCard, place) => {
+  // Обработчик закрытия попапа
+  const onClosePopupButtonClick = () => {
+    bodyElement.removeChild(filmPopupCardComponent.getElement());
+  };
+  // Обработчик показа попапа
+  const onShowPopupClick = () => {
+    bodyElement.appendChild(filmPopupCardComponent.getElement());
+  };
 
+  // метод назначения клика по объекту для вызова попапа
+  const addClickListener = (...rest) => {
+    rest.forEach((it) => it.addEventListener(`click`, onShowPopupClick));
+  };
+
+  // body- элемент
+  const bodyElement = document.querySelector(`body`);
+  // Компонент - карточка фильма
+  const filmCardComponent = new FilmCardComponent(filmCard);
+  // Отрисовка карточки фильма
+  render(container, filmCardComponent.getElement(), place);
+  // Элементы по клику которым вызывается попап форма
+  const filmCardPoster = filmCardComponent.getElement().querySelector(`.film-card__poster`);
+  const filmCardTitle = filmCardComponent.getElement().querySelector(`.film-card__title`);
+  const filmCardComments = filmCardComponent.getElement().querySelector(`.film-card__comments`);
+
+  // Назначение клика
+  addClickListener(filmCardPoster, filmCardTitle, filmCardComments);
+
+  // компонент - попап
+  const filmPopupCardComponent = new FilmPopupComponent(filmCard);
+
+  // Кнопка закрытия попапа и назначение обработчика клика по ней
+  const popupCloseButton = filmPopupCardComponent.getElement().querySelector(`.film-details__close-btn`);
+  popupCloseButton.addEventListener(`click`, onClosePopupButtonClick);
+};
 /**
  * Рендеринг карточек фильмов
- * @param {Element} container Когтейнер для генерации разметки карточек фильмов
+ * @param {Element} container Контейнер для генерации разметки карточек фильмов
  * @param {Array} films Массив с карточками фильмов
  * @param {number} fromIndex Стартовый индекс массива
  * @param {number} toIndex Конечный индекс массива
@@ -23,10 +64,18 @@ import {render} from "./utils.js";
  */
 const renderFilmCards = (container, films, fromIndex, toIndex, place) => {
   films.slice(fromIndex, toIndex)
-    .forEach((filmCard) => render(container, new FilmCardComponent(filmCard).getElement(), place));
+    .forEach((filmCard) => renderFilmCard(container, filmCard, place));
 };
 
+/**
+ *
+ * @param {Element} container Контейнер для генерации разметки списка фильмов
+ * @param {Boolean} isExtra Признак, является ли эта отрисовка отрисовкой доп. секций
+ * @param {String} header Заголовок для секций фильмов
+ * @return {FilmsListComponent} Компонент-контейнер для карточек фильмов
+ */
 const renderFilmsList = (container, isExtra, header) => {
+  // отрисовка списка карточек
   const filmsListComponent = new FilmsListComponent(isExtra, header);
   render(container, filmsListComponent.getElement(), appConst.RenderPosition.BEFOREEND);
 
@@ -51,18 +100,23 @@ const renderFilmsList = (container, isExtra, header) => {
   return filmsListComponent;
 };
 
+/**
+ * Отрисовка контейнера со списками фильмов
+ */
 const renderFilms = () =>{
-// Отрисовка компонента - Контент-контейнер
+  // Отрисовка компонента - Контент-контейнер
   const filmsElement = new FilmsComponent().getElement();
-
   render(siteMainElement, filmsElement, appConst.RenderPosition.BEFOREEND);
 
+  // Отрисовка основных карточек фильмов
   const mainFilmsListComponent = renderFilmsList(filmsElement, false, `All movies. Upcoming`);
   renderFilmCards(mainFilmsListComponent.cardContainer, filmCards, 0, showingFilmCardsCount, appConst.RenderPosition.BEFOREEND);
 
+  // Отрисовка extra-top-rated карточек фильмов
   const topRatedFilmsListComponent = renderFilmsList(filmsElement, true, `Top rated`);
   renderFilmCards(topRatedFilmsListComponent.cardContainer, extraFilmCards, 0, appConst.EXTRA_FILM_CARDS_COUNT, appConst.RenderPosition.BEFOREEND);
 
+  // Отрисовка extra-most-commented карточек фильмов
   const mostCommentedFilmsListComponent = renderFilmsList(filmsElement, true, `Most commented`);
   renderFilmCards(mostCommentedFilmsListComponent.cardContainer, extraFilmCards, appConst.EXTRA_FILM_CARDS_COUNT,
       appConst.EXTRA_FILM_CARDS_COUNT * appConst.EXTRA_FILM_SECTION_COUNT, appConst.RenderPosition.BEFOREEND);
@@ -75,11 +129,13 @@ const extraFilmCards = generateFilmCards(appConst.EXTRA_FILM_CARDS_COUNT * appCo
 // Переменная счетчик показанных карточек фильмов
 let showingFilmCardsCount = appConst.SHOWING_FILM_CARDS_COUNT_ON_START;
 
+// header - элемент
 const siteHeaderElement = document.querySelector(`.header`);
 
 // Отрисовка компонента - Звание пользователя
 render(siteHeaderElement, new ProfileRatingComponent(appConst.USER_WATCHED_COUNT).getElement(), appConst.RenderPosition.BEFOREEND);
 
+// main - элемент
 const siteMainElement = document.querySelector(`.main`);
 
 // Отрисовка компонента - Меню
@@ -87,11 +143,9 @@ render(siteMainElement, new MainMenuComponent(generateFilters()).getElement(), a
 // Отрисовка компонента - Меню сортировки
 render(siteMainElement, new SortMenuComponent().getElement(), appConst.RenderPosition.BEFOREEND);
 
+// Отрисовка списков фильмов
 renderFilms();
 
+// Отрисовка статистики в подвале
 const footerStatisticsElement = document.querySelector(`.footer__statistics`);
 render(footerStatisticsElement, new FooterStatisticComponent(appConst.MOVIE_COUNT).getElement(), appConst.RenderPosition.BEFOREEND);
-
-const bodyElement = document.querySelector(`body`);
-// отрисовка подробностей о фильме
-render(bodyElement, new FilmPopupComponent(filmCards[0]).getElement(), appConst.RenderPosition.BEFOREEND);
