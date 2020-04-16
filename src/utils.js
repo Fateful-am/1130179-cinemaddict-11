@@ -1,4 +1,5 @@
-import {MONTH_NAMES} from "./const.js";
+import {RenderPosition, MONTH_NAMES} from "./const.js";
+
 /**
  * Возвращает случайный элемент массива
  * @param {Array} array Входной массив
@@ -38,5 +39,33 @@ const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
+/**
+ * Функция для создания DOM-элемента
+ * @param {String} template Шаблон разметки
+ * @return {ChildNode} DOM-элемент созданный по шаблону
+ */
+const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
 
-export {getRandomArrayItem, getRandomIntegerNumber, getRandomArrayIndex, formatDateDDMMMMYYYY};
+  return newElement.firstChild;
+};
+
+/**
+ * Функция рендеринга компонента
+ * @param {Element} container Контейнер для шаблона
+ * @param {Element} element HTML-компонент для вставки
+ * @param {InsertPosition} place Место вставки
+ */
+const render = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
+export {getRandomArrayItem, getRandomIntegerNumber, getRandomArrayIndex, formatDateDDMMMMYYYY, createElement, render};

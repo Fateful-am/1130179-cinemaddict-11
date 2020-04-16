@@ -1,11 +1,28 @@
-/**
- * Компонент - Количество фильмов
- * @param {number} movieCount количество фильмов в библиотеке
- * @return {string}
- */
-export const createFooterStatisticsTemplate = (movieCount) => {
-  return (
-    `<p>${movieCount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1 `)} movies inside</p>`
-  );
-};
+import {createElement} from "../utils.js";
 
+export default class FooterStatisticComponent {
+  constructor(movieCount) {
+    this._movieCount = movieCount;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    const formattedMoviesInside = this._movieCount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1 `);
+    return (
+      `<p>${formattedMoviesInside} movies inside</p>`
+    );
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
