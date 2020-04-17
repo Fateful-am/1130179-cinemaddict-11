@@ -7,6 +7,8 @@ import ProfileRatingComponent from './components/profile-rating';
 import ShowMoreButtonComponent from './components/show-more-button.js';
 import SortMenuComponent from './components/sort-menu.js';
 import FilmPopupComponent from './components/film-popup.js';
+import NoFilms from './components/no-films.js';
+
 import {generateFilmCards} from './mock/film-card.js';
 import {generateFilters} from './mock/filter.js';
 import * as appConst from './const.js';
@@ -120,6 +122,10 @@ const renderFilms = () =>{
   const filmsElement = new FilmsComponent().getElement();
   render(siteMainElement, filmsElement, appConst.RenderPosition.BEFOREEND);
 
+  if (filmCards.length === 0) {
+    render(filmsElement, new NoFilms().getElement(), appConst.RenderPosition.BEFOREEND);
+    return;
+  }
   // Отрисовка основных карточек фильмов
   const mainFilmsListComponent = renderFilmsList(filmsElement, false, `All movies. Upcoming`);
   renderFilmCards(mainFilmsListComponent.cardContainer, filmCards, 0, showingFilmCardsCount, appConst.RenderPosition.BEFOREEND);
