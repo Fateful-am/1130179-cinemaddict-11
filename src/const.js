@@ -34,12 +34,6 @@ export const MONTH_NAMES = [
   `December`,
 ];
 
-// Позиции для рендеринга компонентов
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
-};
-
 // Массив объектов с званием пользователя
 export const RANK_RATINGS = [
   {rank: ``, minWatchCount: 0},
