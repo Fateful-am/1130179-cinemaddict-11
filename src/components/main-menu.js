@@ -1,10 +1,13 @@
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
-export default class MainMenuComponent {
+/** Компонент главного меню сайта
+ * @extends AbstractComponent
+ */
+export default class MainMenuComponent extends AbstractComponent {
   constructor(filters) {
-    this._filters = filters;
+    super();
 
-    this._element = null;
+    this._filters = filters;
   }
   /**
    * Генерирует разметку пункта меню фильтра
@@ -33,17 +36,5 @@ export default class MainMenuComponent {
       <a href="#stats" class="main-navigation__additional">Stats</a>
     </nav>`
     );
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

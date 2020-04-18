@@ -1,11 +1,14 @@
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
-export default class FilmsListComponent {
+/** Компонент списка фильмов
+ * @extends AbstractComponent
+ */
+export default class FilmsListComponent extends AbstractComponent {
   constructor(isExtra, header) {
+    super();
+
     this._isExtra = isExtra;
     this._header = header;
-
-    this._element = null;
   }
 
   getTemplate() {
@@ -20,17 +23,12 @@ export default class FilmsListComponent {
     );
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-      this.cardContainer = this._element.querySelector(`.films-list__container`);
+  get cardContainer() {
+    if (!this._cardContainer) {
+      this._cardContainer = this._element.querySelector(`.films-list__container`);
     }
 
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return this._cardContainer;
   }
 }
 

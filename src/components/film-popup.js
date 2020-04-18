@@ -1,10 +1,14 @@
-import {createElement, formatDateDDMMMMYYYY} from '../utils.js';
+import {formatDateDDMMMMYYYY} from '../utils.js';
+import AbstractComponent from "./abstract-component.js";
 
-export default class FilmPopupComponent {
+/** Компонент детальной карточки фильма
+ * @extends AbstractComponent
+ */
+export default class FilmPopupComponent extends AbstractComponent {
   constructor(filmCard) {
-    this._filmCard = filmCard;
+    super();
 
-    this._element = null;
+    this._filmCard = filmCard;
   }
 
   /**
@@ -183,17 +187,5 @@ export default class FilmPopupComponent {
       </form>
     </section>`
     );
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

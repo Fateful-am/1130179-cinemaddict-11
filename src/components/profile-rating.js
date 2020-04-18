@@ -1,11 +1,14 @@
 import {RANK_RATINGS} from '../const.js';
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
-export default class ProfileRatingComponent {
+/** Компонент райтинга пользователя
+ * @extends AbstractComponent
+ */
+export default class ProfileRatingComponent extends AbstractComponent {
   constructor(watchedCount) {
-    this._watchedCount = watchedCount;
+    super();
 
-    this._element = null;
+    this._watchedCount = watchedCount;
   }
 
   /**
@@ -32,17 +35,5 @@ export default class ProfileRatingComponent {
       <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
     </section>`
     );
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

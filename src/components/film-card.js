@@ -1,11 +1,14 @@
 import {MAX_DESCRIPTION_LENGTH} from '../const.js';
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
-export default class FilmCardComponent {
+/** Компонент карточки фильма
+ * @extends AbstractComponent
+ */
+export default class FilmCardComponent extends AbstractComponent {
   constructor(filmCard) {
-    this._filmCard = filmCard;
+    super();
 
-    this._element = null;
+    this._filmCard = filmCard;
   }
 
   getTemplate() {
@@ -40,18 +43,6 @@ export default class FilmCardComponent {
       </form>
     </article>`
     );
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
