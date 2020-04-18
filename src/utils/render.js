@@ -53,6 +53,7 @@ export const replace = (newComponent, oldComponent) => {
   }
 };
 
+
 /**
  * Удаляет элемент из разметки
  * @param {AbstractComponent} component - Компонент для удаления

@@ -99,7 +99,7 @@ const renderFilmsList = (container, isExtra, header) => {
     render(filmsListComponent.getElement(), showMoreButtonComponent, RenderPosition.BEFOREEND);
 
     // Событие клика по кнопке
-    showMoreButtonComponent.getElement().addEventListener(`click`, () => {
+    showMoreButtonComponent.setClickHandler(() => {
       const prevTasksCount = showingFilmCardsCount;
       showingFilmCardsCount = showingFilmCardsCount + appConst.SHOWING_FILM_CARDS_COUNT_BY_BUTTON;
 
