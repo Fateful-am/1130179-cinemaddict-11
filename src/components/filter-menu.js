@@ -2,7 +2,7 @@ import AbstractRenderComponent from './abstract-render-component';
 import {FILTER_NAMES} from '../const.js';
 
 /** Компонент главного меню сайта
- * @extends AbstractComponent
+ * @extends AbstractRenderComponent
  */
 export default class FilterMenuComponent extends AbstractRenderComponent {
   constructor(container, place) {

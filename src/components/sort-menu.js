@@ -1,9 +1,14 @@
-import AbstractComponent from "./abstract-component.js";
-
+import AbstractRenderComponent from './abstract-render-component';
 /** Компонент меню сортировки
- * @extends AbstractComponent
+ * @extends AbstractRenderComponent
  */
-export default class SortMenuComponent extends AbstractComponent {
+export default class SortMenuComponent extends AbstractRenderComponent {
+  constructor(container, place) {
+    super(container, place);
+
+    this.render();
+  }
+
   getTemplate() {
     return (
       `<ul class="sort">

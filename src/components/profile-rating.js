@@ -2,7 +2,7 @@ import {RANK_RATINGS} from '../const.js';
 import AbstractRenderComponent from './abstract-render-component';
 
 /** Компонент райтинга пользователя
- * @extends AbstractComponent
+ * @extends AbstractRenderComponent
  */
 export default class ProfileRatingComponent extends AbstractRenderComponent {
   constructor(container, place) {

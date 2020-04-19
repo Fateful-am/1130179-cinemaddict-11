@@ -3,7 +3,6 @@ import FilmCardComponent from './components/film-card.js';
 import FilmsComponent from './components/films.js';
 import FooterStatisticComponent from './components/footer-statistics.js';
 import ShowMoreButtonComponent from './components/show-more-button.js';
-import SortMenuComponent from './components/sort-menu.js';
 import FilmPopupComponent from './components/film-popup.js';
 import NoFilms from './components/no-films.js';
 
@@ -164,7 +163,7 @@ const siteMainElement = document.querySelector(`.main`);
 // Отрисовка компонента - Меню
 // render(siteMainElement, new MainMenuComponent(generateFilters()), RenderPosition.BEFOREEND);
 // Отрисовка компонента - Меню сортировки
-render(siteMainElement, new SortMenuComponent(), RenderPosition.BEFOREEND);
+// render(siteMainElement, new SortMenuComponent(), RenderPosition.BEFOREEND);
 
 // Отрисовка списков фильмов
 renderFilms();
