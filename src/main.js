@@ -13,6 +13,7 @@ import {generateFilmCards} from './mock/film-card.js';
 import {generateFilters} from './mock/filter.js';
 import * as appConst from './const.js';
 import {render, RenderPosition} from "./utils/render.js";
+import SiteController from './controllers/site';
 
 /**
  * Отрисовка карточки фильма
@@ -147,11 +148,13 @@ const extraFilmCards = generateFilmCards(appConst.EXTRA_FILM_CARDS_COUNT * appCo
 // Переменная счетчик показанных карточек фильмов
 let showingFilmCardsCount = appConst.SHOWING_FILM_CARDS_COUNT_ON_START;
 
-// header - элемент
-const siteHeaderElement = document.querySelector(`.header`);
+
+const siteController = new SiteController();
 
 // Отрисовка компонента - Звание пользователя
-render(siteHeaderElement, new ProfileRatingComponent(appConst.USER_WATCHED_COUNT), RenderPosition.BEFOREEND);
+// const profileRatingComponent = new ProfileRatingComponent(siteHeaderElement, RenderPosition.BEFOREEND);
+// profileRatingComponent.watchedCount = appConst.USER_WATCHED_COUNT;
+// render(siteHeaderElement, new ProfileRatingComponent(appConst.USER_WATCHED_COUNT), RenderPosition.BEFOREEND);
 
 // main - элемент
 const siteMainElement = document.querySelector(`.main`);
