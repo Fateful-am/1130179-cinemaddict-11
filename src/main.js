@@ -7,6 +7,8 @@ import ProfileRatingComponent from './components/profile-rating';
 import ShowMoreButtonComponent from './components/show-more-button.js';
 import SortMenuComponent from './components/sort-menu.js';
 import FilmPopupComponent from './components/film-popup.js';
+import NoFilms from './components/no-films.js';
+
 import {generateFilmCards} from './mock/film-card.js';
 import {generateFilters} from './mock/filter.js';
 import * as appConst from './const.js';
@@ -20,17 +22,28 @@ import {render} from "./utils.js";
  */
 const renderFilmCard = (container, filmCard, place) => {
   // Обработчик закрытия попапа
-  const onClosePopupButtonClick = () => {
+  const closePopup = () => {
     bodyElement.removeChild(filmPopupCardComponent.getElement());
+    document.removeEventListener(`keydown`, onEscKeyDown);
   };
+
   // Обработчик показа попапа
-  const onShowPopupClick = () => {
+  const showPopup = () => {
     bodyElement.appendChild(filmPopupCardComponent.getElement());
+    document.addEventListener(`keydown`, onEscKeyDown);
   };
 
   // метод назначения клика по объекту для вызова попапа
   const addClickListener = (...rest) => {
-    rest.forEach((it) => it.addEventListener(`click`, onShowPopupClick));
+    rest.forEach((it) => it.addEventListener(`click`, showPopup));
+  };
+
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      closePopup();
+    }
   };
 
   // body- элемент
@@ -52,8 +65,9 @@ const renderFilmCard = (container, filmCard, place) => {
 
   // Кнопка закрытия попапа и назначение обработчика клика по ней
   const popupCloseButton = filmPopupCardComponent.getElement().querySelector(`.film-details__close-btn`);
-  popupCloseButton.addEventListener(`click`, onClosePopupButtonClick);
+  popupCloseButton.addEventListener(`click`, closePopup);
 };
+
 /**
  * Рендеринг карточек фильмов
  * @param {Element} container Контейнер для генерации разметки карточек фильмов
@@ -108,6 +122,10 @@ const renderFilms = () =>{
   const filmsElement = new FilmsComponent().getElement();
   render(siteMainElement, filmsElement, appConst.RenderPosition.BEFOREEND);
 
+  if (filmCards.length === 0) {
+    render(filmsElement, new NoFilms().getElement(), appConst.RenderPosition.BEFOREEND);
+    return;
+  }
   // Отрисовка основных карточек фильмов
   const mainFilmsListComponent = renderFilmsList(filmsElement, false, `All movies. Upcoming`);
   renderFilmCards(mainFilmsListComponent.cardContainer, filmCards, 0, showingFilmCardsCount, appConst.RenderPosition.BEFOREEND);
