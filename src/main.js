@@ -1,6 +1,5 @@
 import FilmsListComponent from './components/films-list.js';
 import FilmCardComponent from './components/film-card.js';
-import FilmsComponent from './components/films.js';
 import ShowMoreButtonComponent from './components/show-more-button.js';
 import FilmPopupComponent from './components/film-popup.js';
 import NoFilms from './components/no-films.js';
@@ -116,23 +115,22 @@ const renderFilmsList = (container, isExtra, header) => {
  */
 const renderFilms = () =>{
   // Отрисовка компонента - Контент-контейнер
-  const filmsElement = new FilmsComponent();
-  render(siteMainElement, filmsElement, RenderPosition.BEFOREEND);
+  const filmsComponent = siteController.filmsComponent;
 
   if (filmCards.length === 0) {
-    render(filmsElement.getElement(), new NoFilms(), RenderPosition.BEFOREEND);
+    render(filmsComponent.getElement(), new NoFilms(), RenderPosition.BEFOREEND);
     return;
   }
   // Отрисовка основных карточек фильмов
-  const mainFilmsListComponent = renderFilmsList(filmsElement.getElement(), false, `All movies. Upcoming`);
+  const mainFilmsListComponent = renderFilmsList(filmsComponent.getElement(), false, `All movies. Upcoming`);
   renderFilmCards(mainFilmsListComponent.cardContainer, filmCards, 0, showingFilmCardsCount, RenderPosition.BEFOREEND);
 
   // Отрисовка extra-top-rated карточек фильмов
-  const topRatedFilmsListComponent = renderFilmsList(filmsElement.getElement(), true, `Top rated`);
+  const topRatedFilmsListComponent = renderFilmsList(filmsComponent.getElement(), true, `Top rated`);
   renderFilmCards(topRatedFilmsListComponent.cardContainer, extraFilmCards, 0, appConst.EXTRA_FILM_CARDS_COUNT, RenderPosition.BEFOREEND);
 
   // Отрисовка extra-most-commented карточек фильмов
-  const mostCommentedFilmsListComponent = renderFilmsList(filmsElement.getElement(), true, `Most commented`);
+  const mostCommentedFilmsListComponent = renderFilmsList(filmsComponent.getElement(), true, `Most commented`);
   renderFilmCards(mostCommentedFilmsListComponent.cardContainer, extraFilmCards, appConst.EXTRA_FILM_CARDS_COUNT,
       appConst.EXTRA_FILM_CARDS_COUNT * appConst.EXTRA_FILM_SECTION_COUNT, RenderPosition.BEFOREEND);
 };
@@ -149,10 +147,8 @@ const siteController = new SiteController();
 
 // Заполнение данными разметки из моки
 siteController.profileRatingComponent.watchedCount = appConst.USER_WATCHED_COUNT;
-siteController.filterMenu.filters = generateFilters();
-siteController.footerStatistics.movieCont = appConst.MOVIE_COUNT;
+siteController.filterMenuComponent.filters = generateFilters();
+siteController.footerStatisticsComponent.movieCont = appConst.MOVIE_COUNT;
 
 // Отрисовка списков фильмов
-const siteMainElement = document.querySelector(`.main`);
-
 renderFilms();

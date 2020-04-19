@@ -2,6 +2,7 @@ import ProfileRatingComponent from '../components/profile-rating';
 import FilterMenuComponent from '../components/filter-menu.js';
 import SortMenuComponent from '../components/sort-menu.js';
 import FooterStatisticComponent from '../components/footer-statistics.js';
+import FilmsComponent from '../components/films.js';
 
 import {RenderPosition} from '../utils/render';
 // import * as appConst from '../const.js';
@@ -14,9 +15,10 @@ export default class SiteController {
     this._footerStatistics = this._body.querySelector(`.footer__statistics`);
 
     this.profileRatingComponent = new ProfileRatingComponent(this._header, RenderPosition.BEFOREEND);
-    this.filterMenu = new FilterMenuComponent(this._main, RenderPosition.AFTERBEGIN);
-    this._sortMenu = new SortMenuComponent(this._main, RenderPosition.BEFOREEND);
-    this.footerStatistics = new FooterStatisticComponent(this._footerStatistics, RenderPosition.BEFOREEND);
+    this.filterMenuComponent = new FilterMenuComponent(this._main, RenderPosition.AFTERBEGIN);
+    this._sortMenuComponent = new SortMenuComponent(this._main, RenderPosition.BEFOREEND);
+    this.footerStatisticsComponent = new FooterStatisticComponent(this._footerStatistics, RenderPosition.BEFOREEND);
+    this.filmsComponent = new FilmsComponent(this._main, RenderPosition.BEFOREEND);
   }
 
   get body() {
