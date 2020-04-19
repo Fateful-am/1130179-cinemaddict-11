@@ -1,7 +1,6 @@
 import FilmsListComponent from './components/films-list.js';
 import FilmCardComponent from './components/film-card.js';
 import FilmsComponent from './components/films.js';
-import FooterStatisticComponent from './components/footer-statistics.js';
 import ShowMoreButtonComponent from './components/show-more-button.js';
 import FilmPopupComponent from './components/film-popup.js';
 import NoFilms from './components/no-films.js';
@@ -151,23 +150,9 @@ const siteController = new SiteController();
 // Заполнение данными разметки из моки
 siteController.profileRatingComponent.watchedCount = appConst.USER_WATCHED_COUNT;
 siteController.filterMenu.filters = generateFilters();
-
-// Отрисовка компонента - Звание пользователя
-// const profileRatingComponent = new ProfileRatingComponent(siteHeaderElement, RenderPosition.BEFOREEND);
-// profileRatingComponent.watchedCount = appConst.USER_WATCHED_COUNT;
-// render(siteHeaderElement, new ProfileRatingComponent(appConst.USER_WATCHED_COUNT), RenderPosition.BEFOREEND);
-
-// main - элемент
-const siteMainElement = document.querySelector(`.main`);
-
-// Отрисовка компонента - Меню
-// render(siteMainElement, new MainMenuComponent(generateFilters()), RenderPosition.BEFOREEND);
-// Отрисовка компонента - Меню сортировки
-// render(siteMainElement, new SortMenuComponent(), RenderPosition.BEFOREEND);
+siteController.footerStatistics.movieCont = appConst.MOVIE_COUNT;
 
 // Отрисовка списков фильмов
-renderFilms();
+const siteMainElement = document.querySelector(`.main`);
 
-// Отрисовка статистики в подвале
-const footerStatisticsElement = document.querySelector(`.footer__statistics`);
-render(footerStatisticsElement, new FooterStatisticComponent(appConst.MOVIE_COUNT), RenderPosition.BEFOREEND);
+renderFilms();

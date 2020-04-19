@@ -1,4 +1,5 @@
 import AbstractRenderComponent from './abstract-render-component';
+
 /** Компонент меню сортировки
  * @extends AbstractRenderComponent
  */
