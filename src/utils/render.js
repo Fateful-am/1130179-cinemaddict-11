@@ -45,8 +45,10 @@ export const reRender = (component, place) => {
   const element = component.getElement();
   const container = element.parentElement;
 
-  element.innerHTML = ``;
+  element.remove();
+  component.removeElement();
 
+  // debugger;
   render(container, component, place);
 };
 

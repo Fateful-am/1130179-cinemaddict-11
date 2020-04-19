@@ -16,7 +16,6 @@ export default class AbstractComponent {
   /**
    * @abstract
    * Должен возвращать шаблон компонента
-   * @return {string} шаблон компонента
    */
   getTemplate() {
     throw new Error(`Abstract method not implemented: getTemplate`);
