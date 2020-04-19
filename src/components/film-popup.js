@@ -1,12 +1,12 @@
 import {formatDateDDMMMMYYYY} from '../utils.js';
-import AbstractComponent from "./abstract-component.js";
+import AbstractRenderComponent from './abstract-render-component';
 
 /** Компонент детальной карточки фильма
  * @extends AbstractComponent
  */
-export default class FilmPopupComponent extends AbstractComponent {
-  constructor(filmCard) {
-    super();
+export default class FilmPopupComponent extends AbstractRenderComponent {
+  constructor(container, place, filmCard) {
+    super(container, place);
 
     this._filmCard = filmCard;
   }

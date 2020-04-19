@@ -1,14 +1,15 @@
 import {MAX_DESCRIPTION_LENGTH} from '../const.js';
-import AbstractComponent from "./abstract-component.js";
+import AbstractRenderComponent from './abstract-render-component';
 
 /** Компонент карточки фильма
  * @extends AbstractComponent
  */
-export default class FilmCardComponent extends AbstractComponent {
-  constructor(filmCard) {
-    super();
-
+export default class FilmCardComponent extends AbstractRenderComponent {
+  constructor(container, place, filmCard) {
+    super(container, place);
     this._filmCard = filmCard;
+
+    this.render();
   }
 
   getTemplate() {

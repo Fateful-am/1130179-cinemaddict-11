@@ -1,9 +1,15 @@
-import AbstractComponent from "./abstract-component.js";
+import AbstractRenderComponent from './abstract-render-component';
 
 /** Компонент кнопки "Show more"
- * @extends AbstractComponent
+ * @extends AbstractRenderComponent
  */
-export default class ShowMoreButtonComponent extends AbstractComponent {
+export default class ShowMoreButtonComponent extends AbstractRenderComponent {
+  constructor(container, place) {
+    super(container, place);
+
+    this.render();
+  }
+
   getTemplate() {
     return `<button class="films-list__show-more">Show more</button>`;
   }

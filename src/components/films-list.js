@@ -1,14 +1,16 @@
-import AbstractComponent from "./abstract-component.js";
+import AbstractRenderComponent from './abstract-render-component';
 
 /** Компонент списка фильмов
- * @extends AbstractComponent
+ * @extends AbstractRenderComponent
  */
-export default class FilmsListComponent extends AbstractComponent {
-  constructor(isExtra, header) {
-    super();
+export default class FilmsListComponent extends AbstractRenderComponent {
+  constructor(container, place, isExtra, header) {
+    super(container, place);
 
     this._isExtra = isExtra;
     this._header = header;
+
+    this.render();
   }
 
   getTemplate() {
