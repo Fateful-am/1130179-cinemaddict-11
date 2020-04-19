@@ -1,13 +1,22 @@
-import AbstractComponent from "./abstract-component.js";
+import AbstractRenderComponent from './abstract-render-component';
+import {FILTER_NAMES} from '../const.js';
 
 /** Компонент главного меню сайта
  * @extends AbstractComponent
  */
-export default class MainMenuComponent extends AbstractComponent {
-  constructor(filters) {
-    super();
+export default class FilterMenuComponent extends AbstractRenderComponent {
+  constructor(container, place) {
+    super(container, place);
 
-    this._filters = filters;
+    // Установка фильтра по умолчанию
+    this._filters = FILTER_NAMES.map((it) => {
+      return {
+        name: it,
+        count: 0,
+      };
+    });
+
+    this.render();
   }
   /**
    * Генерирует разметку пункта меню фильтра
@@ -20,7 +29,7 @@ export default class MainMenuComponent extends AbstractComponent {
     const activeClass = isActive ? `main-navigation__item--active` : ``;
     const anchorText = name.lower;
     return (
-      `<a href="#${anchorText}" class="main-navigation__item ${activeClass}">${name} <span class="main-navigation__item-count">${count}</span></a>`
+      `<a href="#${anchorText}" class="main-navigation__item ${activeClass}">${name}<span class="main-navigation__item-count">${count}</span></a>`
     );
   }
 
@@ -36,5 +45,10 @@ export default class MainMenuComponent extends AbstractComponent {
       <a href="#stats" class="main-navigation__additional">Stats</a>
     </nav>`
     );
+  }
+
+  set filters(value) {
+    this._filters = value;
+    this.reRender();
   }
 }

@@ -1,6 +1,8 @@
 import ProfileRatingComponent from '../components/profile-rating';
+import FilterMenuComponent from '../components/filter-menu.js';
+
 import {RenderPosition} from '../utils/render';
-import * as appConst from '../const.js';
+// import * as appConst from '../const.js';
 
 export default class SiteController {
   constructor() {
@@ -10,7 +12,7 @@ export default class SiteController {
     this._footer = this._body.querySelector(`footer`);
 
     this.profileRatingComponent = new ProfileRatingComponent(this._header, RenderPosition.BEFOREEND);
-    this.profileRatingComponent.watchedCount = appConst.USER_WATCHED_COUNT;
+    this.filterMenu = new FilterMenuComponent(this._main, RenderPosition.BEFOREEND);
   }
 
   get body() {

@@ -2,8 +2,6 @@ import FilmsListComponent from './components/films-list.js';
 import FilmCardComponent from './components/film-card.js';
 import FilmsComponent from './components/films.js';
 import FooterStatisticComponent from './components/footer-statistics.js';
-import MainMenuComponent from './components/main-menu.js';
-import ProfileRatingComponent from './components/profile-rating';
 import ShowMoreButtonComponent from './components/show-more-button.js';
 import SortMenuComponent from './components/sort-menu.js';
 import FilmPopupComponent from './components/film-popup.js';
@@ -151,6 +149,10 @@ let showingFilmCardsCount = appConst.SHOWING_FILM_CARDS_COUNT_ON_START;
 
 const siteController = new SiteController();
 
+// Заполнение данными разметки из моки
+siteController.profileRatingComponent.watchedCount = appConst.USER_WATCHED_COUNT;
+siteController.filterMenu.filters = generateFilters();
+
 // Отрисовка компонента - Звание пользователя
 // const profileRatingComponent = new ProfileRatingComponent(siteHeaderElement, RenderPosition.BEFOREEND);
 // profileRatingComponent.watchedCount = appConst.USER_WATCHED_COUNT;
@@ -160,7 +162,7 @@ const siteController = new SiteController();
 const siteMainElement = document.querySelector(`.main`);
 
 // Отрисовка компонента - Меню
-render(siteMainElement, new MainMenuComponent(generateFilters()), RenderPosition.BEFOREEND);
+// render(siteMainElement, new MainMenuComponent(generateFilters()), RenderPosition.BEFOREEND);
 // Отрисовка компонента - Меню сортировки
 render(siteMainElement, new SortMenuComponent(), RenderPosition.BEFOREEND);
 

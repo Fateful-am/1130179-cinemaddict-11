@@ -1,5 +1,4 @@
 import {RANK_RATINGS} from '../const.js';
-// import AbstractRenderComponent from "./abstract-render-componentcomponent.js";
 import AbstractRenderComponent from './abstract-render-component';
 
 /** Компонент райтинга пользователя
