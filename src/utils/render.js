@@ -37,6 +37,20 @@ export const render = (container, component, place) => {
 };
 
 /**
+ * Переотрисовывает компонент новым содержимым
+ * @param {AbstractComponent} component - Компонент для отрисовки
+ * @param {InsertPosition} place - Место вставки элемента в контейнер
+ */
+export const reRender = (component, place) => {
+  const element = component.getElement();
+  const container = element.parentElement;
+
+  element.innerHTML = ``;
+
+  render(container, component, place);
+};
+
+/**
  * Заменяет один элемент на другой в родительском контейнере
  * @param {AbstractComponent} newComponent - Новый элемент
  * @param {AbstractComponent} oldComponent - Старый элемент
