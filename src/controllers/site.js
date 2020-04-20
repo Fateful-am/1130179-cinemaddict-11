@@ -26,5 +26,7 @@ export default class SiteController {
 
   renderFilms(films) {
     this.filmsBoardController.render(films);
+    this.filmsBoardController.renderTopRated(films);
+    this.filmsBoardController.renderMostCommented(films);
   }
 }
