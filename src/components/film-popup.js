@@ -188,4 +188,13 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     </section>`
     );
   }
+  /**
+   * Устанавливает обработчик клика по кнопке
+   * @param {function} handler - КоллБэк-функция
+   */
+  setClickHandler(handler) {
+    // Кнопка закрытия попапа и назначение обработчика клика по ней
+    const popupCloseButton = this.getElement().querySelector(`.film-details__close-btn`);
+    popupCloseButton.addEventListener(`click`, handler);
+  }
 }

@@ -45,5 +45,23 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     </article>`
     );
   }
+  /**
+   * Устанавливает обработчик клика по элементам
+   * @param {function} handler - КоллБэк-функция
+   */
+  setClickHandler(handler) {
+    // метод назначения клика по объекту для вызова попапа
+    const addClickListener = (...rest) => {
+      rest.forEach((it) => it.addEventListener(`click`, handler));
+    };
+
+    // Элементы по клику которым вызывается попап форма
+    const filmCardPoster = this.getElement().querySelector(`.film-card__poster`);
+    const filmCardTitle = this.getElement().querySelector(`.film-card__title`);
+    const filmCardComments = this.getElement().querySelector(`.film-card__comments`);
+
+    // Назначение клика
+    addClickListener(filmCardPoster, filmCardTitle, filmCardComments);
+  }
 }
 

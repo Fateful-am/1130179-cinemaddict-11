@@ -26,11 +26,6 @@ export default class FilmsBoardController {
         document.addEventListener(`keydown`, onEscKeyDown);
       };
 
-      // метод назначения клика по объекту для вызова попапа
-      const addClickListener = (...rest) => {
-        rest.forEach((it) => it.addEventListener(`click`, showPopup));
-      };
-
       const onEscKeyDown = (evt) => {
         const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
@@ -38,24 +33,13 @@ export default class FilmsBoardController {
           closePopup();
         }
       };
-
+      // компонент карточув фильма
       const filmCardComponent = new FilmCardComponent(container, RenderPosition.BEFOREEND, filmCard);
-
-      // Элементы по клику которым вызывается попап форма
-      const filmCardPoster = filmCardComponent.getElement().querySelector(`.film-card__poster`);
-      const filmCardTitle = filmCardComponent.getElement().querySelector(`.film-card__title`);
-      const filmCardComments = filmCardComponent.getElement().querySelector(`.film-card__comments`);
-
-      // Назначение клика
-      addClickListener(filmCardPoster, filmCardTitle, filmCardComments);
+      filmCardComponent.setClickHandler(showPopup);
 
       // компонент - попап
       const filmPopupCardComponent = new FilmPopupComponent(container, RenderPosition.BEFOREEND, filmCard);
-
-      // Кнопка закрытия попапа и назначение обработчика клика по ней
-      const popupCloseButton = filmPopupCardComponent.getElement().querySelector(`.film-details__close-btn`);
-      popupCloseButton.addEventListener(`click`, closePopup);
-
+      filmPopupCardComponent.setClickHandler(closePopup);
     });
   }
 
@@ -94,6 +78,7 @@ export default class FilmsBoardController {
         }
       });
     }
+
     this._renderFilmCards(this._mainFilmsListComponent.cardContainer, 0, appConst.SHOWING_FILM_CARDS_COUNT_ON_START);
   }
 }
