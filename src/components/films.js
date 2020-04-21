@@ -1,23 +1,16 @@
-import {createElement} from "../utils.js";
+import AbstractRenderComponent from './abstract-render-component';
 
-export default class FilmsComponent {
-  constructor() {
-    this._element = null;
+/** Компонент фильмотеки
+ * @extends AbstractRenderComponent
+ */
+export default class FilmsComponent extends AbstractRenderComponent {
+  constructor(container, place) {
+    super(container, place);
+
+    this.render();
   }
 
   getTemplate() {
     return `<section class="films"></section>`;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

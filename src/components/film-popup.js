@@ -1,10 +1,14 @@
-import {createElement, formatDateDDMMMMYYYY} from '../utils.js';
+import {formatDateDDMMMMYYYY} from '../utils.js';
+import AbstractRenderComponent from './abstract-render-component';
 
-export default class FilmPopupComponent {
-  constructor(filmCard) {
+/** Компонент детальной карточки фильма
+ * @extends AbstractComponent
+ */
+export default class FilmPopupComponent extends AbstractRenderComponent {
+  constructor(container, place, filmCard) {
+    super(container, place);
+
     this._filmCard = filmCard;
-
-    this._element = null;
   }
 
   /**
@@ -184,16 +188,13 @@ export default class FilmPopupComponent {
     </section>`
     );
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  /**
+   * Устанавливает обработчик клика по кнопке
+   * @param {function} handler - КоллБэк-функция
+   */
+  setClickHandler(handler) {
+    // Кнопка закрытия попапа и назначение обработчика клика по ней
+    const popupCloseButton = this.getElement().querySelector(`.film-details__close-btn`);
+    popupCloseButton.addEventListener(`click`, handler);
   }
 }

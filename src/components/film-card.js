@@ -1,11 +1,15 @@
 import {MAX_DESCRIPTION_LENGTH} from '../const.js';
-import {createElement} from "../utils.js";
+import AbstractRenderComponent from './abstract-render-component';
 
-export default class FilmCardComponent {
-  constructor(filmCard) {
+/** Компонент карточки фильма
+ * @extends AbstractComponent
+ */
+export default class FilmCardComponent extends AbstractRenderComponent {
+  constructor(container, place, filmCard) {
+    super(container, place);
     this._filmCard = filmCard;
 
-    this._element = null;
+    this.render();
   }
 
   getTemplate() {
@@ -41,17 +45,23 @@ export default class FilmCardComponent {
     </article>`
     );
   }
+  /**
+   * Устанавливает обработчик клика по элементам
+   * @param {function} handler - КоллБэк-функция
+   */
+  setClickHandler(handler) {
+    // метод назначения клика по объекту для вызова попапа
+    const addClickListener = (...rest) => {
+      rest.forEach((it) => it.addEventListener(`click`, handler));
+    };
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
+    // Элементы по клику которым вызывается попап форма
+    const filmCardPoster = this.getElement().querySelector(`.film-card__poster`);
+    const filmCardTitle = this.getElement().querySelector(`.film-card__title`);
+    const filmCardComments = this.getElement().querySelector(`.film-card__comments`);
 
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    // Назначение клика
+    addClickListener(filmCardPoster, filmCardTitle, filmCardComments);
   }
 }
 

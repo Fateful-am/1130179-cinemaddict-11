@@ -1,8 +1,13 @@
-import {createElement} from "../utils.js";
+import AbstractRenderComponent from './abstract-render-component';
 
-export default class SortMenuComponent {
-  constructor() {
-    this._element = null;
+/** Компонент меню сортировки
+ * @extends AbstractRenderComponent
+ */
+export default class SortMenuComponent extends AbstractRenderComponent {
+  constructor(container, place) {
+    super(container, place);
+
+    this.render();
   }
 
   getTemplate() {
@@ -13,17 +18,5 @@ export default class SortMenuComponent {
        <li><a href="#" class="sort__button">Sort by rating</a></li>
     </ul>`
     );
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

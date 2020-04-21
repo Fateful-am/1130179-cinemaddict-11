@@ -1,10 +1,15 @@
-import {createElement} from "../utils.js";
+import AbstractRenderComponent from './abstract-render-component';
 
-export default class FooterStatisticComponent {
-  constructor(movieCount) {
-    this._movieCount = movieCount;
+/** Компонент статистики фильмов в подвале
+ * @extends AbstractRenderComponent
+ */
+export default class FooterStatisticComponent extends AbstractRenderComponent {
+  constructor(container, place) {
+    super(container, place);
 
-    this._element = null;
+    this._movieCount = 0;
+
+    this.render();
   }
 
   getTemplate() {
@@ -14,15 +19,8 @@ export default class FooterStatisticComponent {
     );
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  set movieCont(value) {
+    this._movieCount = value;
+    this.reRender();
   }
 }

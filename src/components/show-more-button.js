@@ -1,23 +1,25 @@
-import {createElement} from "../utils.js";
+import AbstractRenderComponent from './abstract-render-component';
 
-export default class ShowMoreButtonComponent {
-  constructor() {
-    this._element = null;
+/** Компонент кнопки "Show more"
+ * @extends AbstractRenderComponent
+ */
+export default class ShowMoreButtonComponent extends AbstractRenderComponent {
+  constructor(container, place) {
+    super(container, place);
+
+    this.render();
   }
 
   getTemplate() {
     return `<button class="films-list__show-more">Show more</button>`;
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  /**
+   * Устанавливает обработчик клика по кнопке
+   * @param {function} handler - КоллБэк-функция
+   */
+  setClickHandler(handler) {
+    this.getElement().addEventListener(`click`, handler);
   }
 
-  removeElement() {
-    this._element = null;
-  }
 }

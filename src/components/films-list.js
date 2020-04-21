@@ -1,11 +1,16 @@
-import {createElement} from "../utils.js";
+import AbstractRenderComponent from './abstract-render-component';
 
-export default class FilmsListComponent {
-  constructor(isExtra, header) {
+/** Компонент списка фильмов
+ * @extends AbstractRenderComponent
+ */
+export default class FilmsListComponent extends AbstractRenderComponent {
+  constructor(container, place, isExtra, header) {
+    super(container, place);
+
     this._isExtra = isExtra;
     this._header = header;
 
-    this._element = null;
+    this.render();
   }
 
   getTemplate() {
@@ -20,17 +25,12 @@ export default class FilmsListComponent {
     );
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-      this.cardContainer = this._element.querySelector(`.films-list__container`);
+  get cardContainer() {
+    if (!this._cardContainer) {
+      this._cardContainer = this._element.querySelector(`.films-list__container`);
     }
 
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return this._cardContainer;
   }
 }
 
