@@ -7,6 +7,7 @@ export default class ShowMoreButtonComponent extends AbstractRenderComponent {
   constructor(container, place) {
     super(container, place);
 
+    this._clickHandler = null;
     this.render();
   }
 
@@ -19,6 +20,10 @@ export default class ShowMoreButtonComponent extends AbstractRenderComponent {
    * @param {function} handler - КоллБэк-функция
    */
   setClickHandler(handler) {
+    if (this._clickHandler) {
+      this.getElement().removeEventListener(`click`, this._clickHandler);
+    }
+    this._clickHandler = handler;
     this.getElement().addEventListener(`click`, handler);
   }
 

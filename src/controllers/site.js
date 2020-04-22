@@ -6,7 +6,6 @@ import FilmsComponent from '../components/films.js';
 import FilmsBoardController from './films-board.js';
 
 import {RenderPosition} from '../utils/render';
-// import * as appConst from '../const.js';
 
 export default class SiteController {
   constructor() {
@@ -21,12 +20,10 @@ export default class SiteController {
     this.footerStatisticsComponent = new FooterStatisticComponent(this._footerStatistics, RenderPosition.BEFOREEND);
     this._filmsComponent = new FilmsComponent(this._main, RenderPosition.BEFOREEND);
 
-    this.filmsBoardController = new FilmsBoardController(this._filmsComponent.getElement(), this._body);
+    this._filmsBoardController = new FilmsBoardController(this._filmsComponent.getElement(), this._body, this._sortMenuComponent);
   }
 
   renderFilms(films) {
-    this.filmsBoardController.render(films);
-    this.filmsBoardController.renderTopRated(films);
-    this.filmsBoardController.renderMostCommented(films);
+    this._filmsBoardController.films = films;
   }
 }
