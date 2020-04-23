@@ -9,6 +9,7 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     super(container, place);
     this._filmCard = filmCard;
 
+    this._clickHandler = null;
     this.render();
   }
 
@@ -50,9 +51,10 @@ export default class FilmCardComponent extends AbstractRenderComponent {
    * @param {function} handler - КоллБэк-функция
    */
   setClickHandler(handler) {
+    this._clickHandler = handler;
     // метод назначения клика по объекту для вызова попапа
     const addClickListener = (...rest) => {
-      rest.forEach((it) => it.addEventListener(`click`, handler));
+      rest.forEach((it) => it.addEventListener(`click`, this._clickHandler));
     };
 
     // Элементы по клику которым вызывается попап форма
@@ -63,5 +65,10 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     // Назначение клика
     addClickListener(filmCardPoster, filmCardTitle, filmCardComments);
   }
+
+  recoveryListeners() {
+    this.setClickHandler(this._clickHandler);
+  }
+
 }
 

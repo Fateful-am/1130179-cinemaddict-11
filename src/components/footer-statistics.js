@@ -23,4 +23,7 @@ export default class FooterStatisticComponent extends AbstractRenderComponent {
     this._movieCount = value;
     this.reRender();
   }
+
+  recoveryListeners() {}
+
 }

@@ -8,6 +8,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   constructor(container, place, filmCard) {
     super(container, place);
 
+    this._clickHandler = null;
     this._filmCard = filmCard;
   }
 
@@ -193,8 +194,14 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
    * @param {function} handler - КоллБэк-функция
    */
   setClickHandler(handler) {
+    this._clickHandler = handler;
+
     // Кнопка закрытия попапа и назначение обработчика клика по ней
     const popupCloseButton = this.getElement().querySelector(`.film-details__close-btn`);
     popupCloseButton.addEventListener(`click`, handler);
+  }
+
+  recoveryListeners() {
+    this.setClickHandler(this._clickHandler);
   }
 }

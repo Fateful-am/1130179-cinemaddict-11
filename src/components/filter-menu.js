@@ -51,4 +51,7 @@ export default class FilterMenuComponent extends AbstractRenderComponent {
     this._filters = value;
     this.reRender();
   }
+
+  recoveryListeners() {}
+
 }

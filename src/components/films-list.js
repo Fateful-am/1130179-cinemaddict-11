@@ -32,5 +32,7 @@ export default class FilmsListComponent extends AbstractRenderComponent {
 
     return this._cardContainer;
   }
+
+  recoveryListeners() {}
 }
 

@@ -42,4 +42,7 @@ export default class ProfileRatingComponent extends AbstractRenderComponent {
     this._watchedCount = value;
     this.reRender();
   }
+
+  recoveryListeners() {}
+
 }

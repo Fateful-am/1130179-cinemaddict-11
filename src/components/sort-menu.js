@@ -59,9 +59,13 @@ export default class SortMenuComponent extends AbstractRenderComponent {
       }
 
       this._currenSortType = sortType;
-      this.reRender();
-      this.setSortTypeChangeHandler(this._clickHandler);
       handler(this._currenSortType);
+      this.reRender();
     });
   }
+
+  recoveryListeners() {
+    this.setSortTypeChangeHandler(this._clickHandler);
+  }
+
 }

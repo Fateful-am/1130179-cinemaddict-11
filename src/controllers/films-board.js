@@ -15,9 +15,6 @@ export default class FilmsBoardController {
     sortMenuComponent.setSortTypeChangeHandler((sortType) => {
       this._showingFilmCardsCount = appConst.SHOWING_FILM_CARDS_COUNT_ON_START;
 
-      // Перемещение контейнера списков фильмов в конец main
-      this._container.parentNode.appendChild(this._container);
-
       this.render(this._getSortedFilms(sortType));
     });
   }
