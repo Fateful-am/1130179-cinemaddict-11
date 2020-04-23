@@ -12,8 +12,6 @@ export const FILM_CARDS_COUNT = 14;
 export const SHOWING_FILM_CARDS_COUNT_ON_START = 5;
 // Количество карточек фильмов добавляемых при нажатии на кнопку "Load More"
 export const SHOWING_FILM_CARDS_COUNT_BY_BUTTON = 5;
-// Количество экстра секций
-export const EXTRA_FILM_SECTION_COUNT = 2;
 // Количество крточек фильмов на сервере
 export const MOVIE_COUNT = 130291;
 // Количество просотренных пользователем фильмов
