@@ -33,7 +33,7 @@ export default class MovieController {
       // показывать только если раньше не был показан
       if (!this._filmPopupComponent) {
         this._filmPopupComponent = new FilmPopupComponent(this._popupContainer, RenderPosition.BEFOREEND, filmCard);
-        this._filmPopupComponent.setClickHandler(closePopup);
+        this._filmPopupComponent.setClosePopupClickHandler(closePopup);
 
         this._popupContainer.appendChild(this._filmPopupComponent.getElement());
 
@@ -45,7 +45,7 @@ export default class MovieController {
     if (!this._filmCardComponent) {
       this._filmCardComponent = new FilmCardComponent(this._container, RenderPosition.BEFOREEND, filmCard);
 
-      this._filmCardComponent.setClickHandler(showPopup);
+      this._filmCardComponent.setShowPopupClickHandler(showPopup);
     } else {
       this._filmCardComponent.reRender(filmCard);
 

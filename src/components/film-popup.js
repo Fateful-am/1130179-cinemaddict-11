@@ -197,7 +197,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
    * Устанавливает обработчик клика по кнопке
    * @param {function} handler - КоллБэк-функция
    */
-  setClickHandler(handler) {
+  setClosePopupClickHandler(handler) {
     this._clickHandler = handler;
 
     // Кнопка закрытия попапа и назначение обработчика клика по ней
@@ -205,8 +205,23 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     popupCloseButton.addEventListener(`click`, handler);
   }
 
+  setAddToWatchListClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, handler);
+  }
+
+  setMarkAsWatchedListClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, handler);
+  }
+
+  setFavoriteClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, handler);
+  }
+
   recoveryListeners() {
-    this.setClickHandler(this._clickHandler);
+    this.setClosePopupClickHandler(this._clickHandler);
   }
 
   reRender(filmCard) {

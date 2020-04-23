@@ -9,7 +9,7 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     super(container, place);
     this._filmCard = filmCard;
 
-    this._clickHandler = null;
+    this._showPopupClickHandler = null;
     this.render();
   }
 
@@ -50,11 +50,11 @@ export default class FilmCardComponent extends AbstractRenderComponent {
    * Устанавливает обработчик клика по элементам
    * @param {function} handler - КоллБэк-функция
    */
-  setClickHandler(handler) {
-    this._clickHandler = handler;
+  setShowPopupClickHandler(handler) {
+    this._showPopupClickHandler = handler;
     // метод назначения клика по объекту для вызова попапа
     const addClickListener = (...rest) => {
-      rest.forEach((it) => it.addEventListener(`click`, this._clickHandler));
+      rest.forEach((it) => it.addEventListener(`click`, this._showPopupClickHandler));
     };
 
     // Элементы по клику которым вызывается попап форма
@@ -66,8 +66,23 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     addClickListener(filmCardPoster, filmCardTitle, filmCardComments);
   }
 
+  setAddToWatchListClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`)
+      .addEventListener(`click`, handler);
+  }
+
+  setMarkAsWatchedListClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`)
+      .addEventListener(`click`, handler);
+  }
+
+  setFavoriteClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__controls-item--favorite`)
+      .addEventListener(`click`, handler);
+  }
+
   recoveryListeners() {
-    this.setClickHandler(this._clickHandler);
+    this.setShowPopupClickHandler(this._showPopupClickHandler);
   }
 
   reRender(filmCard) {
