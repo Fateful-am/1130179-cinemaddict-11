@@ -204,4 +204,9 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   recoveryListeners() {
     this.setClickHandler(this._clickHandler);
   }
+
+  reRender(filmCard) {
+    this._filmCard = filmCard;
+    super.reRender();
+  }
 }

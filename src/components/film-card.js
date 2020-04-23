@@ -70,5 +70,10 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     this.setClickHandler(this._clickHandler);
   }
 
+  reRender(filmCard) {
+    this._filmCard = filmCard;
+    super.reRender();
+  }
+
 }
 
