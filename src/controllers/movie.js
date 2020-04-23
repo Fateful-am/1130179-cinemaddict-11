@@ -30,12 +30,15 @@ export default class MovieController {
 
     // Обработчик показа попапа
     const showPopup = () => {
-      this._filmPopupComponent = new FilmPopupComponent(this._popupContainer, RenderPosition.BEFOREEND, filmCard);
-      this._filmPopupComponent.setClickHandler(closePopup);
+      // показывать только если раньше не был показан
+      if (!this._filmPopupComponent) {
+        this._filmPopupComponent = new FilmPopupComponent(this._popupContainer, RenderPosition.BEFOREEND, filmCard);
+        this._filmPopupComponent.setClickHandler(closePopup);
 
-      this._popupContainer.appendChild(this._filmPopupComponent.getElement());
+        this._popupContainer.appendChild(this._filmPopupComponent.getElement());
 
-      document.addEventListener(`keydown`, onEscKeyDown);
+        document.addEventListener(`keydown`, onEscKeyDown);
+      }
     };
 
 
