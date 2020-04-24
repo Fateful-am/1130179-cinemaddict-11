@@ -54,7 +54,7 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     this._showPopupClickHandler = handler;
     // метод назначения клика по объекту для вызова попапа
     const addClickListener = (...rest) => {
-      rest.forEach((it) => it.addEventListener(`click`, this._showPopupClickHandler));
+      rest.forEach((it) => it.addEventListener(`click`, handler));
     };
 
     // Элементы по клику которым вызывается попап форма
@@ -68,17 +68,26 @@ export default class FilmCardComponent extends AbstractRenderComponent {
 
   setAddToWatchListClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        handler();
+      });
   }
 
   setMarkAsWatchedListClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        handler();
+      });
   }
 
   setFavoriteClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--favorite`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        handler();
+      });
   }
 
   recoveryListeners() {

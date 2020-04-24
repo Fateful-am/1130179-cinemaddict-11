@@ -8,7 +8,11 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   constructor(container, place, filmCard) {
     super(container, place);
 
-    this._clickHandler = null;
+    this._closePopupClickHandler = null;
+    this._addToWatchListClickHandler = null;
+    this._markAsWatchedListClickHandler = null;
+    this._favoriteClickHandler = null;
+
     this._filmCard = filmCard;
   }
 
@@ -198,7 +202,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
    * @param {function} handler - КоллБэк-функция
    */
   setClosePopupClickHandler(handler) {
-    this._clickHandler = handler;
+    this._closePopupClickHandler = handler;
 
     // Кнопка закрытия попапа и назначение обработчика клика по ней
     const popupCloseButton = this.getElement().querySelector(`.film-details__close-btn`);
@@ -206,26 +210,39 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   }
 
   setAddToWatchListClickHandler(handler) {
+    this._addToWatchListClickHandler = handler;
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, handler);
   }
 
   setMarkAsWatchedListClickHandler(handler) {
+    this._markAsWatchedListClickHandler = handler;
     this.getElement().querySelector(`.film-details__control-label--watched`)
       .addEventListener(`click`, handler);
   }
 
   setFavoriteClickHandler(handler) {
+    this._favoriteClickHandler = handler;
     this.getElement().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, handler);
   }
 
   recoveryListeners() {
-    this.setClosePopupClickHandler(this._clickHandler);
+    this.setClosePopupClickHandler(this._closePopupClickHandler);
+    this.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
+    this.setMarkAsWatchedListClickHandler(this._markAsWatchedListClickHandler);
+    this.setFavoriteClickHandler(this._favoriteClickHandler);
   }
 
   reRender(filmCard) {
-    this._filmCard = filmCard;
+    if (filmCard) {
+      this._filmCard = filmCard;
+    }
     super.reRender();
   }
+
+  setFilmCard(filmCard) {
+    this._filmCard = filmCard;
+  }
+
 }

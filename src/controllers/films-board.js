@@ -21,6 +21,7 @@ export default class FilmsBoardController {
     this._showedMostCommentedMoviewControllers = [];
     this._showMoreButtonComponent = null;
 
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   _getSortedFilms(sortType) {
@@ -47,9 +48,9 @@ export default class FilmsBoardController {
   }
 
 
-  _renderFilmCards(container, films) {
+  _renderFilmCards(container, films, onDataChange) {
     return films.map((filmCard) => {
-      const movieController = new MovieController(container, this._popupContainer);
+      const movieController = new MovieController(container, this._popupContainer, onDataChange);
 
       movieController.render(filmCard);
 
@@ -83,7 +84,8 @@ export default class FilmsBoardController {
         const prevTasksCount = this._showingFilmCardsCount;
         this._showingFilmCardsCount = this._showingFilmCardsCount + appConst.SHOWING_FILM_CARDS_COUNT_BY_BUTTON;
 
-        const newFilmCards = this._renderFilmCards(this._mainFilmsListComponent.cardContainer, films.slice(prevTasksCount, this._showingFilmCardsCount));
+        const newFilmCards = this._renderFilmCards(this._mainFilmsListComponent.cardContainer, films.slice(prevTasksCount, this._showingFilmCardsCount,
+            this._onDataChange));
         this._showedMoviewControllers = this._showedMoviewControllers.concat(newFilmCards);
 
         if (this._showingFilmCardsCount >= films.length) {
@@ -94,7 +96,8 @@ export default class FilmsBoardController {
       });
     }
 
-    this._showedMoviewControllers = this._renderFilmCards(this._mainFilmsListComponent.cardContainer, films.slice(0, appConst.SHOWING_FILM_CARDS_COUNT_ON_START));
+    this._showedMoviewControllers = this._renderFilmCards(this._mainFilmsListComponent.cardContainer, films.slice(0, appConst.SHOWING_FILM_CARDS_COUNT_ON_START),
+        this._onDataChange);
   }
 
   renderTopRated(films) {
@@ -115,7 +118,7 @@ export default class FilmsBoardController {
 
     if (topRatedFilms.length > 0) {
       this._showedTopRatedMoviewControllers = this._renderFilmCards(this._topRatedFilmsListComponent.cardContainer,
-          topRatedFilms.slice(0, topRatedFilms.length));
+          topRatedFilms.slice(0, topRatedFilms.length), this._onDataChange);
     } else {
       this._topRatedFilmsListComponent.getElement().remove();
       this._topRatedFilmsListComponent.removeElement();
@@ -142,11 +145,23 @@ export default class FilmsBoardController {
 
     if (mostCommentedFilms.length > 0) {
       this._showedMostCommentedMoviewControllers = this._renderFilmCards(this._mostCommntedFilmsListComponent.cardContainer,
-          mostCommentedFilms.slice(0, mostCommentedFilms.length));
+          mostCommentedFilms.slice(0, mostCommentedFilms.length), this._onDataChange);
     } else {
       this._mostCommntedFilmsListComponent.getElement().remove();
       this._mostCommntedFilmsListComponent.removeElement();
       this._showedMostCommentedMoviewControllers = [];
     }
   }
+
+  _onDataChange(movieController, oldData, newData) {
+    const index = this._films.findIndex((it) => it === oldData);
+    if (index === -1) {
+      return;
+    }
+
+    this._films = [].concat(this._films.slice(0, index), newData, this._films.slice(index + 1));
+
+    movieController.render(this._films[index]);
+  }
+
 }
