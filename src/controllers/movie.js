@@ -32,6 +32,7 @@ export default class MovieController {
     // Обработчик показа попапа
     const showPopup = () => {
       this._popupContainer.appendChild(this._filmPopupComponent.getElement());
+      this._filmPopupComponent.initPopup();
       this._filmPopupComponent.reRender();
       this._popupShowing = true;
       document.addEventListener(`keydown`, onEscKeyDown);
