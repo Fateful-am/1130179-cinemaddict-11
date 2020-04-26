@@ -47,6 +47,10 @@ export default class FilterMenuComponent extends AbstractRenderComponent {
     );
   }
 
+  /**
+   * Установка списка фильтров
+   * @param {Object} value - Объект фильтров
+   */
   set filters(value) {
     this._filters = value;
     this.reRender();

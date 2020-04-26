@@ -4,6 +4,13 @@ import AbstractRenderComponent from './abstract-render-component';
  * @extends AbstractRenderComponent
  */
 export default class FilmsListComponent extends AbstractRenderComponent {
+  /**
+   * @constructor
+   * @param {Element} container - Контайнер для компонента
+   * @param {InsertPosition} place - Место вставки компонента
+   * @param {Boolean} isExtra - Флаг списка, если true - создается дополнительный контейнер
+   * @param {String} header - Заголовок списка
+   */
   constructor(container, place, isExtra, header) {
     super(container, place);
 
@@ -33,6 +40,9 @@ export default class FilmsListComponent extends AbstractRenderComponent {
     return this._cardContainer;
   }
 
+  /**
+   * Очистка содержимого списка
+   */
   clearCardContainer() {
     while (this.cardContainer.firstChild) {
       this.cardContainer.removeChild(this.cardContainer.firstChild);

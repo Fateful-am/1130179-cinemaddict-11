@@ -7,6 +7,7 @@ import FilmsBoardController from './films-board.js';
 
 import {RenderPosition} from '../utils/render';
 
+/** Контроллер индексной страницы */
 export default class SiteController {
   constructor() {
     this._body = document.querySelector(`body`);
@@ -23,6 +24,10 @@ export default class SiteController {
     this._filmsBoardController = new FilmsBoardController(this._filmsComponent.getElement(), this._body, this._sortMenuComponent);
   }
 
+  /**
+   * Отрисовка фильмов
+   * @param {{}[]} films - Массив с данными фильмов
+   */
   renderFilms(films) {
     this._filmsBoardController.films = films;
   }

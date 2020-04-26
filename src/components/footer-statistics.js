@@ -19,6 +19,10 @@ export default class FooterStatisticComponent extends AbstractRenderComponent {
     );
   }
 
+  /**
+   * Устнаовка количества фильмов в БД
+   * @param {number} value - Количестко фильмов в БД
+   */
   set movieCont(value) {
     this._movieCount = value;
     this.reRender();

@@ -8,7 +8,15 @@ const Mode = {
   DETAIL: `detail`,
 };
 
+/** Контроллер фильма */
 export default class MovieController {
+  /**
+   * @constructor
+   * @param {Element} container - Контейнер фильма
+   * @param {Element} popupContainer - Контейнер для попапа
+   * @param {function} onDataChange - Колбэк функция при изменении данных
+   * @param {function} onViewChange - Колбэк функция при изменении отображения
+   */
   constructor(container, popupContainer, onDataChange, onViewChange) {
     this._container = container;
     this._popupContainer = popupContainer;
@@ -24,6 +32,11 @@ export default class MovieController {
     this._closePopup = this._closePopup.bind(this);
   }
 
+  /**
+   * Обработчик нажатия клавиш
+   * @param {Event} evt - Объект события
+   * @private
+   */
   _onEscKeyDown(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
@@ -32,14 +45,20 @@ export default class MovieController {
     }
   }
 
-  // Обработчик закрытия попапа
+  /**
+   * Обработчик закрытия попапа
+   * @private
+   */
   _closePopup() {
     this._popupContainer.removeChild(this._filmPopupComponent.getElement());
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DEFAULT;
   }
 
-  // Обработчик показа попапа
+  /**
+   * Обработчик показа попапа
+   * @private
+   */
   _showPopup() {
     this._onViewChange();
     this._popupContainer.appendChild(this._filmPopupComponent.getElement());
@@ -49,8 +68,11 @@ export default class MovieController {
     this._mode = Mode.DETAIL;
   }
 
+  /**
+   * Отрисовка карточки фильма
+   * @param {{}} filmCard - Данные с фильмом
+   */
   render(filmCard) {
-
     if (!this._filmCardComponent) {
       this._filmCardComponent = new FilmCardComponent(this._container, RenderPosition.BEFOREEND, filmCard);
       this._filmCardComponent.setShowPopupClickHandler(this._showPopup);
@@ -90,6 +112,9 @@ export default class MovieController {
     });
   }
 
+  /**
+   * Установка вида по умолчанию
+   */
   setDefaultView() {
     if (this._mode !== Mode.DEFAULT) {
       this._closePopup();

@@ -6,7 +6,14 @@ import {SortType} from '../components/sort-menu.js';
 import * as appConst from '../const';
 import MovieController from './movie';
 
+/** Контроллер списка фильмов */
 export default class FilmsBoardController {
+  /**
+   * @constructor
+   * @param {Element} container - Контайнер для списка
+   * @param {Element} popupContainer - Контейнер для попапа
+   * @param {SortMenuComponent} sortMenuComponent - Компонент меню сортировки
+   */
   constructor(container, popupContainer, sortMenuComponent) {
     this._container = container;
     this._popupContainer = popupContainer;
@@ -23,6 +30,12 @@ export default class FilmsBoardController {
     this._onViewChange = this._onViewChange.bind(this);
   }
 
+  /**
+   * Получение отсортированного списка фильмов
+   * @param {SortType} sortType - Тип сортировки
+   * @return {{}[]} - Массив отсортированных фильмов
+   * @private
+   */
   _getSortedFilms(sortType) {
     const showingFilms = this.films.slice();
     switch (sortType) {
@@ -34,10 +47,18 @@ export default class FilmsBoardController {
     return showingFilms;
   }
 
+  /**
+   * Геттер списка фильмов
+   * @return {[]} - Список фильмов
+   */
   get films() {
     return this._films;
   }
 
+  /**
+   * Сеттер списка фильмов
+   * @param {{}[]} value - Список фильмов
+   */
   set films(value) {
     this._films = value;
 
@@ -47,6 +68,13 @@ export default class FilmsBoardController {
   }
 
 
+  /**
+   * Генеация и рендеринг контроллеров фильмов
+   * @param {Element} container - Контайнер для контроллера
+   * @param {{}[]}films - Массив с данными для генерации контроллеров
+   * @return {MovieController[]} - Массив с контроллерами фильмов
+   * @private
+   */
   _renderFilmCards(container, films) {
     return films.map((filmCard) => {
       const movieController = new MovieController(container, this._popupContainer, this._onDataChange, this._onViewChange);
@@ -57,6 +85,10 @@ export default class FilmsBoardController {
     });
   }
 
+  /**
+   * Рендеринг списка фильмов
+   * @param {{}[]}films - Массив объектов с данными
+   */
   render(films) {
     // Если фильмов нет показываем заглушку
     if (films.length === 0) {
@@ -96,6 +128,10 @@ export default class FilmsBoardController {
     this._showedMoviewControllers = this._renderFilmCards(this._mainFilmsListComponent.cardContainer, films.slice(0, appConst.SHOWING_FILM_CARDS_COUNT_ON_START));
   }
 
+  /**
+   * Рендеринг списка фильмов Top Rated
+   * @param {{}[]}films - Массив объектов с данными
+   */
   renderTopRated(films) {
     // получение контейнера
     if (!this._topRatedFilmsListComponent) {
@@ -122,7 +158,10 @@ export default class FilmsBoardController {
     }
   }
 
-
+  /**
+   * Рендеринг списка фильмов Most Commented
+   * @param {{}[]}films - Массив объектов с данными
+   */
   renderMostCommented(films) {
     // получение контейнера
     if (!this._mostCommntedFilmsListComponent) {
@@ -149,6 +188,13 @@ export default class FilmsBoardController {
     }
   }
 
+  /**
+   * Обработчик изменения данных
+   * @param {MovieController} movieController
+   * @param {{}} oldData - Старые данные
+   * @param {{}} newData - Новые данные
+   * @private
+   */
   _onDataChange(movieController, oldData, newData) {
     const index = this._films.findIndex((it) => it === oldData);
     if (index === -1) {
@@ -159,6 +205,10 @@ export default class FilmsBoardController {
     movieController.render(this._films[index]);
   }
 
+  /**
+   * Обработчик изменения отображения
+   * @private
+   */
   _onViewChange() {
     this._showedMoviewControllers.forEach((it) => it.setDefaultView());
   }
