@@ -13,4 +13,6 @@ export default class FilmsComponent extends AbstractRenderComponent {
   getTemplate() {
     return `<section class="films"></section>`;
   }
+
+  recoveryListeners() {}
 }

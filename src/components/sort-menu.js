@@ -19,6 +19,11 @@ export default class SortMenuComponent extends AbstractRenderComponent {
     this.render();
   }
 
+  /**
+   * Генерация шаблона меню сортировки
+   * @return {string} - Шаблон меню сортировки
+   * @private
+   */
   _getSortMenuItemsTemplate() {
     const items = [];
     for (let item in SortType) {
@@ -39,10 +44,18 @@ export default class SortMenuComponent extends AbstractRenderComponent {
     );
   }
 
+  /**
+   * Текущий тип сортировки
+   * @return {string} - Текущий тип сортировки
+   */
   getSortType() {
     return this._currenSortType;
   }
 
+  /**
+   * Установка обработчика клика по сортировке
+   * @param {function} handler - Коллбэк функция клика
+   */
   setSortTypeChangeHandler(handler) {
     this._clickHandler = handler;
     this.getElement().addEventListener(`click`, (evt) => {
@@ -59,9 +72,13 @@ export default class SortMenuComponent extends AbstractRenderComponent {
       }
 
       this._currenSortType = sortType;
-      this.reRender();
-      this.setSortTypeChangeHandler(this._clickHandler);
       handler(this._currenSortType);
+      this.reRender();
     });
   }
+
+  recoveryListeners() {
+    this.setSortTypeChangeHandler(this._clickHandler);
+  }
+
 }

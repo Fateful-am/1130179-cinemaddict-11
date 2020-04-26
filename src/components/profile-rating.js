@@ -38,8 +38,15 @@ export default class ProfileRatingComponent extends AbstractRenderComponent {
     );
   }
 
+  /**
+   * Установка количества фильмов просмотренных пользователем
+   * @param {number} value - Количество фильмов просмотренных пользователем
+   */
   set watchedCount(value) {
     this._watchedCount = value;
     this.reRender();
   }
+
+  recoveryListeners() {}
+
 }

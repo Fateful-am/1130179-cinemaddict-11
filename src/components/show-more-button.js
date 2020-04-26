@@ -27,4 +27,7 @@ export default class ShowMoreButtonComponent extends AbstractRenderComponent {
     this.getElement().addEventListener(`click`, handler);
   }
 
+  recoveryListeners() {
+    this.setClickHandler(this._clickHandler);
+  }
 }

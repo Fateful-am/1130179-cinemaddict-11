@@ -1,20 +1,99 @@
 import {formatDateDDMMMMYYYY} from '../utils.js';
 import AbstractRenderComponent from './abstract-render-component';
 
+// Типы Emoji
+const EmojiType = {
+  NONE: ``,
+  SMILE: `smile`,
+  SLEEPING: `sleeping`,
+  PUKE: `puke`,
+  ANGRY: `angry`
+};
+
 /** Компонент детальной карточки фильма
- * @extends AbstractComponent
+ * @extends AbstractRenderComponent
  */
 export default class FilmPopupComponent extends AbstractRenderComponent {
+  /**
+   * @constructor
+   * @param {Element} container - Контейнер для компонента
+   * @param {InsertPosition} place - Место вставки компонента
+   * @param {Object} filmCard - Объект с данными фильма
+   */
   constructor(container, place, filmCard) {
     super(container, place);
 
+    this._closePopupClickHandler = null;
+    this._addToWatchListClickHandler = null;
+    this._markAsWatchedListClickHandler = null;
+    this._favoriteClickHandler = null;
     this._filmCard = filmCard;
+
+    this.initPopup();
+    this._setAddEmojiClickHandler();
   }
 
   /**
-   * Возвращает шаблон отрисовки комментариев
-   * @param {object} comment
-   * @return {string}
+   * Инициализация компонента
+   */
+  initPopup() {
+    this._addEmojiType = EmojiType.NONE;
+    this._elementScrollTop = 0;
+  }
+
+  /**
+   * Генерация шаблона для списка эмоций
+   * @return {string} - Разметка для списка эмоций
+   * @private
+   */
+  _getEmojiListItemsTemplate() {
+    const items = [];
+    for (let item in EmojiType) {
+      if (EmojiType[item] === EmojiType.NONE) {
+        continue;
+      }
+      if (EmojiType.hasOwnProperty(item)) {
+        const itemChecked = this._addEmojiType === EmojiType[item] ? `checked` : ``;
+
+        items.push(
+            `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${EmojiType[item]}" value="${EmojiType[item]}" ${itemChecked}>
+          <label class="film-details__emoji-label" for="emoji-${EmojiType[item]}">
+            <img src="./images/emoji/${EmojiType[item]}.png" width="30" height="30" alt="emoji">
+          </label>
+           `
+        );
+      }
+    }
+
+    return items.join(`\n`);
+  }
+
+  /**
+   * Возвращает шаблон отрисовки жанра фильма
+   * @param {String} genre - Жанр фильма
+   * @return {string} Шаблон жанра фильма
+   */
+  _createGenreItemTemplate(genre) {
+    return `<span class="film-details__genre">${genre}</span>`;
+  }
+
+  /**
+   * Отрисовывыет все жанры
+   * @param {Array} genres - Массив с жанрами фильма
+   * @return {string} Шаблон жанров фильма
+   */
+  _renderGenres(genres) {
+    const outArray = [];
+    genres.forEach((genre) => {
+      outArray.push(this._createGenreItemTemplate(genre));
+    });
+    return outArray.join(`\n`);
+  }
+
+  /**
+   * Генерирует шаблон отрисовки комментариев
+   * @param {object} comment - Объект с данными комментария
+   * @return {string} - Шаблон отрисовки комментариев
    */
   _createCommentItemTemplate(comment) {
     const {text, emoji, author, date} = comment;
@@ -35,28 +114,6 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   }
 
   /**
-   * Возвращает шаблон отрисовки жакра фильма
-   * @param {String} genre
-   * @return {string}
-   */
-  _createGenreItemTemplate(genre) {
-    return `<span class="film-details__genre">${genre}</span>`;
-  }
-
-  /**
-   * Отрисовывыет все жанры
-   * @param {Array} genres
-   * @return {string}
-   */
-  _renderGenres(genres) {
-    const outArray = [];
-    genres.forEach((genre) => {
-      outArray.push(this._createGenreItemTemplate(genre));
-    });
-    return outArray.join(`\n`);
-  }
-
-  /**
    * Отрисовывает все комментарии
    * @param {Array} comments
    * @return {string}
@@ -70,12 +127,18 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   }
 
   getTemplate() {
-    const {title, originTitle, rating, director, writers, actors, releaseDate, duration, country, genres, poster, description, comments, age} = this._filmCard;
+    const {title, originTitle, rating, director, writers, actors, releaseDate, duration, country,
+      genres, poster, description, comments, age, addedToWatchlist, markedAsWatched, addedToFavorite} = this._filmCard;
     const genreSuffix = genres.split(` `).length === 1 ? `` : `s`;
     const releaseDateString = formatDateDDMMMMYYYY(releaseDate);
     const genresString = this._renderGenres(genres.split(` `));
     const commentsString = this._renderComments(comments);
     const filmDetailsCommentsCount = comments.length;
+    const addedToWatchlistChecked = addedToWatchlist ? `checked` : ``;
+    const markedAsWatchedChecked = markedAsWatched ? `checked` : ``;
+    const addedToFavoriteChecked = addedToFavorite ? `checked` : ``;
+    const emojiList = this._getEmojiListItemsTemplate();
+    const addEmoji = this._addEmojiType !== EmojiType.NONE ? `<img src="./images/emoji/${this._addEmojiType}.png" width="55" height="55" alt="emoji-smile">` : ``;
 
     return (
       `<section class="film-details">
@@ -136,13 +199,13 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
             </div>
           </div>
           <section class="film-details__controls">
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${addedToWatchlistChecked}>
             <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${markedAsWatchedChecked}>
             <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${addedToFavoriteChecked}>
             <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
           </section>
         </div>
@@ -154,32 +217,16 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
             </ul>
 
             <div class="film-details__new-comment">
-              <div class="film-details__add-emoji-label"></div>
+              <div class="film-details__add-emoji-label">
+                ${addEmoji}
+              </div>
 
               <label class="film-details__comment-label">
                 <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
               </label>
 
               <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-                <label class="film-details__emoji-label" for="emoji-smile">
-                  <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-                <label class="film-details__emoji-label" for="emoji-sleeping">
-                  <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-                <label class="film-details__emoji-label" for="emoji-puke">
-                  <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-                <label class="film-details__emoji-label" for="emoji-angry">
-                  <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-                </label>
+                ${emojiList}
               </div>
             </div>
           </section>
@@ -188,13 +235,87 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     </section>`
     );
   }
+
+  /**
+   * Устанавливает обработчик клика по эмоциям
+   * @private
+   */
+  _setAddEmojiClickHandler() {
+    const addEmojiList = this.getElement().querySelector(`.film-details__emoji-list`);
+    addEmojiList.addEventListener(`click`, (evt) => {
+      if (evt.target.tagName !== `INPUT`) {
+        return;
+      }
+      this._addEmojiType = evt.target.value;
+      this._elementScrollTop = this.getElement().scrollTop;
+
+      this.reRender();
+    });
+  }
+
   /**
    * Устанавливает обработчик клика по кнопке
    * @param {function} handler - КоллБэк-функция
    */
-  setClickHandler(handler) {
-    // Кнопка закрытия попапа и назначение обработчика клика по ней
+  setClosePopupClickHandler(handler) {
+    this._closePopupClickHandler = handler;
+
     const popupCloseButton = this.getElement().querySelector(`.film-details__close-btn`);
     popupCloseButton.addEventListener(`click`, handler);
   }
+
+  /**
+   * Установка обработчика для инпута "Add to watchlist"
+   * @param {function} handler - Коллбэк функция по нажатию на инпут
+   */
+  setAddToWatchListClickHandler(handler) {
+    this._addToWatchListClickHandler = handler;
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, handler);
+  }
+
+  /**
+   * Установка обработчика для инпута "Mark as watched"
+   * @param {function} handler - Коллбэк функция по нажатию на инпут
+   */
+  setMarkAsWatchedListClickHandler(handler) {
+    this._markAsWatchedListClickHandler = handler;
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, handler);
+  }
+
+  /**
+   * Установка обработчика для инпута "Favorite"
+   * @param {function} handler - Коллбэк функция по нажатию на инпут
+   */
+  setFavoriteClickHandler(handler) {
+    this._favoriteClickHandler = handler;
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, handler);
+  }
+
+  recoveryListeners() {
+    this.setClosePopupClickHandler(this._closePopupClickHandler);
+    this.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
+    this.setMarkAsWatchedListClickHandler(this._markAsWatchedListClickHandler);
+    this.setFavoriteClickHandler(this._favoriteClickHandler);
+    this._setAddEmojiClickHandler();
+  }
+
+  reRender(filmCard) {
+    if (filmCard) {
+      this._filmCard = filmCard;
+    }
+    super.reRender();
+    this.getElement().scrollTop = this._elementScrollTop;
+  }
+
+  /**
+   * Устанавливает текущий объект с данными о фильме
+   * @param {Object} filmCard - Объект с данными о фильме
+   */
+  setFilmCard(filmCard) {
+    this._filmCard = filmCard;
+  }
+
 }

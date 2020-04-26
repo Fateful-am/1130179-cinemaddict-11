@@ -1,21 +1,25 @@
 import {MAX_DESCRIPTION_LENGTH} from '../const.js';
 import AbstractRenderComponent from './abstract-render-component';
 
+
+const ITEM_ACTIVE_CLASS = `film-card__controls-item--active`;
+
 /** Компонент карточки фильма
- * @extends AbstractComponent
+ * @extends AbstractRenderComponent
  */
 export default class FilmCardComponent extends AbstractRenderComponent {
   constructor(container, place, filmCard) {
     super(container, place);
     this._filmCard = filmCard;
 
+    this._showPopupClickHandler = null;
+    this._clickListeners = {};
     this.render();
   }
 
   getTemplate() {
     const {title, rating, releaseDate, duration, genres, poster, description, comments, addedToWatchlist, markedAsWatched, addedToFavorite} = this._filmCard;
 
-    const ITEM_ACTIVE_CLASS = `film-card__controls-item--active`;
     const addToWatchlistActiveClass = addedToWatchlist ? ITEM_ACTIVE_CLASS : ``;
     const markAsWatchedActiveClass = markedAsWatched ? ITEM_ACTIVE_CLASS : ``;
     const favoriteActiveClass = addedToFavorite ? ITEM_ACTIVE_CLASS : ``;
@@ -45,12 +49,14 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     </article>`
     );
   }
+
   /**
    * Устанавливает обработчик клика по элементам
    * @param {function} handler - КоллБэк-функция
    */
-  setClickHandler(handler) {
-    // метод назначения клика по объекту для вызова попапа
+  setShowPopupClickHandler(handler) {
+    this._showPopupClickHandler = handler;
+
     const addClickListener = (...rest) => {
       rest.forEach((it) => it.addEventListener(`click`, handler));
     };
@@ -63,5 +69,64 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     // Назначение клика
     addClickListener(filmCardPoster, filmCardTitle, filmCardComments);
   }
+
+  /**
+   * Устанавливает обработчик клика по кнопкам
+   * @param {Element} button - Кнопка для установки слушателя
+   * @param {function} handler - Коллбэк функция по нажатию на кнопку
+   * @private
+   */
+  _setButtonClickHandler(button, handler) {
+    const buttonClass = button.classList.item(2);
+
+    // убираем слушатель если был установлен ранее
+    if (this._clickListeners[buttonClass]) {
+      button.removeEventListener(`click`, this._clickListeners[buttonClass]);
+    }
+
+    // создаем новый обработчик
+    this._clickListeners[buttonClass] = (evt) => {
+      evt.preventDefault();
+      button.classList.toggle(ITEM_ACTIVE_CLASS);
+      handler();
+    };
+
+    // устанавливаем новый обработчик
+    button.addEventListener(`click`, this._clickListeners[buttonClass]);
+  }
+
+  /**
+   * Установка обработчика для кнопки "Add to watchlist"
+   * @param {function} handler - Коллбэк функция по нажатию на кнопку
+   */
+  setAddToWatchListClickHandler(handler) {
+    this._setButtonClickHandler(this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`), handler);
+  }
+
+  /**
+   * Установка обработчика для кнопки "Mark as watched"
+   * @param {function} handler - Коллбэк функция по нажатию на кнопку
+   */
+  setMarkAsWatchedListClickHandler(handler) {
+    this._setButtonClickHandler(this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`), handler);
+  }
+
+  /**
+   * Установка обработчика для кнопки "Favorite"
+   * @param {function} handler - Коллбэк функция по нажатию на кнопку
+   */
+  setFavoriteClickHandler(handler) {
+    this._setButtonClickHandler(this.getElement().querySelector(`.film-card__controls-item--favorite`), handler);
+  }
+
+  recoveryListeners() {
+    this.setShowPopupClickHandler(this._showPopupClickHandler);
+  }
+
+  reRender(filmCard) {
+    this._filmCard = filmCard;
+    super.reRender();
+  }
+
 }
 
