@@ -46,8 +46,8 @@ export default class MovieController {
       this._filmPopupComponent.setClosePopupClickHandler(closePopup);
 
     } else {
-      this._filmCardComponent.reRender(filmCard);
       if (this._popupShowing) {
+        this._filmCardComponent.reRender(filmCard);
         this._filmPopupComponent.reRender(filmCard);
       } else {
         this._filmPopupComponent.setFilmCard(filmCard);

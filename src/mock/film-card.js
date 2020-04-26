@@ -112,7 +112,7 @@ const MAX_RANDOM_DESCRIPTION_SENTENCES_COUNT = 5;
 // Минимальное количество комментариев
 const MIN_RANDOM_COMMENTS_COUNT = 0;
 // Максимальное количество комментариев
-const MAX_RANDOM_COMMENTS_COUNT = 10;
+const MAX_RANDOM_COMMENTS_COUNT = 5;
 // Максимальное случайное число сценаристов фильма
 const MAX_RANDOM_WRITERS_COUNT = 3;
 // Минимальное количество актеров в фильме
