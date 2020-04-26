@@ -2,51 +2,64 @@ import FilmCardComponent from '../components/film-card';
 import FilmPopupComponent from '../components/film-popup';
 import {RenderPosition} from '../utils/render';
 
+
+const Mode = {
+  DEFAULT: `default`,
+  DETAIL: `detail`,
+};
+
 export default class MovieController {
-  constructor(container, popupContainer, onDataChange) {
+  constructor(container, popupContainer, onDataChange, onViewChange) {
     this._container = container;
     this._popupContainer = popupContainer;
     this._onDataChange = onDataChange;
+    this._onViewChange = onViewChange;
 
+    this._mode = Mode.DEFAULT;
     this._filmCardComponent = null;
     this._filmPopupComponent = null;
-    this._popupShowing = false;
+
+    this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._showPopup = this._showPopup.bind(this);
+    this._closePopup = this._closePopup.bind(this);
+  }
+
+  _onEscKeyDown(evt) {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      this._closePopup();
+    }
+  }
+
+  // Обработчик закрытия попапа
+  _closePopup() {
+    this._popupContainer.removeChild(this._filmPopupComponent.getElement());
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    this._mode = Mode.DEFAULT;
+  }
+
+  // Обработчик показа попапа
+  _showPopup() {
+    this._onViewChange();
+    this._popupContainer.appendChild(this._filmPopupComponent.getElement());
+    this._filmPopupComponent.initPopup();
+    this._filmPopupComponent.reRender();
+    document.addEventListener(`keydown`, this._onEscKeyDown);
+    this._mode = Mode.DETAIL;
   }
 
   render(filmCard) {
-    const onEscKeyDown = (evt) => {
-      const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-      if (isEscKey) {
-        closePopup();
-      }
-    };
-
-    // Обработчик закрытия попапа
-    const closePopup = () => {
-      this._popupContainer.removeChild(this._filmPopupComponent.getElement());
-      this._popupShowing = false;
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-
-    // Обработчик показа попапа
-    const showPopup = () => {
-      this._popupContainer.appendChild(this._filmPopupComponent.getElement());
-      this._filmPopupComponent.initPopup();
-      this._filmPopupComponent.reRender();
-      this._popupShowing = true;
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
 
     if (!this._filmCardComponent) {
       this._filmCardComponent = new FilmCardComponent(this._container, RenderPosition.BEFOREEND, filmCard);
-      this._filmCardComponent.setShowPopupClickHandler(showPopup);
+      this._filmCardComponent.setShowPopupClickHandler(this._showPopup);
 
       this._filmPopupComponent = new FilmPopupComponent(this._popupContainer, RenderPosition.BEFOREEND, filmCard);
-      this._filmPopupComponent.setClosePopupClickHandler(closePopup);
+      this._filmPopupComponent.setClosePopupClickHandler(this._closePopup);
 
     } else {
-      if (this._popupShowing) {
+      if (this._mode === Mode.DETAIL) {
         this._filmCardComponent.reRender(filmCard);
         this._filmPopupComponent.reRender(filmCard);
       } else {
@@ -75,6 +88,13 @@ export default class MovieController {
         }));
       });
     });
-
   }
+
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._closePopup();
+    }
+  }
+
+
 }
