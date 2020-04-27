@@ -1,7 +1,7 @@
 import {getRandomArrayItem, getRandomIntegerNumber} from '../utils';
 
 // Число возможных дней до текущей даты для даты комментария
-const COMMENTS_PAST_DAYS = 365;
+const COMMENTS_PAST_DAYS = 7;
 
 // имена файлов с эмоджи
 const emojis = [
@@ -46,27 +46,9 @@ const commentTexts = [
  */
 const getRandomCommentDateTime = (pastSinceDays) => {
   const targetDate = new Date();
-  targetDate.setDate(targetDate.getDate() - getRandomIntegerNumber(0, pastSinceDays));
+  targetDate.setDate(targetDate.getDate() - getRandomIntegerNumber(0, pastSinceDays) - 1);
   targetDate.setHours(getRandomIntegerNumber(0, 23), getRandomIntegerNumber(0, 59));
   return targetDate;
-};
-
-/**
- * Добавление 0 для цифр меньше 10
- * @param {number} number Входное число
- * @return {string} Отфарматированнное число
- */
-const addLeadZero = (number) => {
-  return number < 10 ? `0${number}` : number;
-};
-
-/**
- * Форматирование даты комментария
- * @param {Date} dateTime Дата для форматирования
- * @return {string} Отформатированная дата комментария
- */
-const formatCommentDateTime = (dateTime) => {
-  return `${dateTime.getFullYear()}/${addLeadZero(dateTime.getMonth() + 1)}/${addLeadZero(dateTime.getDate())} ${addLeadZero(dateTime.getHours())}:${addLeadZero(dateTime.getMinutes())}`;
 };
 
 /**
@@ -79,7 +61,7 @@ const generateFilmComment = ()=> {
     text: getRandomArrayItem(commentTexts),
     emoji: getRandomArrayItem(emojis),
     author: getRandomArrayItem(commentAuthors),
-    date: formatCommentDateTime(getRandomCommentDateTime(COMMENTS_PAST_DAYS)),
+    date: getRandomCommentDateTime(COMMENTS_PAST_DAYS),
   };
 };
 

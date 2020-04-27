@@ -16,21 +16,6 @@ export const SHOWING_FILM_CARDS_COUNT_BY_BUTTON = 5;
 export const MOVIE_COUNT = 130291;
 // Количество просотренных пользователем фильмов
 export const USER_WATCHED_COUNT = 25;
-// Именованные месяцы
-export const MONTH_NAMES = [
-  `January`,
-  `February`,
-  `March`,
-  `April`,
-  `May`,
-  `June`,
-  `July`,
-  `August`,
-  `September`,
-  `October`,
-  `November`,
-  `December`,
-];
 
 // Массив объектов с званием пользователя
 export const RANK_RATINGS = [

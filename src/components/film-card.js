@@ -1,5 +1,7 @@
 import {MAX_DESCRIPTION_LENGTH} from '../const.js';
 import AbstractRenderComponent from './abstract-render-component';
+import {formatDuration} from '../utils.js';
+import moment from 'moment';
 
 
 const ITEM_ACTIVE_CLASS = `film-card__controls-item--active`;
@@ -26,7 +28,8 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     const commentsCount = comments.length === 0 ? `No` : comments.length;
     const commentsSuffix = comments.length === 1 ? `` : `s`;
     const shortDescription = description.length > MAX_DESCRIPTION_LENGTH ? `${description.substr(0, MAX_DESCRIPTION_LENGTH - 1)}…` : description;
-    const filmCardYear = releaseDate.getFullYear();
+    const formattedDuration = formatDuration(duration);
+    const filmCardYear = moment(releaseDate).format(`YYYY`);
     const filmCardGenre = genres.split(` `)[0];
 
     return (
@@ -35,7 +38,7 @@ export default class FilmCardComponent extends AbstractRenderComponent {
       <p class="film-card__rating">${rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${filmCardYear}</span>
-        <span class="film-card__duration">${duration}</span>
+        <span class="film-card__duration">${formattedDuration}</span>
         <span class="film-card__genre">${filmCardGenre}</span>
       </p>
       <img src="./images/posters/${poster}" alt="" class="film-card__poster">

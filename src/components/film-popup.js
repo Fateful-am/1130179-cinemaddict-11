@@ -1,5 +1,6 @@
-import {formatDateDDMMMMYYYY} from '../utils.js';
+import moment from 'moment';
 import AbstractRenderComponent from './abstract-render-component';
+import {formatDuration} from '../utils.js';
 
 // Типы Emoji
 const EmojiType = {
@@ -106,7 +107,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
         <p class="film-details__comment-text">${text}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
-          <span class="film-details__comment-day">${date}</span>
+          <span class="film-details__comment-day">${moment(date).fromNow()}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>
@@ -130,13 +131,14 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     const {title, originTitle, rating, director, writers, actors, releaseDate, duration, country,
       genres, poster, description, comments, age, addedToWatchlist, markedAsWatched, addedToFavorite} = this._filmCard;
     const genreSuffix = genres.split(` `).length === 1 ? `` : `s`;
-    const releaseDateString = formatDateDDMMMMYYYY(releaseDate);
+    const releaseDateString = moment(releaseDate).format(`DD MMMM YYYY`);
     const genresString = this._renderGenres(genres.split(` `));
     const commentsString = this._renderComments(comments);
     const filmDetailsCommentsCount = comments.length;
     const addedToWatchlistChecked = addedToWatchlist ? `checked` : ``;
     const markedAsWatchedChecked = markedAsWatched ? `checked` : ``;
     const addedToFavoriteChecked = addedToFavorite ? `checked` : ``;
+    const formattedDuration = formatDuration(duration);
     const emojiList = this._getEmojiListItemsTemplate();
     const addEmoji = this._addEmojiType !== EmojiType.NONE ? `<img src="./images/emoji/${this._addEmojiType}.png" width="55" height="55" alt="emoji-smile">` : ``;
 
@@ -181,7 +183,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
+                  <td class="film-details__cell">${formattedDuration}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
