@@ -53,11 +53,12 @@ const getRandomCommentDateTime = (pastSinceDays) => {
 
 /**
  * Генерация комментария к фильму
- * @return {{date: string, emoji: string, author: string, text: string}} date - отфармотированная дата комментария,
+ * @return {{date: Date, emoji: *, author: *, id: string, text: *}} date - отфармотированная дата комментария,
  * emoji - название эмоджи (файл), author - автор, text - текст
  */
 const generateFilmComment = ()=> {
   return {
+    id: String(new Date() + Math.random()),
     text: getRandomArrayItem(commentTexts),
     emoji: getRandomArrayItem(emojis),
     author: getRandomArrayItem(commentAuthors),
