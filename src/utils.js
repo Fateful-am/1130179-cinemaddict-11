@@ -36,9 +36,7 @@ const getRandomIntegerNumber = (min, max) => {
  * @return {string} Отформатированная строка с продолжительностью фильма
  */
 const formatDuration = (duration) => {
-  const hour = moment.duration(duration, `minutes`).hours();
-  const minute = moment.duration(duration, `minutes`).minutes();
-  return `${hour === 0 ? `` : `${hour}h`}${minute === 0 ? `` : ` ${minute}m`}`;
+  return moment.utc(moment.duration(duration, `minutes`).asMilliseconds()).format(`H[h] m[m]`);
 };
 
 export {getRandomArrayItem, getRandomIntegerNumber, getRandomArrayIndex, formatDuration};
