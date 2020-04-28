@@ -1,4 +1,4 @@
-import {MONTH_NAMES} from "./const.js";
+import moment from 'moment';
 
 /**
  * Возвращает случайный элемент массива
@@ -21,15 +21,6 @@ const getRandomArrayIndex = (array) => {
 };
 
 /**
- * Возвращает дату в формате 30 March 1945
- * @param {Date} date
- * @return {string}
- */
-const formatDateDDMMMMYYYY = (date) => {
-  return `${date.getDate()} ${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}`;
-};
-
-/**
  * Возвпащает случайное целое число в пределах аргуметов
  * @param {number} min Нижний предел
  * @param {number} max Верхний предел
@@ -39,4 +30,13 @@ const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
-export {getRandomArrayItem, getRandomIntegerNumber, getRandomArrayIndex, formatDateDDMMMMYYYY};
+/**
+ * Форматирование продолжительности фильма
+ * @param {number} duration Продолжительность фильма в минутах
+ * @return {string} Отформатированная строка с продолжительностью фильма
+ */
+const formatDuration = (duration) => {
+  return moment.utc(moment.duration(duration, `minutes`).asMilliseconds()).format(`H[h] m[m]`);
+};
+
+export {getRandomArrayItem, getRandomIntegerNumber, getRandomArrayIndex, formatDuration};

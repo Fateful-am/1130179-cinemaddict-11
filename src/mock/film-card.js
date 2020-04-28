@@ -196,17 +196,6 @@ const getRandomReleaseDate = (yearFrom, yearTo) => {
 };
 
 /**
- * Форматирование продолжительности фильма
- * @param {number} duration Продолжительность фильма в минутах
- * @return {string} Отформатированная строка с продолжительностью фильма
- */
-const formatDuration = (duration) => {
-  const hour = Math.trunc(duration / 60);
-  const minute = duration % 60;
-  return `${hour === 0 ? `` : `${hour}h`}${minute === 0 ? `` : ` ${minute}m`}`;
-};
-
-/**
  * Генератор карточки фильма
  * @return {{country: string, comments: {date: string, emoji: string, author: string, text: string}[],
  * releaseDate: Date, director: string, markedAsWatched: boolean, rating: string, description: string,
@@ -239,7 +228,7 @@ const generateFilmCard = ()=> {
     originTitle: filmTitles[filmIndex],
     writers: getRandomWriters(),
     actors: getRandomActors(),
-    duration: formatDuration(getRandomIntegerNumber(MIN_RANDOM_FILM_DURATION, MAX_RANDOM_FILM_DURATION)),
+    duration: getRandomIntegerNumber(MIN_RANDOM_FILM_DURATION, MAX_RANDOM_FILM_DURATION),
     genres: getRandomGenres(),
     poster: filmPosters[filmIndex],
     description: `${getRandomSDescription()}.`,
