@@ -10,24 +10,28 @@ export default class FilmsListComponent extends AbstractRenderComponent {
    * @param {InsertPosition} place - Место вставки компонента
    * @param {Boolean} isExtra - Флаг списка, если true - создается дополнительный контейнер
    * @param {String} header - Заголовок списка
+   * @param {Boolean} isNoMovies - Флаг заглушки при отсутствии фильмов
    */
-  constructor(container, place, isExtra, header) {
+  constructor(container, place, isExtra, header, isNoMovies = false) {
     super(container, place);
 
     this._isExtra = isExtra;
     this._header = header;
+    this._isNoMovies = isNoMovies;
 
     this.render();
   }
 
   getTemplate() {
-    const [filmsListClass, filmsListTitleClass] = this._isExtra ? [`--extra`, ``] : [``, `visually-hidden`];
+    let [filmsListClass, filmsListTitleClass] = this._isExtra ? [`--extra`, ``] : [``, `visually-hidden`];
     const filmsListHeader = this._header;
+    let makeFilmListContainer = true;
+    [filmsListTitleClass, makeFilmListContainer] = this._isNoMovies ? [``, false] : [filmsListTitleClass, makeFilmListContainer];
+    const filmListContainer = makeFilmListContainer ? `<div class="films-list__container"> </div>` : ``;
     return (
       `<section class="films-list${filmsListClass}">
       <h2 class="films-list__title ${filmsListTitleClass}">${filmsListHeader}</h2>
-      <div class="films-list__container">
-      </div>
+      ${filmListContainer}
     </section>`
     );
   }
@@ -38,15 +42,6 @@ export default class FilmsListComponent extends AbstractRenderComponent {
     }
 
     return this._cardContainer;
-  }
-
-  /**
-   * Очистка содержимого списка
-   */
-  clearCardContainer() {
-    while (this.cardContainer.firstChild) {
-      this.cardContainer.removeChild(this.cardContainer.firstChild);
-    }
   }
 
   recoveryListeners() {}

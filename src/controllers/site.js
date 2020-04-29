@@ -9,7 +9,8 @@ import {RenderPosition} from '../utils/render';
 
 /** Контроллер индексной страницы */
 export default class SiteController {
-  constructor() {
+  constructor(moviesModel) {
+    this._moviesModel = moviesModel;
     this._body = document.querySelector(`body`);
     this._header = this._body.querySelector(`header`);
     this._main = this._body.querySelector(`main`);
@@ -21,14 +22,13 @@ export default class SiteController {
     this.footerStatisticsComponent = new FooterStatisticComponent(this._footerStatistics, RenderPosition.BEFOREEND);
     this._filmsComponent = new FilmsComponent(this._main, RenderPosition.BEFOREEND);
 
-    this._filmsBoardController = new FilmsBoardController(this._filmsComponent.getElement(), this._body, this._sortMenuComponent);
+    this._filmsBoardController = new FilmsBoardController(this._filmsComponent.getElement(), this._body, this._sortMenuComponent, this._moviesModel);
   }
 
   /**
    * Отрисовка фильмов
-   * @param {{}[]} films - Массив с данными фильмов
    */
-  renderFilms(films) {
-    this._filmsBoardController.films = films;
+  renderFilms() {
+    this._filmsBoardController.render();
   }
 }

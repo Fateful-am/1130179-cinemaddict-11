@@ -54,4 +54,12 @@ export default class AbstractRenderComponent extends AbstractComponent {
 
     this.recoveryListeners();
   }
+
+  /**
+   * Удаляет компонент
+   */
+  remove() {
+    this.getElement().remove();
+    this.removeElement();
+  }
 }

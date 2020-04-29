@@ -121,5 +121,14 @@ export default class MovieController {
     }
   }
 
+  destroy() {
+    this._filmCardComponent.remove();
+    this._filmPopupComponent.remove();
+    this._filmCardComponent = null;
+    this._filmPopupComponent = null;
+
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+  }
+
 
 }

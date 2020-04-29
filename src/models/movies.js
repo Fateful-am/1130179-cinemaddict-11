@@ -9,6 +9,10 @@ export default class Movies {
     return this._movies;
   }
 
+  getMovies() {
+    return this.getMoviesAll();
+  }
+
   setMovies(movies) {
     this._movies = Array.from(movies);
     this._callHandlers(this._dataChangeHandlers);
