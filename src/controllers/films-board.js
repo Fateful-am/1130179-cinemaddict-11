@@ -242,19 +242,18 @@ export default class FilmsBoardController {
 
   /**
    * Обработчик изменения данных
-   * @param {MovieController} movieController
+   * @param {MovieController} movieController - Контроллер фильма
    * @param {{}} oldData - Старые данные
    * @param {{}} newData - Новые данные
    * @private
    */
   _onDataChange(movieController, oldData, newData) {
-    const index = this._films.findIndex((it) => it === oldData);
-    if (index === -1) {
-      return;
-    }
 
-    this._films = [].concat(this._films.slice(0, index), newData, this._films.slice(index + 1));
-    movieController.render(this._films[index]);
+    const isSuccess = this._moviesModel.updateMovie(oldData.id, newData);
+
+    if (isSuccess) {
+      movieController.render(newData);
+    }
   }
 
   /**

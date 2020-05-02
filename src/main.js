@@ -1,5 +1,4 @@
 import {generateFilmCards} from './mock/film-card.js';
-import {generateFilters} from './mock/filter.js';
 import * as appConst from './const.js';
 import SiteController from './controllers/site.js';
 import Movies from './models/movies.js';
@@ -15,7 +14,6 @@ const siteController = new SiteController(moviesModel);
 
 // Заполнение данными разметки из моки
 siteController.profileRatingComponent.watchedCount = appConst.USER_WATCHED_COUNT;
-siteController.filterMenuComponent.filters = generateFilters();
 siteController.footerStatisticsComponent.movieCont = appConst.MOVIE_COUNT;
 
 

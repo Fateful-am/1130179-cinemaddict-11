@@ -18,14 +18,14 @@ export default class Movies {
     this._callHandlers(this._dataChangeHandlers);
   }
 
-  updateMovie(id, movie) {
+  updateMovie(id, newMovieData) {
     const index = this._movies.findIndex((it) => it.id === id);
 
     if (index === -1) {
       return false;
     }
 
-    this._movies = [].concat(this._movies.slice(0, index), movie, this._movies.slice(index + 1));
+    this._movies = [].concat(this._movies.slice(0, index), newMovieData, this._movies.slice(index + 1));
 
     this._callHandlers(this._dataChangeHandlers);
 
