@@ -1,8 +1,30 @@
+import {FilterType} from '../const';
+
 export default class Movies {
   constructor() {
     this._movies = [];
 
+    this._activeFilterType = FilterType.ALL;
+
     this._dataChangeHandlers = [];
+    this._filterChangeHandlers = [];
+  }
+
+  getMoviesByFilter(filterType) {
+    const allMovies = this.getMoviesAll();
+
+    switch (filterType) {
+      case FilterType.ALL:
+        return allMovies;
+      case FilterType.FAVORITES:
+        return allMovies.filter((movie) => movie.addedToFavorite);
+      case FilterType.HISTORY:
+        return allMovies.filter((movie) => movie.markedAsWatched);
+      case FilterType.WATCH_LIST:
+        return allMovies.filter((movie) => movie.addedToWatchlist);
+      default:
+        return [];
+    }
   }
 
   getMoviesAll() {
@@ -10,7 +32,7 @@ export default class Movies {
   }
 
   getMovies() {
-    return this.getMoviesAll();
+    return this.getMoviesByFilter(this._activeFilterType);
   }
 
   setMovies(movies) {
@@ -38,5 +60,10 @@ export default class Movies {
 
   _callHandlers(handlers) {
     handlers.forEach((handler) => handler());
+  }
+
+  setFilter(filterType) {
+    this._activeFilterType = filterType;
+    this._callHandlers(this._filterChangeHandlers);
   }
 }
