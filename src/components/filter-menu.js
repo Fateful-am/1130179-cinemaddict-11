@@ -8,6 +8,7 @@ export default class FilterMenuComponent extends AbstractRenderComponent {
   constructor(container, place) {
     super(container, place);
 
+    this._filterChangeHandler = null;
     // Установка фильтра по умолчанию
     this._filters = Object.values(FilterType).map((filterType) => {
       return {
@@ -57,6 +58,19 @@ export default class FilterMenuComponent extends AbstractRenderComponent {
     this.reRender();
   }
 
-  recoveryListeners() {}
+  setFilterChangeHandler(handler) {
+    this._filterChangeHandler = handler;
+    this.getElement().querySelector(`.main-navigation__items`).addEventListener(`click`, (evt) => {
+      if (evt.target.tagName !== `A`) {
+        return;
+      }
+      let filterName = evt.target.hash.slice(1);
+      filterName = filterName === `all` ? FilterType.ALL : filterName.charAt(0).toUpperCase() + filterName.slice(1);
+      handler(filterName);
+    });
+  }
 
+  recoveryListeners() {
+    this.setFilterChangeHandler(this._filterChangeHandler);
+  }
 }

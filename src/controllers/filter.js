@@ -7,11 +7,13 @@ export default class FilterController {
     this._container = container;
     this._movieModel = movieModel;
 
-    this._activeFilterType = FilterType.ALL;
-    this._filterComponent = new FilterMenuComponent(this._container, RenderPosition.AFTERBEGIN);
-
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
+
+    this._activeFilterType = FilterType.ALL;
+    this._filterComponent = new FilterMenuComponent(this._container, RenderPosition.AFTERBEGIN);
+    this._filterComponent.setFilterChangeHandler(this._onFilterChange);
+
 
     this._movieModel.setDataChangeHandler(this._onDataChange);
   }
@@ -29,7 +31,19 @@ export default class FilterController {
 
   _getMoviesByFilter(filterType) {
     const allMovies = this._movieModel.getMoviesAll();
-    return allMovies;
+
+    switch (filterType) {
+      case FilterType.ALL:
+        return allMovies;
+      case FilterType.FAVORITES:
+        return allMovies.filter((movie) => movie.addedToFavorite);
+      case FilterType.HISTORY:
+        return allMovies.filter((movie) => movie.markedAsWatched);
+      case FilterType.WATCH_LIST:
+        return allMovies.filter((movie) => movie.addedToWatchlist);
+      default:
+        return [];
+    }
   }
 
   _onDataChange() {
@@ -37,8 +51,8 @@ export default class FilterController {
   }
 
   _onFilterChange(filterType) {
-    // this._tasksModel.setFilter(filterType);
     this._activeFilterType = filterType;
+    this.render();
   }
 
 }
