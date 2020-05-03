@@ -2,7 +2,6 @@ import FilmCardComponent from '../components/film-card';
 import FilmPopupComponent from '../components/film-popup';
 import {RenderPosition} from '../utils/render';
 
-
 export const Mode = {
   DEFAULT: `default`,
   DETAIL: `detail`,
@@ -42,9 +41,25 @@ export default class MovieController {
    */
   _onEscKeyDown(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
+    const isCtrlEnter = evt.key === `Enter` && evt.ctrlKey;
     if (isEscKey) {
       this._closePopup();
+      return;
+    }
+
+    if (isCtrlEnter) {
+      const formData = this._filmPopupComponent.getData();
+      if (formData.comment && formData.emoji) {
+        const comments = [].concat(formData.oldMovieData.comments, {
+          id: String(new Date() + Math.random()),
+          text: formData.comment,
+          emoji: formData.emoji + `.png`,
+          author: `Myself`,
+          date: new Date()
+        });
+        this._filmPopupComponent.initPopup(true);
+        this._onDataChange(this, formData.oldMovieData, Object.assign({}, formData.oldMovieData, {comments}));
+      }
     }
   }
 

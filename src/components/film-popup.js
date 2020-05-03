@@ -37,10 +37,13 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
 
   /**
    * Инициализация компонента
+   * @param {boolean} skipScroll - Если true не сбрасывать скролл
    */
-  initPopup() {
+  initPopup(skipScroll = false) {
     this._addEmojiType = EmojiType.NONE;
-    this._elementScrollTop = 0;
+    if (!skipScroll) {
+      this._elementScrollTop = 0;
+    }
   }
 
   /**
@@ -252,7 +255,9 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
       this._addEmojiType = evt.target.value;
       this._elementScrollTop = this.getElement().scrollTop;
 
+      const currentComment = this.getData().comment;
       this.reRender();
+      this.getElement().querySelector(`.film-details__comment-input`).value = currentComment;
     });
   }
 
@@ -340,6 +345,12 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   getData() {
     const form = this.getElement().querySelector(`.film-details__inner`);
     const formData = new FormData(form);
+    return {
+      comment: formData.get(`comment`),
+      emoji: formData.get(`comment-emoji`),
+      oldMovieData: this._filmCard
+    };
   }
+
 
 }
