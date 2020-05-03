@@ -2,7 +2,7 @@ import {RenderPosition} from '../utils/render.js';
 import FilmsListComponent from '../components/films-list.js';
 import ShowMoreButtonComponent from '../components/show-more-button.js';
 import * as appConst from '../const.js';
-import MovieController from './movie.js';
+import MovieController, {Mode} from './movie.js';
 import {SortType} from '../const.js';
 
 /** Контроллер списка фильмов */
@@ -31,8 +31,8 @@ export default class FilmsBoardController {
     this._showMoreButtonComponent = null;
 
     this._showedMainMovieControllers = [];
-    this._showedTopRatedMoviewControllers = [];
-    this._showedMostCommentedMoviewControllers = [];
+    this._showedTopRatedMovieControllers = [];
+    this._showedMostCommentedMovieControllers = [];
     this._reset();
 
     this._onShowMoreButtonClick = this._onShowMoreButtonClick.bind(this);
@@ -73,7 +73,8 @@ export default class FilmsBoardController {
    */
   _renderFilmCards(container, movies) {
     return movies.map((movie) => {
-      const movieController = new MovieController(container, this._popupContainer, this._onDataChange, this._onViewChange);
+      const movieController = new MovieController(container, this._popupContainer, movie.id, this._onDataChange,
+          this._onViewChange);
 
       movieController.render(movie);
 
@@ -118,7 +119,7 @@ export default class FilmsBoardController {
     * @private
    */
   _resetTopRated() {
-    this._resetShowedMovieControllers(this._showedTopRatedMoviewControllers);
+    this._resetShowedMovieControllers(this._showedTopRatedMovieControllers);
 
     if (this._topRatedFilmsListComponent) {
       this._topRatedFilmsListComponent.remove();
@@ -131,7 +132,7 @@ export default class FilmsBoardController {
    * @private
    */
   _resetMostCommented() {
-    this._resetShowedMovieControllers(this._showedMostCommentedMoviewControllers);
+    this._resetShowedMovieControllers(this._showedMostCommentedMovieControllers);
 
     if (this._mostCommntedFilmsListComponent) {
       this._mostCommntedFilmsListComponent.remove();
@@ -236,7 +237,7 @@ export default class FilmsBoardController {
    */
   renderTopRated() {
     this._resetTopRated();
-    [this._topRatedFilmsListComponent, this._showedTopRatedMoviewControllers] =
+    [this._topRatedFilmsListComponent, this._showedTopRatedMovieControllers] =
       this._renderExtraMovies(`Top rated`, (a, b) => b.rating - a.rating,
           (movie) => movie.rating > 0);
   }
@@ -247,7 +248,7 @@ export default class FilmsBoardController {
   renderMostCommented() {
     this._resetMostCommented();
 
-    [this._mostCommntedFilmsListComponent, this._showedMostCommentedMoviewControllers] =
+    [this._mostCommntedFilmsListComponent, this._showedMostCommentedMovieControllers] =
       this._renderExtraMovies(`Most commented`, (a, b) => b.comments.length - a.comments.length,
           (movie) => movie.comments.length > 0);
   }
@@ -266,19 +267,37 @@ export default class FilmsBoardController {
 
     if (isSuccess) {
       movieController.render(newData);
+
+      // Перерисовываем карточки в других списках
+      const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
+          this._showedTopRatedMovieControllers).filter((it) => it.movieId === newData.id && it !== movieController);
+      // debugger;
+      showedSameMovieControllers.forEach((it) => {
+        it.forceRender = true;
+        it.render(newData);
+        it.forceRender = false;
+      });
     }
   }
 
   /**
    * Обработчик изменения отображения
+   * @param {string} movieMode - Режим отображения
    * @private
    */
-  _onViewChange() {
-    this._showedMainMovieControllers.forEach((it) => it.setDefaultView());
+  _onViewChange(movieMode) {
+    switch (movieMode) {
+      case Mode.DEFAULT :
+        this.renderMostCommented();
+        break;
+      case Mode.DETAIL:
+        this._showedMainMovieControllers.forEach((it) => it.setDefaultView());
+    }
   }
 
   _onFilterChange() {
     this._sortMenuComponent.setSortType(SortType.DEFAULT);
     this.render();
   }
+
 }

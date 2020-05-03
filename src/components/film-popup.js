@@ -28,6 +28,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     this._addToWatchListClickHandler = null;
     this._markAsWatchedListClickHandler = null;
     this._favoriteClickHandler = null;
+    this._commentsListClickHandler = null;
     this._filmCard = filmCard;
 
     this.initPopup();
@@ -97,7 +98,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
    * @return {string} - Шаблон отрисовки комментариев
    */
   _createCommentItemTemplate(comment) {
-    const {text, emoji, author, date} = comment;
+    const {id, text, emoji, author, date} = comment;
     return `
     <li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -108,7 +109,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${moment(date).fromNow()}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-comment-id="${id}">Delete</button>
         </p>
       </div>
     </li>`;
@@ -296,12 +297,28 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
       .addEventListener(`click`, handler);
   }
 
+  setCommentsListClickHandler(handler) {
+    this._commentsListClickHandler = handler;
+    this.getElement().querySelector(`.film-details__comments-list`)
+      .addEventListener(`click`, (evt) => {
+        if (evt.target.tagName !== `BUTTON`) {
+          return;
+        }
+        evt.preventDefault();
+        this._elementScrollTop = this.getElement().scrollTop;
+
+        handler(evt.target.dataset.commentId);
+      });
+  }
+
   recoveryListeners() {
     this.setClosePopupClickHandler(this._closePopupClickHandler);
     this.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
     this.setMarkAsWatchedListClickHandler(this._markAsWatchedListClickHandler);
     this.setFavoriteClickHandler(this._favoriteClickHandler);
+    this.setCommentsListClickHandler(this._commentsListClickHandler);
     this._setAddEmojiClickHandler();
+
   }
 
   reRender(filmCard) {
@@ -318,6 +335,11 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
    */
   setFilmCard(filmCard) {
     this._filmCard = filmCard;
+  }
+
+  getData() {
+    const form = this.getElement().querySelector(`.film-details__inner`);
+    const formData = new FormData(form);
   }
 
 }

@@ -69,7 +69,7 @@ const generateFilmComment = ()=> {
 /**
  * Генерация массива комментариев
  * @param {number} count Количество коментариев
- * @return {{date: string, emoji: string, author: string, text: string}[]} Массив комментариев
+ * @return {{date: Date, emoji: *, author: *, id: string, text: *}[]} Массив комментариев
  */
 const generateFilmComments = (count)=> {
   return new Array(count)
