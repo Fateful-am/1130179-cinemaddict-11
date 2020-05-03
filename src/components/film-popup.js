@@ -1,6 +1,7 @@
 import moment from 'moment';
 import AbstractRenderComponent from './abstract-render-component';
 import {formatDuration} from '../utils.js';
+import {encode} from 'he';
 
 // Типы Emoji
 const EmojiType = {
@@ -101,7 +102,8 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
    * @return {string} - Шаблон отрисовки комментариев
    */
   _createCommentItemTemplate(comment) {
-    const {id, text, emoji, author, date} = comment;
+    const {id, text: currentText, emoji, author, date} = comment;
+    const text = encode(currentText);
     return `
     <li class="film-details__comment">
       <span class="film-details__comment-emoji">
