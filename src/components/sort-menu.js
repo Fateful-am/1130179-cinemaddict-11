@@ -1,11 +1,6 @@
 import AbstractRenderComponent from './abstract-render-component';
+import {SortType} from '../const';
 
-
-export const SortType = {
-  DEFAULT: `default`,
-  DATE: `date`,
-  RATING: `rating`,
-};
 
 /** Компонент меню сортировки
  * @extends AbstractRenderComponent
@@ -45,11 +40,13 @@ export default class SortMenuComponent extends AbstractRenderComponent {
   }
 
   /**
-   * Текущий тип сортировки
-   * @return {string} - Текущий тип сортировки
+   * Устанавливает текущий тип сортировки
+   * @param {string} sortType - Тип сортировки
    */
-  getSortType() {
-    return this._currenSortType;
+  setSortType(sortType) {
+    this._currenSortType = sortType;
+    this._clickHandler(this._currenSortType);
+    this.reRender();
   }
 
   /**

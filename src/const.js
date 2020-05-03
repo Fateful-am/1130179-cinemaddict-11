@@ -7,6 +7,13 @@ export const FilterType = {
   HISTORY: `History`,
   FAVORITES: `Favorites`
 };
+
+export const SortType = {
+  DEFAULT: `default`,
+  DATE: `date`,
+  RATING: `rating`,
+};
+
 // Жанры фильмов
 export const GENRES = [`Musical`, `Western`, `Drama`, `Comedy`, `Cartoon`, `Mystery`, `Film-Noir`, `Sci-Fi`];
 // Максимальная длина описания фильма

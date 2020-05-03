@@ -12,10 +12,7 @@ export default class Movies {
 
   getMoviesByFilter(filterType) {
     const allMovies = this.getMoviesAll();
-
     switch (filterType) {
-      case FilterType.ALL:
-        return allMovies;
       case FilterType.FAVORITES:
         return allMovies.filter((movie) => movie.addedToFavorite);
       case FilterType.HISTORY:
@@ -23,7 +20,7 @@ export default class Movies {
       case FilterType.WATCH_LIST:
         return allMovies.filter((movie) => movie.addedToWatchlist);
       default:
-        return [];
+        return allMovies.slice();
     }
   }
 
@@ -66,4 +63,9 @@ export default class Movies {
     this._activeFilterType = filterType;
     this._callHandlers(this._filterChangeHandlers);
   }
+
+  setFilterChangeHandler(handler) {
+    this._filterChangeHandlers.push(handler);
+  }
+
 }
