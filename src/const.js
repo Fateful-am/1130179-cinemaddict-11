@@ -28,7 +28,7 @@ export const MAX_DESCRIPTION_LENGTH = 140;
 // Количество карточек фильмов в экстра контейнере
 export const EXTRA_FILM_CARDS_COUNT = 2;
 // Общее количество карточек фильмов
-export const FILM_CARDS_COUNT = 14;
+export const FILM_CARDS_COUNT = 41;
 // Количество карточек фильмов показываемых при старте
 export const SHOWING_FILM_CARDS_COUNT_ON_START = 5;
 // Количество карточек фильмов добавляемых при нажатии на кнопку "Load More"

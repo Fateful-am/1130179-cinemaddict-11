@@ -85,7 +85,7 @@ export default class Statistics extends AbstractRenderComponent {
       if (evt.target.tagName !== `LABEL`) {
         return;
       }
-      this._activeStatisticsPeriod = evt.target.htmlFor.split(`-`)[1];
+      this._activeStatisticsPeriod = evt.target.htmlFor.split(`-`).slice(1).join(`-`);
       this.reRender();
     });
   }

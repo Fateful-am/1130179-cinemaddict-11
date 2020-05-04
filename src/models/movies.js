@@ -76,6 +76,10 @@ export default class Movies {
     return watchedMovies.length;
   }
 
+  getMovieCount() {
+    return this._movies.length;
+  }
+
   getStatistics(statisticsPeriod) {
     let fromDate = 0;
     switch (statisticsPeriod) {
