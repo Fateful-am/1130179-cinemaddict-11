@@ -9,7 +9,7 @@ import {SortType} from '../const.js';
 export default class FilmsBoardController {
   /**
    * @constructor
-   * @param {Element} container - Контайнер для списка
+   * @param {AbstractComponent} container - Контайнер для списка
    * @param {Element} popupContainer - Контейнер для попапа
    * @param {SortMenuComponent} sortMenuComponent - Компонент меню сортировки
    * @param {Movies} moviesModel - Модель с фильмами
@@ -145,11 +145,11 @@ export default class FilmsBoardController {
 
     // Если фильмов нет - показываем заглушку
     if (movies.length === 0) {
-      this._mainFilmsListComponent = new FilmsListComponent(this._container, RenderPosition.AFTERBEGIN, false, `There are no movies in our database`, true);
+      this._mainFilmsListComponent = new FilmsListComponent(this._container.getElement(), RenderPosition.AFTERBEGIN, false, `There are no movies in our database`, true);
       return false;
     }
 
-    this._mainFilmsListComponent = new FilmsListComponent(this._container, RenderPosition.AFTERBEGIN, false, `All movies. Upcoming`);
+    this._mainFilmsListComponent = new FilmsListComponent(this._container.getElement(), RenderPosition.AFTERBEGIN, false, `All movies. Upcoming`);
     return true;
   }
 
@@ -224,7 +224,7 @@ export default class FilmsBoardController {
     movies = movies.slice(0, appConst.EXTRA_FILM_CARDS_COUNT).filter(filterFunction);
 
     if (movies.length > 0) {
-      const filmsListComponent = new FilmsListComponent(this._container, RenderPosition.BEFOREEND, true, header);
+      const filmsListComponent = new FilmsListComponent(this._container.getElement(), RenderPosition.BEFOREEND, true, header);
       const showedExtraMovieControllers = this._renderFilmCards(filmsListComponent.cardContainer, movies);
       return [filmsListComponent, showedExtraMovieControllers];
     } else {
@@ -300,4 +300,11 @@ export default class FilmsBoardController {
     this.render();
   }
 
+  hide() {
+    this._container.hide();
+  }
+
+  show() {
+    this._container.show();
+  }
 }

@@ -22,7 +22,7 @@ export default class SiteController {
     this.footerStatisticsComponent = new FooterStatisticComponent(this._footerStatistics, RenderPosition.BEFOREEND);
     this._filmsComponent = new FilmsComponent(this._main, RenderPosition.BEFOREEND);
 
-    this._filmsBoardController = new FilmsBoardController(this._filmsComponent.getElement(), this._body, this._sortMenuComponent, this._moviesModel);
+    this._filmsBoardController = new FilmsBoardController(this._filmsComponent, this._body, this._sortMenuComponent, this._moviesModel);
   }
 
   /**
