@@ -1,6 +1,4 @@
 // Список имен фильтров
-export const FILTER_NAMES = [`All movies`, `Watchlist`, `History`, `Favorites`];
-
 export const FilterType = {
   ALL: `All movies`,
   WATCH_LIST: `Watchlist`,
@@ -12,6 +10,14 @@ export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,
   RATING: `rating`,
+};
+
+export const StatisticsPeriod = {
+  ALL_TIME: `all-time`,
+  TODAY: `today`,
+  WEEK: `week`,
+  MONTH: `month`,
+  YEAR: `year`
 };
 
 // Жанры фильмов

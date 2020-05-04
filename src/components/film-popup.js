@@ -136,9 +136,9 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   getTemplate() {
     const {title, originTitle, rating, director, writers, actors, releaseDate, duration, country,
       genres, poster, description, comments, age, addedToWatchlist, markedAsWatched, addedToFavorite} = this._filmCard;
-    const genreSuffix = genres.split(` `).length === 1 ? `` : `s`;
+    const genreSuffix = genres.length === 1 ? `` : `s`;
     const releaseDateString = moment(releaseDate).format(`DD MMMM YYYY`);
-    const genresString = this._renderGenres(genres.split(` `));
+    const genresString = this._renderGenres(genres);
     const commentsString = this._renderComments(comments);
     const filmDetailsCommentsCount = comments.length;
     const addedToWatchlistChecked = addedToWatchlist ? `checked` : ``;

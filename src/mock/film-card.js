@@ -177,10 +177,15 @@ const getRandomActors = () => {
 
 /**
  * Генерация набора жанров фильма
- * @return {string} Жанры фильмов, разделитель - пробел
+ * @return {[string]} Жанры фильмов, разделитель - пробел
  */
 const getRandomGenres = () => {
-  return getJoinRandomArrayElements(GENRES, 1, MAX_RANDOM_GENRES_COUNT, ``);
+  const genreCount = getRandomIntegerNumber(1, MAX_RANDOM_GENRES_COUNT);
+  const tempArray = [];
+  for (let i = 1; i <= genreCount; i++) {
+    tempArray.push(getRandomArrayItem(GENRES).trim());
+  }
+  return tempArray;
 };
 
 /**
