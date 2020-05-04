@@ -3,7 +3,6 @@ import FilterController from './filter.js';
 import SortMenuComponent from '../components/sort-menu.js';
 import FooterStatisticComponent from '../components/footer-statistics.js';
 import FilmsComponent from '../components/films.js';
-import Statistics from '../components/statistics.js';
 import FilmsBoardController from './films-board.js';
 
 import {RenderPosition} from '../utils/render';
@@ -21,7 +20,6 @@ export default class SiteController {
     this._filterController = new FilterController(this._main, moviesModel);
     this._sortMenuComponent = new SortMenuComponent(this._main, RenderPosition.BEFOREEND);
     this.footerStatisticsComponent = new FooterStatisticComponent(this._footerStatistics, RenderPosition.BEFOREEND);
-    this._statsComponent = new Statistics(this._main, RenderPosition.BEFOREEND, this._moviesModel);
     this._filmsComponent = new FilmsComponent(this._main, RenderPosition.BEFOREEND);
 
     this._filmsBoardController = new FilmsBoardController(this._filmsComponent, this._body, this._sortMenuComponent, this._moviesModel);

@@ -1,6 +1,9 @@
 import AbstractRenderComponent from './abstract-render-component';
 import {StatisticsPeriod} from '../const';
 import moment from 'moment';
+import Chart from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
 
 export default class Statistics extends AbstractRenderComponent {
   constructor(container, place, moviesModel) {
@@ -23,6 +26,7 @@ export default class Statistics extends AbstractRenderComponent {
   getTemplate() {
     const statisticsPeriodsMarkup = Object.values(StatisticsPeriod).map((it) => this._getStatisticPeriodMarkup(it)).join(`\n`);
     const {watchedCount, duration, genresStatistics} = this._moviesModel.getStatistics();
+
     const topGenre = genresStatistics[0].name;
     const rank = `Sci-Fighter`;
 
@@ -62,5 +66,91 @@ export default class Statistics extends AbstractRenderComponent {
       </div>
     </section>`
     );
+  }
+
+  render() {
+    super.render();
+    this._chart = this.renderChart();
+  }
+
+  reRender() {
+    super.reRender();
+    this._chart = this.renderChart();
+  }
+
+  recoveryListeners() {}
+
+  renderChart() {
+    if (this._chart) {
+      this._chart.destroy();
+    }
+    const {genresStatistics} = this._moviesModel.getStatistics();
+    const BAR_HEIGHT = 50;
+    const statisticCtx = document.querySelector(`.statistic__chart`);
+
+    // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
+
+    if (genresStatistics.length === 1 && genresStatistics[0].name === ``) {
+      statisticCtx.height = 0;
+      return null;
+    }
+    statisticCtx.height = BAR_HEIGHT * genresStatistics.length;
+
+    return new Chart(statisticCtx, {
+      plugins: [ChartDataLabels],
+      type: `horizontalBar`,
+      data: {
+        labels: genresStatistics.map((it) => it.name),
+        datasets: [{
+          data: genresStatistics.map((it) => it.count),
+          backgroundColor: `#ffe800`,
+          hoverBackgroundColor: `#ffe800`,
+          anchor: `start`
+        }]
+      },
+      options: {
+        plugins: {
+          datalabels: {
+            font: {
+              size: 20
+            },
+            color: `#ffffff`,
+            anchor: `start`,
+            align: `start`,
+            offset: 40,
+          }
+        },
+        scales: {
+          yAxes: [{
+            ticks: {
+              fontColor: `#ffffff`,
+              padding: 100,
+              fontSize: 20
+            },
+            gridLines: {
+              display: false,
+              drawBorder: false
+            },
+            barThickness: 24
+          }],
+          xAxes: [{
+            ticks: {
+              display: false,
+              beginAtZero: true
+            },
+            gridLines: {
+              display: false,
+              drawBorder: false
+            },
+          }],
+        },
+        legend: {
+          display: false
+        },
+        tooltips: {
+          enabled: false
+        }
+      }
+    });
   }
 }

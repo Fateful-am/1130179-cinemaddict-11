@@ -4,6 +4,8 @@ import ShowMoreButtonComponent from '../components/show-more-button.js';
 import * as appConst from '../const.js';
 import MovieController, {Mode} from './movie.js';
 import {SortType} from '../const.js';
+import Statistics from '../components/statistics';
+import {FilterType} from '../const';
 
 /** Контроллер списка фильмов */
 export default class FilmsBoardController {
@@ -24,6 +26,7 @@ export default class FilmsBoardController {
     this._sortMenuComponent.setSortTypeChangeHandler((sortType) => {
       this._renderMainFilmList(this._getSortedFilms(sortType));
     });
+    this._statsComponent = new Statistics(this._container.getElement().parentElement, RenderPosition.BEFOREEND, this._moviesModel);
 
     this._mainFilmsListComponent = null;
     this._topRatedFilmsListComponent = null;
@@ -155,8 +158,17 @@ export default class FilmsBoardController {
 
   _renderMainFilmList(movies) {
     if (!this._renderMainFilmListComponent(movies)) {
+      // debugger;
+      if (this._moviesModel.activeFilterType === FilterType.STATS) {
+        this._sortMenuComponent.hide();
+        this._mainFilmsListComponent.hide();
+        this._statsComponent.show();
+      }
       return;
     }
+    this._sortMenuComponent.show();
+    this._mainFilmsListComponent.show();
+    this._statsComponent.hide();
 
     this._showedMainMovieControllers = this._renderFilmCards(this._mainFilmsListComponent.cardContainer,
         movies.slice(0, appConst.SHOWING_FILM_CARDS_COUNT_ON_START));
@@ -277,6 +289,8 @@ export default class FilmsBoardController {
         it.render(newData);
         it.forceRender = false;
       });
+
+      this._statsComponent.reRender();
     }
   }
 
