@@ -71,6 +71,11 @@ export default class Movies {
     this._filterChangeHandlers.push(handler);
   }
 
+  getWatchedCount() {
+    const watchedMovies = this._movies.filter((it) => it.markedAsWatched);
+    return watchedMovies.length;
+  }
+
   getStatistics(statisticsPeriod) {
     let fromDate = 0;
     switch (statisticsPeriod) {

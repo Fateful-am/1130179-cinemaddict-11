@@ -45,3 +45,18 @@ export const RANK_RATINGS = [
   {rank: `fan`, minWatchCount: 20},
   {rank: `movie buff`, minWatchCount: 21}
 ];
+/**
+ * возвращает звание пользователя
+ * @param {number} watchedCount количество просмотров пользователя
+ * @return {string}
+ */
+export const getProfileRating = (watchedCount) =>{
+  return RANK_RATINGS.filter((it, i, array) => {
+    if (i === 0) {
+      return watchedCount === it.minWatchCount;
+    }
+    return i < array.length - 1
+      ? watchedCount > array[i - 1].minWatchCount && watchedCount <= it.minWatchCount
+      : watchedCount >= it.minWatchCount;
+  })[0].rank;
+};

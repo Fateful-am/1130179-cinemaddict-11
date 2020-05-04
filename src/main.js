@@ -13,7 +13,6 @@ moviesModel.setMovies(filmCards);
 const siteController = new SiteController(moviesModel);
 
 // Заполнение данными разметки из моки
-siteController.profileRatingComponent.watchedCount = appConst.USER_WATCHED_COUNT;
 siteController.footerStatisticsComponent.movieCont = appConst.MOVIE_COUNT;
 
 

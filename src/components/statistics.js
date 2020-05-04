@@ -1,5 +1,5 @@
 import AbstractRenderComponent from './abstract-render-component';
-import {StatisticsPeriod} from '../const';
+import {getProfileRating, StatisticsPeriod} from '../const';
 import moment from 'moment';
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -28,7 +28,7 @@ export default class Statistics extends AbstractRenderComponent {
     const {watchedCount, duration, genresStatistics} = this._moviesModel.getStatistics(this._activeStatisticsPeriod);
 
     const topGenre = genresStatistics[0].name;
-    const rank = `Sci-Fighter`;
+    const rank = getProfileRating(this._moviesModel.getWatchedCount());
 
     const durationHours = Math.floor(moment.duration(duration, `m`).asHours());
     const durationMinutes = moment.duration(duration, `m`).minutes();

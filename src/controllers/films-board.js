@@ -11,12 +11,14 @@ import {FilterType} from '../const';
 export default class FilmsBoardController {
   /**
    * @constructor
+   * @param {SiteController} siteController - Контроллер индексной страницы
    * @param {AbstractComponent} container - Контайнер для списка
    * @param {Element} popupContainer - Контейнер для попапа
    * @param {SortMenuComponent} sortMenuComponent - Компонент меню сортировки
    * @param {Movies} moviesModel - Модель с фильмами
    */
-  constructor(container, popupContainer, sortMenuComponent, moviesModel) {
+  constructor(siteController, container, popupContainer, sortMenuComponent, moviesModel) {
+    this._siteController = siteController;
     this._container = container;
     this._popupContainer = popupContainer;
     this._moviesModel = moviesModel;
@@ -27,6 +29,8 @@ export default class FilmsBoardController {
       this._renderMainFilmList(this._getSortedFilms(sortType));
     });
     this._statsComponent = new Statistics(this._container.getElement().parentElement, RenderPosition.BEFOREEND, this._moviesModel);
+    this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
+
 
     this._mainFilmsListComponent = null;
     this._topRatedFilmsListComponent = null;
@@ -289,8 +293,8 @@ export default class FilmsBoardController {
         it.render(newData);
         it.forceRender = false;
       });
-
       this._statsComponent.reRender();
+      this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
     }
   }
 
