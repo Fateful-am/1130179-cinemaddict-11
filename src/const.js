@@ -1,5 +1,19 @@
 // Список имен фильтров
 export const FILTER_NAMES = [`All movies`, `Watchlist`, `History`, `Favorites`];
+
+export const FilterType = {
+  ALL: `All movies`,
+  WATCH_LIST: `Watchlist`,
+  HISTORY: `History`,
+  FAVORITES: `Favorites`
+};
+
+export const SortType = {
+  DEFAULT: `default`,
+  DATE: `date`,
+  RATING: `rating`,
+};
+
 // Жанры фильмов
 export const GENRES = [`Musical`, `Western`, `Drama`, `Comedy`, `Cartoon`, `Mystery`, `Film-Noir`, `Sci-Fi`];
 // Максимальная длина описания фильма

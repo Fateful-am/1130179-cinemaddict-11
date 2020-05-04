@@ -3,7 +3,6 @@ import AbstractRenderComponent from './abstract-render-component';
 import {formatDuration} from '../utils.js';
 import moment from 'moment';
 
-
 const ITEM_ACTIVE_CLASS = `film-card__controls-item--active`;
 
 /** Компонент карточки фильма

@@ -1,5 +1,5 @@
 import AbstractRenderComponent from './abstract-render-component';
-import {FILTER_NAMES} from '../const.js';
+import {FilterType} from '../const.js';
 
 /** Компонент главного меню сайта
  * @extends AbstractRenderComponent
@@ -8,11 +8,13 @@ export default class FilterMenuComponent extends AbstractRenderComponent {
   constructor(container, place) {
     super(container, place);
 
+    this._filterChangeHandler = null;
     // Установка фильтра по умолчанию
-    this._filters = FILTER_NAMES.map((it) => {
+    this._filters = Object.values(FilterType).map((filterType) => {
       return {
-        name: it,
+        name: filterType,
         count: 0,
+        checked: filterType === FilterType.ALL
       };
     });
 
@@ -20,26 +22,26 @@ export default class FilterMenuComponent extends AbstractRenderComponent {
   }
   /**
    * Генерирует разметку пункта меню фильтра
-   * @param {{name: string, count: number}} filter Объект с параметрамерами фильтра
-   * @param {boolean} isActive Признак активности пункта меню
+   * @param {{name: string, count: number, checked: boolean}} filter Объект с параметрамерами фильтра
    * @return {string} Разметка пункта меню фильтра
    */
-  _createFilterMarkup(filter, isActive) {
-    const {name, count} = filter;
-    const activeClass = isActive ? `main-navigation__item--active` : ``;
-    const anchorText = name.lower;
+  _createFilterMarkup(filter) {
+    const {name, count, checked} = filter;
+    const activeClass = checked ? `main-navigation__item--active` : ``;
+    const [anchorText, countSpan] = name === FilterType.ALL ?
+      [`all`, ``] :
+      [name.toLowerCase(), `<span class="main-navigation__item-count">${count}</span>`];
+
     return (
-      `<a href="#${anchorText}" class="main-navigation__item ${activeClass}">${name}<span class="main-navigation__item-count">${count}</span></a>`
+      `<a href="#${anchorText}" class="main-navigation__item ${activeClass}">${name}${countSpan}</a>`
     );
   }
 
   getTemplate() {
-    const filterMarkup = this._filters.slice(1).map((it) => this._createFilterMarkup(it, false)).join(`\n`);
-    const allFilterName = this._filters[0].name;
+    const filterMarkup = this._filters.map((it) => this._createFilterMarkup(it)).join(`\n`);
     return (
       `<nav class="main-navigation">
       <div class="main-navigation__items">
-        <a href="#all" class="main-navigation__item main-navigation__item--active">${allFilterName}</a>
         ${filterMarkup}
       </div>
       <a href="#stats" class="main-navigation__additional">Stats</a>
@@ -56,6 +58,19 @@ export default class FilterMenuComponent extends AbstractRenderComponent {
     this.reRender();
   }
 
-  recoveryListeners() {}
+  setFilterChangeHandler(handler) {
+    this._filterChangeHandler = handler;
+    this.getElement().querySelector(`.main-navigation__items`).addEventListener(`click`, (evt) => {
+      if (evt.target.tagName !== `A`) {
+        return;
+      }
+      let filterName = evt.target.hash.slice(1);
+      filterName = filterName === `all` ? FilterType.ALL : filterName.charAt(0).toUpperCase() + filterName.slice(1);
+      handler(filterName);
+    });
+  }
 
+  recoveryListeners() {
+    this.setFilterChangeHandler(this._filterChangeHandler);
+  }
 }

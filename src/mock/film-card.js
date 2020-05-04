@@ -211,6 +211,7 @@ const getRandomReleaseDate = (yearFrom, yearTo) => {
 const generateFilmCard = ()=> {
   const filmIndex = getRandomArrayIndex(filmTitles);
   return {
+    id: String(new Date() + Math.random()),
     country: getRandomArrayItem(filmCountry),
     comments: generateFilmComments(getRandomIntegerNumber(MIN_RANDOM_COMMENTS_COUNT, MAX_RANDOM_COMMENTS_COUNT))
       .sort((a, b) => {
