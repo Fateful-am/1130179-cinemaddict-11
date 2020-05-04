@@ -158,12 +158,12 @@ export default class FilmsBoardController {
 
   _renderMainFilmList(movies) {
     if (!this._renderMainFilmListComponent(movies)) {
-      // debugger;
       if (this._moviesModel.activeFilterType === FilterType.STATS) {
         this._sortMenuComponent.hide();
         this._mainFilmsListComponent.hide();
         this._statsComponent.show();
       }
+
       return;
     }
     this._sortMenuComponent.show();

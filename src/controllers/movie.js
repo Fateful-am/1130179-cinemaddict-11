@@ -124,6 +124,7 @@ export default class MovieController {
       it.setMarkAsWatchedListClickHandler(() => {
         this._onDataChange(this, filmCard, Object.assign({}, filmCard, {
           markedAsWatched: !filmCard.markedAsWatched,
+          watchingDate: filmCard.markedAsWatched ? 0 : new Date()
         }));
       });
 

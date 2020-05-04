@@ -1,4 +1,4 @@
-import {getRandomArrayItem, getRandomIntegerNumber} from '../utils';
+import {getRandomArrayItem, getRandomCommentDateTime} from '../utils';
 
 // Число возможных дней до текущей даты для даты комментария
 const COMMENTS_PAST_DAYS = 7;
@@ -39,17 +39,6 @@ const commentTexts = [
   `Ничто так не мешает естественности, как желание казаться естественным.`
 ];
 
-/**
- * Генерация случайной даты в прошлом
- * @param {number} pastSinceDays Сколько захватить дней до текущей даты
- * @return {Date} Дата в прошлом
- */
-const getRandomCommentDateTime = (pastSinceDays) => {
-  const targetDate = new Date();
-  targetDate.setDate(targetDate.getDate() - getRandomIntegerNumber(0, pastSinceDays) - 1);
-  targetDate.setHours(getRandomIntegerNumber(0, 23), getRandomIntegerNumber(0, 59));
-  return targetDate;
-};
 
 /**
  * Генерация комментария к фильму

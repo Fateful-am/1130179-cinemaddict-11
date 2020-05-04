@@ -1,4 +1,5 @@
-import {FilterType} from '../const';
+import {FilterType, StatisticsPeriod} from '../const';
+import moment from 'moment';
 
 export default class Movies {
   constructor() {
@@ -70,8 +71,26 @@ export default class Movies {
     this._filterChangeHandlers.push(handler);
   }
 
-  getStatistics() {
-    const watchedMovies = this._movies.filter((it) => it.markedAsWatched);
+  getStatistics(statisticsPeriod) {
+    let fromDate = 0;
+    switch (statisticsPeriod) {
+      case StatisticsPeriod.ALL_TIME:
+        fromDate = 0;
+        break;
+      case StatisticsPeriod.TODAY:
+        fromDate = moment().startOf(`date`);
+        break;
+      case StatisticsPeriod.WEEK:
+        fromDate = moment().subtract(1, `weeks`);
+        break;
+      case StatisticsPeriod.MONTH:
+        fromDate = moment().subtract(1, `months`);
+        break;
+      case StatisticsPeriod.YEAR:
+        fromDate = moment().subtract(1, `years`);
+    }
+
+    const watchedMovies = this._movies.filter((it) => it.markedAsWatched && it.watchingDate > fromDate);
 
     const genreGroups = watchedMovies.reduce((prev, curr) => {
       curr.genres.forEach((it) => {

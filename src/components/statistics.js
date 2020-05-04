@@ -25,7 +25,7 @@ export default class Statistics extends AbstractRenderComponent {
 
   getTemplate() {
     const statisticsPeriodsMarkup = Object.values(StatisticsPeriod).map((it) => this._getStatisticPeriodMarkup(it)).join(`\n`);
-    const {watchedCount, duration, genresStatistics} = this._moviesModel.getStatistics();
+    const {watchedCount, duration, genresStatistics} = this._moviesModel.getStatistics(this._activeStatisticsPeriod);
 
     const topGenre = genresStatistics[0].name;
     const rank = `Sci-Fighter`;
@@ -71,6 +71,7 @@ export default class Statistics extends AbstractRenderComponent {
   render() {
     super.render();
     this._chart = this.renderChart();
+    this._setFilterItemClick();
   }
 
   reRender() {
@@ -78,13 +79,36 @@ export default class Statistics extends AbstractRenderComponent {
     this._chart = this.renderChart();
   }
 
-  recoveryListeners() {}
+  _setFilterItemClick() {
+    this.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      if (evt.target.tagName !== `LABEL`) {
+        return;
+      }
+      this._activeStatisticsPeriod = evt.target.htmlFor.split(`-`)[1];
+      this.reRender();
+    });
+  }
+
+  recoveryListeners() {
+    this._setFilterItemClick();
+  }
+
+  hide() {
+    super.hide();
+    this._activeStatisticsPeriod = StatisticsPeriod.ALL_TIME;
+  }
+
+  show() {
+    super.show();
+    this.reRender();
+  }
 
   renderChart() {
     if (this._chart) {
       this._chart.destroy();
     }
-    const {genresStatistics} = this._moviesModel.getStatistics();
+    const {genresStatistics} = this._moviesModel.getStatistics(this._activeStatisticsPeriod);
     const BAR_HEIGHT = 50;
     const statisticCtx = document.querySelector(`.statistic__chart`);
 
