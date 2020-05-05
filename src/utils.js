@@ -39,4 +39,16 @@ const formatDuration = (duration) => {
   return moment.utc(moment.duration(duration, `minutes`).asMilliseconds()).format(`H[h] m[m]`);
 };
 
+/**
+ * Генерация случайной даты в прошлом
+ * @param {number} pastSinceDays Сколько захватить дней до текущей даты
+ * @return {Date} Дата в прошлом
+ */
+export const getRandomCommentDateTime = (pastSinceDays) => {
+  const targetDate = new Date();
+  targetDate.setDate(targetDate.getDate() - getRandomIntegerNumber(0, pastSinceDays) - 1);
+  targetDate.setHours(getRandomIntegerNumber(0, 23), getRandomIntegerNumber(0, 59));
+  return targetDate;
+};
+
 export {getRandomArrayItem, getRandomIntegerNumber, getRandomArrayIndex, formatDuration};

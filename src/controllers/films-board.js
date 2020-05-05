@@ -4,17 +4,21 @@ import ShowMoreButtonComponent from '../components/show-more-button.js';
 import * as appConst from '../const.js';
 import MovieController, {Mode} from './movie.js';
 import {SortType} from '../const.js';
+import Statistics from '../components/statistics';
+import {FilterType} from '../const';
 
 /** Контроллер списка фильмов */
 export default class FilmsBoardController {
   /**
    * @constructor
-   * @param {Element} container - Контайнер для списка
+   * @param {SiteController} siteController - Контроллер индексной страницы
+   * @param {AbstractComponent} container - Контайнер для списка
    * @param {Element} popupContainer - Контейнер для попапа
    * @param {SortMenuComponent} sortMenuComponent - Компонент меню сортировки
    * @param {Movies} moviesModel - Модель с фильмами
    */
-  constructor(container, popupContainer, sortMenuComponent, moviesModel) {
+  constructor(siteController, container, popupContainer, sortMenuComponent, moviesModel) {
+    this._siteController = siteController;
     this._container = container;
     this._popupContainer = popupContainer;
     this._moviesModel = moviesModel;
@@ -24,6 +28,9 @@ export default class FilmsBoardController {
     this._sortMenuComponent.setSortTypeChangeHandler((sortType) => {
       this._renderMainFilmList(this._getSortedFilms(sortType));
     });
+    this._statsComponent = new Statistics(this._container.getElement().parentElement, RenderPosition.BEFOREEND, this._moviesModel);
+    this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
+
 
     this._mainFilmsListComponent = null;
     this._topRatedFilmsListComponent = null;
@@ -145,18 +152,27 @@ export default class FilmsBoardController {
 
     // Если фильмов нет - показываем заглушку
     if (movies.length === 0) {
-      this._mainFilmsListComponent = new FilmsListComponent(this._container, RenderPosition.AFTERBEGIN, false, `There are no movies in our database`, true);
+      this._mainFilmsListComponent = new FilmsListComponent(this._container.getElement(), RenderPosition.AFTERBEGIN, false, `There are no movies in our database`, true);
       return false;
     }
 
-    this._mainFilmsListComponent = new FilmsListComponent(this._container, RenderPosition.AFTERBEGIN, false, `All movies. Upcoming`);
+    this._mainFilmsListComponent = new FilmsListComponent(this._container.getElement(), RenderPosition.AFTERBEGIN, false, `All movies. Upcoming`);
     return true;
   }
 
   _renderMainFilmList(movies) {
     if (!this._renderMainFilmListComponent(movies)) {
+      if (this._moviesModel.activeFilterType === FilterType.STATS) {
+        this._sortMenuComponent.hide();
+        this._mainFilmsListComponent.hide();
+        this._statsComponent.show();
+      }
+
       return;
     }
+    this._sortMenuComponent.show();
+    this._mainFilmsListComponent.show();
+    this._statsComponent.hide();
 
     this._showedMainMovieControllers = this._renderFilmCards(this._mainFilmsListComponent.cardContainer,
         movies.slice(0, appConst.SHOWING_FILM_CARDS_COUNT_ON_START));
@@ -224,7 +240,7 @@ export default class FilmsBoardController {
     movies = movies.slice(0, appConst.EXTRA_FILM_CARDS_COUNT).filter(filterFunction);
 
     if (movies.length > 0) {
-      const filmsListComponent = new FilmsListComponent(this._container, RenderPosition.BEFOREEND, true, header);
+      const filmsListComponent = new FilmsListComponent(this._container.getElement(), RenderPosition.BEFOREEND, true, header);
       const showedExtraMovieControllers = this._renderFilmCards(filmsListComponent.cardContainer, movies);
       return [filmsListComponent, showedExtraMovieControllers];
     } else {
@@ -277,6 +293,8 @@ export default class FilmsBoardController {
         it.render(newData);
         it.forceRender = false;
       });
+      this._statsComponent.reRender();
+      this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
     }
   }
 
@@ -300,4 +318,11 @@ export default class FilmsBoardController {
     this.render();
   }
 
+  hide() {
+    this._container.hide();
+  }
+
+  show() {
+    this._container.show();
+  }
 }

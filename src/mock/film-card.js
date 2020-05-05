@@ -1,6 +1,9 @@
-import {getRandomArrayIndex, getRandomIntegerNumber, getRandomArrayItem} from '../utils.js';
+import {getRandomArrayIndex, getRandomIntegerNumber, getRandomArrayItem, getRandomCommentDateTime} from '../utils.js';
 import {generateFilmComments} from './comment';
 import {GENRES} from '../const';
+
+
+const WATCHING_DATE_PAST_DAYS = 45;
 
 // Массив названий фильмов
 const filmTitles = [
@@ -177,10 +180,15 @@ const getRandomActors = () => {
 
 /**
  * Генерация набора жанров фильма
- * @return {string} Жанры фильмов, разделитель - пробел
+ * @return {[string]} Жанры фильмов, разделитель - пробел
  */
 const getRandomGenres = () => {
-  return getJoinRandomArrayElements(GENRES, 1, MAX_RANDOM_GENRES_COUNT, ``);
+  const genreCount = getRandomIntegerNumber(1, MAX_RANDOM_GENRES_COUNT);
+  const tempArray = [];
+  for (let i = 1; i <= genreCount; i++) {
+    tempArray.push(getRandomArrayItem(GENRES).trim());
+  }
+  return tempArray;
 };
 
 /**
@@ -223,7 +231,6 @@ const generateFilmCard = ()=> {
       }),
     releaseDate: getRandomReleaseDate(MIN_RANDOM_FILM_YEAR_RELEASE, MAX_RANDOM_FILM_YEAR_RELEASE),
     director: getRandomArrayItem(filmDirectors),
-    markedAsWatched: Math.random() > 0.5,
     rating: `${getRandomIntegerNumber(MIN_RANDOM_FILM_RATE, MAX_RANDOM_FILM_RATE - 1)}.${getRandomIntegerNumber(0, 9)}`,
     title: filmTitles[filmIndex],
     originTitle: filmTitles[filmIndex],
@@ -233,9 +240,11 @@ const generateFilmCard = ()=> {
     genres: getRandomGenres(),
     poster: filmPosters[filmIndex],
     description: `${getRandomSDescription()}.`,
+    age: getRandomIntegerNumber(0, 18),
     addedToWatchlist: Math.random() > 0.5,
-    addedToFavorite: Math.random() > 0.5,
-    age: getRandomIntegerNumber(0, 18)
+    markedAsWatched: Math.random() > 0.5,
+    watchingDate: getRandomCommentDateTime(WATCHING_DATE_PAST_DAYS),
+    addedToFavorite: Math.random() > 0.5
   };
 };
 
