@@ -7,8 +7,10 @@ import API from "./api.js";
 // Генерация карточек (Моки)
 // const filmCards = generateFilmCards(FILM_CARDS_COUNT);
 
+const AUTHORIZATION = `Basic dXNickBwYXNzd75yZAo=`;
+
 const moviesModel = new Movies();
-const api = new API();
+const api = new API(AUTHORIZATION);
 
 // Контроллер главной страницы
 const siteController = new SiteController(moviesModel);
