@@ -13,6 +13,7 @@ export default class Statistics extends AbstractRenderComponent {
     this._activeStatisticsPeriod = StatisticsPeriod.ALL_TIME;
 
     this.render();
+    this.hide();
   }
 
   _getStatisticPeriodMarkup(statisticPeriod) {
