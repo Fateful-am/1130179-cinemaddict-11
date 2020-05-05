@@ -103,11 +103,14 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
    */
   _createCommentItemTemplate(comment) {
     const {id, text: currentText, emoji, author, date} = comment;
+    if (!id) {
+      return ``;
+    }
     const text = encode(currentText);
     return `
     <li class="film-details__comment">
       <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${emoji}" width="55" height="55" alt="emoji-smile">
+        <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">
       </span>
       <div>
         <p class="film-details__comment-text">${text}</p>
@@ -157,7 +160,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./images/posters/${poster}" alt="">
+              <img class="film-details__poster-img" src="./${poster}" alt="">
               <p class="film-details__age">${age}+</p>
             </div>
             <div class="film-details__info">

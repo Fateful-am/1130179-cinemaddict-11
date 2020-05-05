@@ -2,13 +2,19 @@ import {FilterType, StatisticsPeriod} from '../const';
 import moment from 'moment';
 
 export default class Movies {
-  constructor() {
+  constructor(api) {
+    this._api = api;
+
     this._movies = [];
 
     this.activeFilterType = FilterType.ALL;
 
     this._dataChangeHandlers = [];
     this._filterChangeHandlers = [];
+  }
+
+  getComments(movieId) {
+    return this._api.getComments(movieId);
   }
 
   getMoviesByFilter(filterType) {
@@ -78,6 +84,14 @@ export default class Movies {
 
   getMovieCount() {
     return this._movies.length;
+  }
+
+  getMovieById(id) {
+    const index = this._movies.findIndex((it) => it.id === id);
+    if (index > -1) {
+      return this._movies[index];
+    }
+    return null;
   }
 
   getStatistics(statisticsPeriod) {

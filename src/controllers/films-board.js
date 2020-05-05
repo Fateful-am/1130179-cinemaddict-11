@@ -301,14 +301,23 @@ export default class FilmsBoardController {
   /**
    * Обработчик изменения отображения
    * @param {string} movieMode - Режим отображения
+   * @param {MovieController} movieController - Текущий фильм для попапа
    * @private
    */
-  _onViewChange(movieMode) {
+  _onViewChange(movieMode, movieController = null) {
     switch (movieMode) {
       case Mode.DEFAULT :
         this.renderMostCommented();
         break;
       case Mode.DETAIL:
+        const movie = this._moviesModel.getMovieById(movieController.movieId);
+        if (movie && movie.comments.length > 0 && !movie.comments[0].id) {
+          this._moviesModel.getComments(movieController.movieId)
+            .then((comments) => {
+              movie.comments = comments;
+              movieController.rerenderPopupComponent();
+            });
+        }
         this._showedMainMovieControllers.forEach((it) => it.setDefaultView());
     }
   }

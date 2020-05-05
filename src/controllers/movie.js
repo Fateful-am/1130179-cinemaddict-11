@@ -32,6 +32,7 @@ export default class MovieController {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
     this._showPopup = this._showPopup.bind(this);
     this._closePopup = this._closePopup.bind(this);
+    this.rerenderPopupComponent = this.rerenderPopupComponent.bind(this);
   }
 
   /**
@@ -79,12 +80,16 @@ export default class MovieController {
    * @private
    */
   _showPopup() {
-    this._onViewChange(Mode.DETAIL);
+    this._onViewChange(Mode.DETAIL, this);
     this._popupContainer.appendChild(this._filmPopupComponent.getElement());
     this._filmPopupComponent.initPopup();
-    this._filmPopupComponent.reRender();
+    this.rerenderPopupComponent();
     document.addEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DETAIL;
+  }
+
+  rerenderPopupComponent(movie) {
+    this._filmPopupComponent.reRender(movie);
   }
 
   /**
