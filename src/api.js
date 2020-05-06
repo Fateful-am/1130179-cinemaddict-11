@@ -1,5 +1,12 @@
 import Movie from "./models/movie.js";
 
+const Method = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
     return response;
@@ -9,42 +16,42 @@ const checkStatus = (response) => {
 };
 
 export default class API {
-  constructor(authorization) {
+  constructor(endPoint, authorization) {
     this._authorization = authorization;
-  }
-  _getHeaders() {
-    const headers = new Headers();
-    headers.append(`Authorization`, this._authorization);
-    headers.append(`Content-Type`, `application/json`);
-    return headers;
+    this._endPoint = endPoint;
   }
 
   getMovies() {
-    const headers = this._getHeaders();
-    return fetch(`https://11.ecmascript.pages.academy/cinemaddict/movies`, {headers})
-      .then(checkStatus)
+    return this._load({url: `movies`})
       .then((response) => response.json())
       .then(Movie.parseMovies);
   }
 
   getComments(movieId) {
-    const headers = this._getHeaders();
-    return fetch(`https://11.ecmascript.pages.academy/cinemaddict/comments/${movieId}`, {headers})
-      .then(checkStatus)
+    return this._load({url: `comments/${movieId}`})
       .then((response) => response.json())
       .then(Movie.parseComments);
   }
 
   updateMovie(id, data) {
-    const headers = this._getHeaders();
-    return fetch(`https://11.ecmascript.pages.academy/cinemaddict/movies/${id}`, {
-      method: `PUT`,
+    return this._load({
+      url: `movies/${id}`,
+      method: Method.PUT,
       body: JSON.stringify(data.toRAW()),
-      headers,
+      headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(checkStatus)
       .then((response) => response.json())
       .then(Movie.parseMovie);
+  }
+
+  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+    headers.append(`Authorization`, this._authorization);
+
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+      .then(checkStatus)
+      .catch((err) => {
+        throw err;
+      });
   }
 }
 
