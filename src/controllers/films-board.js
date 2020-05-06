@@ -295,7 +295,6 @@ export default class FilmsBoardController {
           // Перерисовываем карточки в других списках
           const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
               this._showedTopRatedMovieControllers).filter((it) => it.movieId === newData.id && it !== movieController);
-          // debugger;
           showedSameMovieControllers.forEach((it) => {
             it.forceRender = true;
             it.render(newData);
@@ -304,6 +303,16 @@ export default class FilmsBoardController {
           this._statsComponent.reRender();
           this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
         }
+      })
+      .catch(() => {
+        if (oldData.addedToWatchlist !== newData.addedToWatchlist) {
+          movieController.toggleFilmCardButtonClass(`add-to-watchlist`);
+        } else if (oldData.markedAsWatched !== newData.markedAsWatched) {
+          movieController.toggleFilmCardButtonClass(`mark-as-watched`);
+        } else if (oldData.addedToFavorite !== newData.addedToFavorite) {
+          movieController.toggleFilmCardButtonClass(`favorite`);
+        }
+        movieController.render(oldData);
       });
   }
 

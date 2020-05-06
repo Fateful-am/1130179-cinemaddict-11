@@ -28,6 +28,44 @@ export default class Movie {
     this.addedToFavorite = Boolean(userDetails[`favorite`]);
   }
 
+  toRAW() {
+    let comments = [];
+    if (this.comments.length > 0) {
+      const {commentId} = this.comments[0];
+      comments = commentId ? [].concat(commentId, this.comments.slice(1)) : this.comments.map((it) => it.id);
+    }
+    const release = {
+      "date": this.releaseDate ? this.releaseDate.toISOString() : null,
+      "release_country": this.country,
+    };
+    const filmInfo = {
+      "title": this.title,
+      "alternative_title": this.originTitle,
+      "total_rating": this.rating,
+      "poster": this.poster,
+      "age_rating": this.age,
+      "director": this.director,
+      "writers": this.writers,
+      "actors": this.actors,
+      "release": release,
+      "runtime": this.duration,
+      "genre": this.genres,
+      "description": this.description,
+    };
+    const userDetails = {
+      "watchlist": this.addedToWatchlist,
+      "already_watched": this.markedAsWatched,
+      "watching_date": this.watchingDate ? this.watchingDate.toISOString() : null,
+      "favorite": this.addedToFavorite,
+    };
+    return {
+      "id": this.id,
+      "comments": comments,
+      "film_info": filmInfo,
+      "user_details": userDetails
+    };
+  }
+
   static parseMovie(data) {
     return new Movie(data);
   }
@@ -48,5 +86,9 @@ export default class Movie {
 
   static parseComments(data) {
     return data.map(Movie.parseComment);
+  }
+
+  static clone(data) {
+    return new Movie(data.toRAW());
   }
 }
