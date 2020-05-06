@@ -10,7 +10,7 @@ export default class API {
     return headers;
   }
 
-  getTasks() {
+  getMovies() {
     const headers = this._getHeaders();
     return fetch(`https://11.ecmascript.pages.academy/cinemaddict/movies`, {headers})
       .then((response) => response.json())
@@ -22,6 +22,18 @@ export default class API {
     return fetch(`https://11.ecmascript.pages.academy/cinemaddict/comments/${movieId}`, {headers})
       .then((response) => response.json())
       .then(Movie.parseComments);
+  }
+
+  updateMovie(id, data) {
+    const headers = this._getHeaders();
+
+    return fetch(`https://11.ecmascript.pages.academy/cinemaddict/movies/${id}`, {
+      method: `PUT`,
+      body: JSON.stringify(data),
+      headers,
+    })
+      .then((response) => response.json())
+      .then(Movie.parseMovies);
   }
 }
 

@@ -16,12 +16,14 @@ export default class FilmsBoardController {
    * @param {Element} popupContainer - Контейнер для попапа
    * @param {SortMenuComponent} sortMenuComponent - Компонент меню сортировки
    * @param {Movies} moviesModel - Модель с фильмами
+   * @param {API} api - Экземпляр класса API
    */
-  constructor(siteController, container, popupContainer, sortMenuComponent, moviesModel) {
+  constructor(siteController, container, popupContainer, sortMenuComponent, moviesModel, api) {
     this._siteController = siteController;
     this._container = container;
     this._popupContainer = popupContainer;
     this._moviesModel = moviesModel;
+    this._api = api;
     this._activeSortType = SortType.DEFAULT;
     this._sortMenuComponent = sortMenuComponent;
     this._renderCount = 0;
@@ -282,23 +284,27 @@ export default class FilmsBoardController {
    */
   _onDataChange(movieController, oldData, newData) {
 
-    const isSuccess = this._moviesModel.updateMovie(oldData.id, newData);
 
-    if (isSuccess) {
-      movieController.render(newData);
+    this._api.updateMovie(oldData.id, newData)
+      .then((movieModel) => {
+        const isSuccess = this._moviesModel.updateMovie(oldData.id, movieModel);
 
-      // Перерисовываем карточки в других списках
-      const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
-          this._showedTopRatedMovieControllers).filter((it) => it.movieId === newData.id && it !== movieController);
-      // debugger;
-      showedSameMovieControllers.forEach((it) => {
-        it.forceRender = true;
-        it.render(newData);
-        it.forceRender = false;
+        if (isSuccess) {
+          movieController.render(newData);
+
+          // Перерисовываем карточки в других списках
+          const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
+              this._showedTopRatedMovieControllers).filter((it) => it.movieId === newData.id && it !== movieController);
+          // debugger;
+          showedSameMovieControllers.forEach((it) => {
+            it.forceRender = true;
+            it.render(newData);
+            it.forceRender = false;
+          });
+          this._statsComponent.reRender();
+          this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
+        }
       });
-      this._statsComponent.reRender();
-      this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
-    }
   }
 
   /**

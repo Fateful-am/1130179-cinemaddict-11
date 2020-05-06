@@ -8,9 +8,9 @@ const api = new API(AUTHORIZATION);
 const moviesModel = new Movies(api);
 
 // Контроллер главной страницы
-const siteController = new SiteController(moviesModel);
+const siteController = new SiteController(moviesModel, api);
 
-api.getTasks()
+api.getMovies()
   .then((movies) => {
     moviesModel.setMovies(movies);
     siteController.renderFilms();
