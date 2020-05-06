@@ -25,6 +25,7 @@ export default class FilmsBoardController {
     this._moviesModel = moviesModel;
     this._api = api;
     this._activeSortType = SortType.DEFAULT;
+    this._activeMode = Mode.DEFAULT;
     this._sortMenuComponent = sortMenuComponent;
     this._renderCount = 0;
 
@@ -302,6 +303,10 @@ export default class FilmsBoardController {
           });
           this._statsComponent.reRender();
           this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
+
+          if (this._activeMode === Mode.DETAIL) {
+            this._getComments(movieController);
+          }
         }
       })
       .catch(() => {
@@ -316,6 +321,23 @@ export default class FilmsBoardController {
       });
   }
 
+  _getComments(movieController) {
+    const movie = this._moviesModel.getMovieById(movieController.movieId);
+    if (movie && movie.comments.length > 0 && !movie.comments[0].id) {
+      movie.comments[0] = Object.assign({}, movie.comments[0], {text: `loading...`});
+      this._moviesModel.getComments(movieController.movieId)
+        .then((comments) => {
+          movie.comments = comments;
+          // debugger;
+          movieController.rerenderPopupComponent(movie);
+        })
+        .catch(() => {
+          movie.comments[0] = Object.assign({}, movie.comments[0], {text: movie.comments.length + ` [Offline...]`});
+          movieController.rerenderPopupComponent();
+        });
+    }
+  }
+
   /**
    * Обработчик изменения отображения
    * @param {string} movieMode - Режим отображения
@@ -323,24 +345,14 @@ export default class FilmsBoardController {
    * @private
    */
   _onViewChange(movieMode, movieController = null) {
+    this._activeMode = movieMode;
     switch (movieMode) {
       case Mode.DEFAULT :
         this.renderMostCommented();
         break;
       case Mode.DETAIL:
-        const movie = this._moviesModel.getMovieById(movieController.movieId);
-        if (movie && movie.comments.length > 0 && !movie.comments[0].id) {
-          movie.comments[0] = Object.assign({}, movie.comments[0], {text: `loading...`});
-          this._moviesModel.getComments(movieController.movieId)
-            .then((comments) => {
-              movie.comments = comments;
-              movieController.rerenderPopupComponent();
-            })
-            .catch(() => {
-              movie.comments[0] = Object.assign({}, movie.comments[0], {text: movie.comments.length + ` [Offline...]`});
-              movieController.rerenderPopupComponent();
-            });
-        }
+        this._getComments(movieController);
+
         this._showedMainMovieControllers.forEach((it) => it.setDefaultView());
     }
   }

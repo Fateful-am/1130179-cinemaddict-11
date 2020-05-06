@@ -291,7 +291,10 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   setAddToWatchListClickHandler(handler) {
     this._addToWatchListClickHandler = handler;
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, () => {
+        // this._elementScrollTop = this.getElement().scrollTop;
+        handler();
+      });
   }
 
   /**
@@ -301,7 +304,10 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   setMarkAsWatchedListClickHandler(handler) {
     this._markAsWatchedListClickHandler = handler;
     this.getElement().querySelector(`.film-details__control-label--watched`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, () => {
+        // this._elementScrollTop = this.getElement().scrollTop;
+        handler();
+      });
   }
 
   /**
@@ -311,7 +317,10 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   setFavoriteClickHandler(handler) {
     this._favoriteClickHandler = handler;
     this.getElement().querySelector(`.film-details__control-label--favorite`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, () => {
+        // this._elementScrollTop = this.getElement().scrollTop;
+        handler();
+      });
   }
 
   setCommentsListClickHandler(handler) {

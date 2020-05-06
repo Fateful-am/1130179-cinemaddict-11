@@ -6,7 +6,7 @@ export default class Movie {
     this.id = data[`id`];
     this.comments = data[`comments`] || [];
     if (this.comments.length > 0) {
-      this.comments[0] = {commentId: this.comments[0]};
+      this.comments[0] = {commentId: this.comments[0], text: `loading...`};
     }
     this.country = filmInfo[`release`][`release_country`];
     this.releaseDate = filmInfo[`release`][`date`] ? new Date(filmInfo[`release`][`date`]) : null;
