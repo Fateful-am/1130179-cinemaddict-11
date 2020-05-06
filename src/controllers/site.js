@@ -19,7 +19,7 @@ export default class SiteController {
     this.profileRatingComponent = new ProfileRatingComponent(this._header, RenderPosition.BEFOREEND);
     this._filterController = new FilterController(this._main, moviesModel);
     this._sortMenuComponent = new SortMenuComponent(this._main, RenderPosition.BEFOREEND);
-    this.footerStatisticsComponent = new FooterStatisticComponent(this._footerStatistics, RenderPosition.BEFOREEND);
+    this._footerStatisticsComponent = new FooterStatisticComponent(this._footerStatistics, RenderPosition.BEFOREEND);
     this._filmsComponent = new FilmsComponent(this._main, RenderPosition.BEFOREEND);
 
     this._filmsBoardController = new FilmsBoardController(this, this._filmsComponent, this._body, this._sortMenuComponent, this._moviesModel);
@@ -31,5 +31,7 @@ export default class SiteController {
   renderFilms() {
     this._filterController.render();
     this._filmsBoardController.render();
+    this._footerStatisticsComponent.movieCont = this._moviesModel.getMovieCount();
+    this.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
   }
 }

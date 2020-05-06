@@ -143,7 +143,14 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     const releaseDateString = moment(releaseDate).format(`DD MMMM YYYY`);
     const genresString = this._renderGenres(genres);
     const commentsString = this._renderComments(comments);
-    const filmDetailsCommentsCount = comments.length;
+    let filmDetailsCommentsCount = comments.length;
+    if (comments.length > 0) {
+      const {commentId} = comments[0];
+      if (commentId) {
+        filmDetailsCommentsCount = comments[0].text;
+      }
+    }
+
     const addedToWatchlistChecked = addedToWatchlist ? `checked` : ``;
     const markedAsWatchedChecked = markedAsWatched ? `checked` : ``;
     const addedToFavoriteChecked = addedToFavorite ? `checked` : ``;

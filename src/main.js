@@ -14,8 +14,10 @@ api.getTasks()
   .then((movies) => {
     moviesModel.setMovies(movies);
     siteController.renderFilms();
-    // Количество загруженных фильмов
-    siteController.footerStatisticsComponent.movieCont = moviesModel.getMovieCount();
-  });
+  })
+  .catch(() => siteController.renderFilms());
+
+moviesModel.setMovies([]);
+siteController.renderFilms();
 
 

@@ -4,8 +4,10 @@ export default class Movie {
     const userDetails = data[`user_details`];
 
     this.id = data[`id`];
-    this.comments = data[`comments`];
-
+    this.comments = data[`comments`] || [];
+    if (this.comments.length > 0) {
+      this.comments[0] = {commentId: this.comments[0]};
+    }
     this.country = filmInfo[`release`][`release_country`];
     this.releaseDate = filmInfo[`release`][`date`] ? new Date(filmInfo[`release`][`date`]) : null;
     this.director = filmInfo[`director`];

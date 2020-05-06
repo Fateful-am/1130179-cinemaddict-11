@@ -24,6 +24,7 @@ export default class FilmsBoardController {
     this._moviesModel = moviesModel;
     this._activeSortType = SortType.DEFAULT;
     this._sortMenuComponent = sortMenuComponent;
+    this._renderCount = 0;
 
     this._sortMenuComponent.setSortTypeChangeHandler((sortType) => {
       this._renderMainFilmList(this._getSortedFilms(sortType));
@@ -152,7 +153,8 @@ export default class FilmsBoardController {
 
     // Если фильмов нет - показываем заглушку
     if (movies.length === 0) {
-      this._mainFilmsListComponent = new FilmsListComponent(this._container.getElement(), RenderPosition.AFTERBEGIN, false, `There are no movies in our database`, true);
+      const noFilmText = this._renderCount === 0 ? `Loading...` : `There are no movies in our database`;
+      this._mainFilmsListComponent = new FilmsListComponent(this._container.getElement(), RenderPosition.AFTERBEGIN, false, noFilmText, true);
       return false;
     }
 
@@ -189,6 +191,7 @@ export default class FilmsBoardController {
 
     this.renderTopRated();
     this.renderMostCommented();
+    this._renderCount++;
   }
 
   /**
@@ -312,9 +315,14 @@ export default class FilmsBoardController {
       case Mode.DETAIL:
         const movie = this._moviesModel.getMovieById(movieController.movieId);
         if (movie && movie.comments.length > 0 && !movie.comments[0].id) {
+          movie.comments[0] = Object.assign({}, movie.comments[0], {text: `loading...`});
           this._moviesModel.getComments(movieController.movieId)
             .then((comments) => {
               movie.comments = comments;
+              movieController.rerenderPopupComponent();
+            })
+            .catch(() => {
+              movie.comments[0] = Object.assign({}, movie.comments[0], {text: movie.comments.length + ` [Offline...]`});
               movieController.rerenderPopupComponent();
             });
         }

@@ -20,7 +20,6 @@ export default class FilmCardComponent extends AbstractRenderComponent {
 
   getTemplate() {
     const {title, rating, releaseDate, duration, genres, poster, description, comments, addedToWatchlist, markedAsWatched, addedToFavorite} = this._filmCard;
-
     const addToWatchlistActiveClass = addedToWatchlist ? ITEM_ACTIVE_CLASS : ``;
     const markAsWatchedActiveClass = markedAsWatched ? ITEM_ACTIVE_CLASS : ``;
     const favoriteActiveClass = addedToFavorite ? ITEM_ACTIVE_CLASS : ``;
