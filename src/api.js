@@ -44,6 +44,19 @@ export default class API {
       .then(Movie.parseMovie);
   }
 
+  createComment(filmId, data) {
+    return this._load({
+      url: `comments/${filmId}`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        return Movie.parseComments(response.comments);
+      });
+  }
+
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 

@@ -34,7 +34,7 @@ export default class Statistics extends AbstractRenderComponent {
     const durationHours = Math.floor(moment.duration(duration, `m`).asHours());
     const durationMinutes = moment.duration(duration, `m`).minutes();
     return (
-      `<section class="statistic">
+      `<section class="statistic visually-hidden">
       <p class="statistic__rank">
         Your rank
         <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
@@ -101,8 +101,8 @@ export default class Statistics extends AbstractRenderComponent {
   }
 
   show() {
-    super.show();
     this.reRender();
+    super.show();
   }
 
   renderChart() {

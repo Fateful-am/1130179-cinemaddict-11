@@ -85,7 +85,7 @@ export default class Movie {
   }
 
   static parseComments(data) {
-    return data.map(Movie.parseComment).sort((a, b) => b.date - a.date);
+    return data.map(Movie.parseComment).sort((a, b) => a.date - b.date);
   }
 
   static clone(data) {

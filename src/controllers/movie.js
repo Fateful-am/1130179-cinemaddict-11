@@ -75,9 +75,9 @@ export default class MovieController {
    * @private
    */
   _closePopup() {
-    this._onViewChange(Mode.DEFAULT);
     this._popupContainer.removeChild(this._filmPopupComponent.getElement());
     document.removeEventListener(`keydown`, this._onEscKeyDown);
+    this._onViewChange(Mode.DEFAULT);
     this._mode = Mode.DEFAULT;
   }
 

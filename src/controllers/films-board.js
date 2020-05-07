@@ -299,7 +299,7 @@ export default class FilmsBoardController {
       const {text: comment, date, emoji: emotion} = newData.comments[newData.comments.length - 1];
       return {
         type: DataChangeKind.INSERT,
-        detail: {comment, date, emotion}
+        detail: {comment, date: date.toISOString(), emotion}
       };
     }
 
@@ -312,6 +312,21 @@ export default class FilmsBoardController {
     }
 
     return {type, detail: UpdateKind.FAVORITE};
+  }
+
+  _successRender(movieController, data) {
+    movieController.render(data);
+
+    // Перерисовываем карточки в других списках
+    const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
+        this._showedTopRatedMovieControllers).filter((it) => it.movieId === data.id && it !== movieController);
+    showedSameMovieControllers.forEach((it) => {
+      it.forceRender = true;
+      it.render(data);
+      it.forceRender = false;
+    });
+    this._statsComponent.reRender();
+    this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
   }
 
   /**
@@ -331,18 +346,7 @@ export default class FilmsBoardController {
             const isSuccess = this._moviesModel.updateMovie(oldData.id, movieModel);
 
             if (isSuccess) {
-              movieController.render(newData);
-
-              // Перерисовываем карточки в других списках
-              const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
-                  this._showedTopRatedMovieControllers).filter((it) => it.movieId === newData.id && it !== movieController);
-              showedSameMovieControllers.forEach((it) => {
-                it.forceRender = true;
-                it.render(newData);
-                it.forceRender = false;
-              });
-              this._statsComponent.reRender();
-              this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
+              this._successRender(movieController, newData);
 
               if (this._activeMode === Mode.DETAIL) {
                 this._getComments(movieController);
@@ -366,6 +370,18 @@ export default class FilmsBoardController {
       case DataChangeKind.DELETE:
         break;
       default:
+        this._api.createComment(newData.id, dataChangeType.detail)
+          .then((newComments) => {
+            const movieModel = Object.assign({}, oldData, {comments: newComments});
+
+            const isSuccess = this._moviesModel.updateMovie(oldData.id, movieModel);
+            if (isSuccess) {
+              this._successRender(movieController, movieModel);
+            }
+          })
+          .catch(() => {
+            movieController.render(oldData);
+          });
     }
   }
 
