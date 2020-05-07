@@ -16,14 +16,18 @@ export default class FilmsBoardController {
    * @param {Element} popupContainer - Контейнер для попапа
    * @param {SortMenuComponent} sortMenuComponent - Компонент меню сортировки
    * @param {Movies} moviesModel - Модель с фильмами
+   * @param {API} api - Экземпляр класса API
    */
-  constructor(siteController, container, popupContainer, sortMenuComponent, moviesModel) {
+  constructor(siteController, container, popupContainer, sortMenuComponent, moviesModel, api) {
     this._siteController = siteController;
     this._container = container;
     this._popupContainer = popupContainer;
     this._moviesModel = moviesModel;
+    this._api = api;
     this._activeSortType = SortType.DEFAULT;
+    this._activeMode = Mode.DEFAULT;
     this._sortMenuComponent = sortMenuComponent;
+    this._renderCount = 0;
 
     this._sortMenuComponent.setSortTypeChangeHandler((sortType) => {
       this._renderMainFilmList(this._getSortedFilms(sortType));
@@ -152,7 +156,8 @@ export default class FilmsBoardController {
 
     // Если фильмов нет - показываем заглушку
     if (movies.length === 0) {
-      this._mainFilmsListComponent = new FilmsListComponent(this._container.getElement(), RenderPosition.AFTERBEGIN, false, `There are no movies in our database`, true);
+      const noFilmText = this._renderCount === 0 ? `Loading...` : `There are no movies in our database`;
+      this._mainFilmsListComponent = new FilmsListComponent(this._container.getElement(), RenderPosition.AFTERBEGIN, false, noFilmText, true);
       return false;
     }
 
@@ -189,6 +194,7 @@ export default class FilmsBoardController {
 
     this.renderTopRated();
     this.renderMostCommented();
+    this._renderCount++;
   }
 
   /**
@@ -279,36 +285,74 @@ export default class FilmsBoardController {
    */
   _onDataChange(movieController, oldData, newData) {
 
-    const isSuccess = this._moviesModel.updateMovie(oldData.id, newData);
 
-    if (isSuccess) {
-      movieController.render(newData);
+    this._api.updateMovie(oldData.id, newData)
+      .then((movieModel) => {
+        const isSuccess = this._moviesModel.updateMovie(oldData.id, movieModel);
 
-      // Перерисовываем карточки в других списках
-      const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
-          this._showedTopRatedMovieControllers).filter((it) => it.movieId === newData.id && it !== movieController);
-      // debugger;
-      showedSameMovieControllers.forEach((it) => {
-        it.forceRender = true;
-        it.render(newData);
-        it.forceRender = false;
+        if (isSuccess) {
+          movieController.render(newData);
+
+          // Перерисовываем карточки в других списках
+          const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
+              this._showedTopRatedMovieControllers).filter((it) => it.movieId === newData.id && it !== movieController);
+          showedSameMovieControllers.forEach((it) => {
+            it.forceRender = true;
+            it.render(newData);
+            it.forceRender = false;
+          });
+          this._statsComponent.reRender();
+          this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
+
+          if (this._activeMode === Mode.DETAIL) {
+            this._getComments(movieController);
+          }
+        }
+      })
+      .catch(() => {
+        if (oldData.addedToWatchlist !== newData.addedToWatchlist) {
+          movieController.toggleFilmCardButtonClass(`add-to-watchlist`);
+        } else if (oldData.markedAsWatched !== newData.markedAsWatched) {
+          movieController.toggleFilmCardButtonClass(`mark-as-watched`);
+        } else if (oldData.addedToFavorite !== newData.addedToFavorite) {
+          movieController.toggleFilmCardButtonClass(`favorite`);
+        }
+        movieController.render(oldData);
       });
-      this._statsComponent.reRender();
-      this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
+  }
+
+  _getComments(movieController) {
+    const movie = this._moviesModel.getMovieById(movieController.movieId);
+    if (movie && movie.comments.length > 0 && !movie.comments[0].id) {
+      movie.comments[0] = Object.assign({}, movie.comments[0], {text: `loading...`});
+      this._moviesModel.getComments(movieController.movieId)
+        .then((comments) => {
+          movie.comments = comments;
+          // debugger;
+          movieController.rerenderPopupComponent(movie);
+        })
+        .catch(() => {
+          movie.comments[0] = Object.assign({}, movie.comments[0], {text: movie.comments.length + ` [Offline...]`});
+          movieController.rerenderPopupComponent();
+        });
     }
   }
 
   /**
    * Обработчик изменения отображения
    * @param {string} movieMode - Режим отображения
+   * @param {MovieController} movieController - Текущий фильм для попапа
    * @private
    */
-  _onViewChange(movieMode) {
+  _onViewChange(movieMode, movieController = null) {
+    this._activeMode = movieMode;
     switch (movieMode) {
       case Mode.DEFAULT :
         this.renderMostCommented();
         break;
       case Mode.DETAIL:
+        this._getComments(movieController);
+
         this._showedMainMovieControllers.forEach((it) => it.setDefaultView());
     }
   }

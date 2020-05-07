@@ -103,11 +103,14 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
    */
   _createCommentItemTemplate(comment) {
     const {id, text: currentText, emoji, author, date} = comment;
+    if (!id) {
+      return ``;
+    }
     const text = encode(currentText);
     return `
     <li class="film-details__comment">
       <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${emoji}" width="55" height="55" alt="emoji-smile">
+        <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">
       </span>
       <div>
         <p class="film-details__comment-text">${text}</p>
@@ -140,7 +143,14 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     const releaseDateString = moment(releaseDate).format(`DD MMMM YYYY`);
     const genresString = this._renderGenres(genres);
     const commentsString = this._renderComments(comments);
-    const filmDetailsCommentsCount = comments.length;
+    let filmDetailsCommentsCount = comments.length;
+    if (comments.length > 0) {
+      const {commentId} = comments[0];
+      if (commentId) {
+        filmDetailsCommentsCount = comments[0].text;
+      }
+    }
+
     const addedToWatchlistChecked = addedToWatchlist ? `checked` : ``;
     const markedAsWatchedChecked = markedAsWatched ? `checked` : ``;
     const addedToFavoriteChecked = addedToFavorite ? `checked` : ``;
@@ -157,7 +167,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./images/posters/${poster}" alt="">
+              <img class="film-details__poster-img" src="./${poster}" alt="">
               <p class="film-details__age">${age}+</p>
             </div>
             <div class="film-details__info">
@@ -281,7 +291,10 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   setAddToWatchListClickHandler(handler) {
     this._addToWatchListClickHandler = handler;
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, () => {
+        // this._elementScrollTop = this.getElement().scrollTop;
+        handler();
+      });
   }
 
   /**
@@ -291,7 +304,10 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   setMarkAsWatchedListClickHandler(handler) {
     this._markAsWatchedListClickHandler = handler;
     this.getElement().querySelector(`.film-details__control-label--watched`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, () => {
+        // this._elementScrollTop = this.getElement().scrollTop;
+        handler();
+      });
   }
 
   /**
@@ -301,7 +317,10 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   setFavoriteClickHandler(handler) {
     this._favoriteClickHandler = handler;
     this.getElement().querySelector(`.film-details__control-label--favorite`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, () => {
+        // this._elementScrollTop = this.getElement().scrollTop;
+        handler();
+      });
   }
 
   setCommentsListClickHandler(handler) {

@@ -1,6 +1,7 @@
 import FilmCardComponent from '../components/film-card';
 import FilmPopupComponent from '../components/film-popup';
 import {RenderPosition} from '../utils/render';
+import Movie from '../models/movie.js';
 
 export const Mode = {
   DEFAULT: `default`,
@@ -32,6 +33,12 @@ export default class MovieController {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
     this._showPopup = this._showPopup.bind(this);
     this._closePopup = this._closePopup.bind(this);
+    this.rerenderPopupComponent = this.rerenderPopupComponent.bind(this);
+  }
+
+  toggleFilmCardButtonClass(buttonClass) {
+    this._filmCardComponent.getElement().querySelector(`.film-card__controls-item--${buttonClass}`)
+      .classList.toggle(`film-card__controls-item--active`);
   }
 
   /**
@@ -79,12 +86,16 @@ export default class MovieController {
    * @private
    */
   _showPopup() {
-    this._onViewChange(Mode.DETAIL);
+    this._onViewChange(Mode.DETAIL, this);
     this._popupContainer.appendChild(this._filmPopupComponent.getElement());
     this._filmPopupComponent.initPopup();
-    this._filmPopupComponent.reRender();
+    this.rerenderPopupComponent();
     document.addEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DETAIL;
+  }
+
+  rerenderPopupComponent(movie) {
+    this._filmPopupComponent.reRender(movie);
   }
 
   /**
@@ -116,22 +127,22 @@ export default class MovieController {
 
     filmComponents.forEach((it) => {
       it.setAddToWatchListClickHandler(() => {
-        this._onDataChange(this, filmCard, Object.assign({}, filmCard, {
-          addedToWatchlist: !filmCard.addedToWatchlist,
-        }));
+        const newMovie = Movie.clone(filmCard);
+        newMovie.addedToWatchlist = !newMovie.addedToWatchlist;
+        this._onDataChange(this, filmCard, newMovie);
       });
 
       it.setMarkAsWatchedListClickHandler(() => {
-        this._onDataChange(this, filmCard, Object.assign({}, filmCard, {
-          markedAsWatched: !filmCard.markedAsWatched,
-          watchingDate: filmCard.markedAsWatched ? 0 : new Date()
-        }));
+        const newMovie = Movie.clone(filmCard);
+        newMovie.markedAsWatched = !newMovie.markedAsWatched;
+        newMovie.watchingDate = filmCard.markedAsWatched ? null : new Date();
+        this._onDataChange(this, filmCard, newMovie);
       });
 
       it.setFavoriteClickHandler(() => {
-        this._onDataChange(this, filmCard, Object.assign({}, filmCard, {
-          addedToFavorite: !filmCard.addedToFavorite,
-        }));
+        const newMovie = Movie.clone(filmCard);
+        newMovie.addedToFavorite = !newMovie.addedToFavorite;
+        this._onDataChange(this, filmCard, newMovie);
       });
     });
 

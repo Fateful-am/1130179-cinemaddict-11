@@ -1,20 +1,24 @@
-import {generateFilmCards} from './mock/film-card.js';
-import {FILM_CARDS_COUNT} from './const.js';
 import SiteController from './controllers/site.js';
 import Movies from './models/movies.js';
+import API from "./api.js";
 
-// Генерация карточек (Моки)
-const filmCards = generateFilmCards(FILM_CARDS_COUNT);
+const AUTHORIZATION = `Basic dXNickBwYXNzd75yZAo=`;
+const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict/`;
 
-const moviesModel = new Movies();
-moviesModel.setMovies(filmCards);
+const api = new API(END_POINT, AUTHORIZATION);
+const moviesModel = new Movies(api);
 
 // Контроллер главной страницы
-const siteController = new SiteController(moviesModel);
+const siteController = new SiteController(moviesModel, api);
 
-// Количество загруженных фильмов
-siteController.footerStatisticsComponent.movieCont = moviesModel.getMovieCount();
+api.getMovies()
+  .then((movies) => {
+    moviesModel.setMovies(movies);
+    siteController.renderFilms();
+  })
+  .catch(() => siteController.renderFilms());
 
+moviesModel.setMovies([]);
 siteController.renderFilms();
 
 
