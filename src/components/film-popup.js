@@ -332,7 +332,8 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
         }
         evt.preventDefault();
         this._elementScrollTop = this.getElement().scrollTop;
-
+        evt.target.innerText = `Deleting...`;
+        evt.target.disabled = true;
         handler(evt.target.dataset.commentId);
       });
   }

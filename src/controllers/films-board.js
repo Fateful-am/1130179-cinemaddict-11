@@ -290,10 +290,11 @@ export default class FilmsBoardController {
 
   _dataChangeType(oldData, newData) {
     if (oldData.comments.length > newData.comments.length) {
+      const deleteArray = newData.comments.map((it, i) => it.id !== oldData.comments[i].id ? oldData.comments[i].id : null)
+        .filter((it) => it);
       return {
         type: DataChangeKind.DELETE,
-        detail: newData.comments.map((it, i) => it.id !== oldData.comments[i].id ? oldData.comments[i].id : null)
-          .filter((it) => it)[0]
+        detail: deleteArray.length === 0 ? oldData.comments[oldData.comments.length - 1].id : deleteArray[0]
       };
     } else if (oldData.comments.length < newData.comments.length) {
       const {text: comment, date, emoji: emotion} = newData.comments[newData.comments.length - 1];
@@ -368,6 +369,16 @@ export default class FilmsBoardController {
           });
         break;
       case DataChangeKind.DELETE:
+        this._api.deleteComment(dataChangeType.detail)
+          .then(() => {
+            const isSuccess = this._moviesModel.updateMovie(oldData.id, newData);
+            if (isSuccess) {
+              this._successRender(movieController, newData);
+            }
+          })
+          .catch(() => {
+            movieController.render(oldData);
+          });
         break;
       default:
         this._api.createComment(newData.id, dataChangeType.detail)
@@ -392,7 +403,6 @@ export default class FilmsBoardController {
       this._moviesModel.getComments(movieController.movieId)
         .then((comments) => {
           movie.comments = comments;
-          // debugger;
           movieController.rerenderPopupComponent(movie);
         })
         .catch(() => {
