@@ -108,7 +108,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     }
     const text = encode(currentText);
     return `
-    <li class="film-details__comment">
+    <li class="film-details__comment" data-comment-id="${id}">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">
       </span>
@@ -364,14 +364,23 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     this._filmCard = filmCard;
   }
 
-  getData() {
+  getData(disableElements = false) {
     const form = this.getElement().querySelector(`.film-details__inner`);
+    // debugger;
     const formData = new FormData(form);
-    return {
+    const data = {
       comment: formData.get(`comment`),
       emoji: formData.get(`comment-emoji`),
       oldMovieData: this._filmCard
     };
+    if (disableElements) {
+      form.querySelector(`.film-details__comment-input`).style = ``;
+      const qqq = form.querySelectorAll(`input, textarea, button`);
+      qqq.forEach((elem) => {
+        elem.disabled = true;
+      });
+    }
+    return data;
   }
 
 

@@ -8,6 +8,8 @@ export const Mode = {
   DETAIL: `detail`,
 };
 
+export const SHAKE_ANIMATION_TIMEOUT = 600;
+
 /** Контроллер фильма */
 export default class MovieController {
   /**
@@ -36,9 +38,36 @@ export default class MovieController {
     this.rerenderPopupComponent = this.rerenderPopupComponent.bind(this);
   }
 
+  get filmPopupComponent() {
+    return this._filmPopupComponent;
+  }
+
   toggleFilmCardButtonClass(buttonClass) {
     this._filmCardComponent.getElement().querySelector(`.film-card__controls-item--${buttonClass}`)
       .classList.toggle(`film-card__controls-item--active`);
+  }
+
+  _shakeElement(element) {
+    element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      element.style.animation = ``;
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shake(commentId, whenCreating = false) {
+    if (commentId) {
+      this._shakeElement(this._filmPopupComponent.getElement().querySelector(`.film-details__comment[data-comment-id="${commentId}"]`));
+      return;
+    }
+    if (this._mode === Mode.DEFAULT) {
+      this._shakeElement(this._filmCardComponent.getElement());
+      return;
+    }
+    if (whenCreating) {
+      this._shakeElement(this._filmPopupComponent.getElement().querySelector(`.film-details__new-comment`));
+      return;
+    }
+    this._shakeElement(this._filmPopupComponent.getElement());
   }
 
   /**
@@ -55,7 +84,7 @@ export default class MovieController {
     }
 
     if (isCtrlEnter) {
-      const formData = this._filmPopupComponent.getData();
+      const formData = this._filmPopupComponent.getData(true);
       if (formData.comment && formData.emoji) {
         const comments = [].concat(formData.oldMovieData.comments, {
           id: String(new Date() + Math.random()),
@@ -64,7 +93,6 @@ export default class MovieController {
           author: `Myself`,
           date: new Date()
         });
-        this._filmPopupComponent.initPopup(true);
         this._onDataChange(this, formData.oldMovieData, Object.assign({}, formData.oldMovieData, {comments}));
       }
     }

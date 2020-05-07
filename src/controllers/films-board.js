@@ -2,7 +2,7 @@ import {RenderPosition} from '../utils/render.js';
 import FilmsListComponent from '../components/films-list.js';
 import ShowMoreButtonComponent from '../components/show-more-button.js';
 import * as appConst from '../const.js';
-import MovieController, {Mode} from './movie.js';
+import MovieController, {Mode, SHAKE_ANIMATION_TIMEOUT} from './movie.js';
 import {SortType} from '../const.js';
 import Statistics from '../components/statistics';
 import {FilterType} from '../const';
@@ -315,19 +315,38 @@ export default class FilmsBoardController {
     return {type, detail: UpdateKind.FAVORITE};
   }
 
-  _successRender(movieController, data) {
-    movieController.render(data);
+  _successRender(movieController, oldDataId, data) {
+    const isSuccess = this._moviesModel.updateMovie(oldDataId, data);
 
-    // Перерисовываем карточки в других списках
-    const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
-        this._showedTopRatedMovieControllers).filter((it) => it.movieId === data.id && it !== movieController);
-    showedSameMovieControllers.forEach((it) => {
-      it.forceRender = true;
-      it.render(data);
-      it.forceRender = false;
-    });
-    this._statsComponent.reRender();
-    this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
+    if (isSuccess) {
+      movieController.render(data);
+
+      // Перерисовываем карточки в других списках
+      const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
+          this._showedTopRatedMovieControllers).filter((it) => it.movieId === data.id && it !== movieController);
+      showedSameMovieControllers.forEach((it) => {
+        it.forceRender = true;
+        it.render(data);
+        it.forceRender = false;
+      });
+      this._statsComponent.reRender();
+      this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
+      return true;
+    }
+    throw new Error(`Not success`);
+  }
+
+  _failureRender(movieController, commentId, oldData, whenCreating = false) {
+    movieController.shake(commentId, whenCreating);
+    setTimeout(() => {
+      const commentText = movieController.filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).value;
+      movieController.render(oldData);
+      if (whenCreating) {
+        const commentElement = movieController.filmPopupComponent.getElement().querySelector(`.film-details__comment-input`);
+        commentElement.value = commentText;
+        commentElement.style = `outline: 3px solid red;`;
+      }
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   /**
@@ -344,11 +363,7 @@ export default class FilmsBoardController {
       case DataChangeKind.UPDATE:
         this._api.updateMovie(oldData.id, newData)
           .then((movieModel) => {
-            const isSuccess = this._moviesModel.updateMovie(oldData.id, movieModel);
-
-            if (isSuccess) {
-              this._successRender(movieController, newData);
-
+            if (this._successRender(movieController, oldData.id, movieModel)) {
               if (this._activeMode === Mode.DETAIL) {
                 this._getComments(movieController);
               }
@@ -365,34 +380,22 @@ export default class FilmsBoardController {
               default:
                 movieController.toggleFilmCardButtonClass(`favorite`);
             }
-            movieController.render(oldData);
+            this._failureRender(movieController, null, oldData);
           });
         break;
       case DataChangeKind.DELETE:
         this._api.deleteComment(dataChangeType.detail)
-          .then(() => {
-            const isSuccess = this._moviesModel.updateMovie(oldData.id, newData);
-            if (isSuccess) {
-              this._successRender(movieController, newData);
-            }
-          })
-          .catch(() => {
-            movieController.render(oldData);
-          });
+          .then(() => this._successRender(movieController, oldData.id, newData))
+          .catch(() => this._failureRender(movieController, dataChangeType.detail, oldData));
         break;
-      default:
+      default: // INSERT
         this._api.createComment(newData.id, dataChangeType.detail)
           .then((newComments) => {
             const movieModel = Object.assign({}, oldData, {comments: newComments});
-
-            const isSuccess = this._moviesModel.updateMovie(oldData.id, movieModel);
-            if (isSuccess) {
-              this._successRender(movieController, movieModel);
-            }
+            this._successRender(movieController, oldData.id, movieModel);
+            movieController.filmPopupComponent.initPopup(true);
           })
-          .catch(() => {
-            movieController.render(oldData);
-          });
+          .catch(() => this._failureRender(movieController, null, oldData, true));
     }
   }
 
