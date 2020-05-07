@@ -60,7 +60,7 @@ export default class MovieController {
         const comments = [].concat(formData.oldMovieData.comments, {
           id: String(new Date() + Math.random()),
           text: formData.comment,
-          emoji: formData.emoji + `.png`,
+          emoji: formData.emoji,
           author: `Myself`,
           date: new Date()
         });

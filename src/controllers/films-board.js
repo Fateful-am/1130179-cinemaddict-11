@@ -7,6 +7,18 @@ import {SortType} from '../const.js';
 import Statistics from '../components/statistics';
 import {FilterType} from '../const';
 
+const DataChangeKind = {
+  UPDATE: `update`,
+  DELETE: `delete`,
+  INSERT: `insert`
+};
+
+const UpdateKind = {
+  WATCH_LIST: `watchList`,
+  WATCHED: `watched`,
+  FAVORITE: `favorite`
+};
+
 /** Контроллер списка фильмов */
 export default class FilmsBoardController {
   /**
@@ -276,6 +288,32 @@ export default class FilmsBoardController {
   }
 
 
+  _dataChangeType(oldData, newData) {
+    if (oldData.comments.length > newData.comments.length) {
+      return {
+        type: DataChangeKind.DELETE,
+        detail: newData.comments.map((it, i) => it.id !== oldData.comments[i].id ? oldData.comments[i].id : null)
+          .filter((it) => it)[0]
+      };
+    } else if (oldData.comments.length < newData.comments.length) {
+      const {text: comment, date, emoji: emotion} = newData.comments[newData.comments.length - 1];
+      return {
+        type: DataChangeKind.INSERT,
+        detail: {comment, date, emotion}
+      };
+    }
+
+    const type = DataChangeKind.UPDATE;
+    if (oldData.addedToWatchlist !== newData.addedToWatchlist) {
+      return {type, detail: UpdateKind.WATCH_LIST};
+    }
+    if (oldData.markedAsWatched !== newData.markedAsWatched) {
+      return {type, detail: UpdateKind.WATCHED};
+    }
+
+    return {type, detail: UpdateKind.FAVORITE};
+  }
+
   /**
    * Обработчик изменения данных
    * @param {MovieController} movieController - Контроллер фильма
@@ -284,41 +322,51 @@ export default class FilmsBoardController {
    * @private
    */
   _onDataChange(movieController, oldData, newData) {
+    const dataChangeType = this._dataChangeType(oldData, newData);
 
+    switch (dataChangeType.type) {
+      case DataChangeKind.UPDATE:
+        this._api.updateMovie(oldData.id, newData)
+          .then((movieModel) => {
+            const isSuccess = this._moviesModel.updateMovie(oldData.id, movieModel);
 
-    this._api.updateMovie(oldData.id, newData)
-      .then((movieModel) => {
-        const isSuccess = this._moviesModel.updateMovie(oldData.id, movieModel);
+            if (isSuccess) {
+              movieController.render(newData);
 
-        if (isSuccess) {
-          movieController.render(newData);
+              // Перерисовываем карточки в других списках
+              const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
+                  this._showedTopRatedMovieControllers).filter((it) => it.movieId === newData.id && it !== movieController);
+              showedSameMovieControllers.forEach((it) => {
+                it.forceRender = true;
+                it.render(newData);
+                it.forceRender = false;
+              });
+              this._statsComponent.reRender();
+              this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
 
-          // Перерисовываем карточки в других списках
-          const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
-              this._showedTopRatedMovieControllers).filter((it) => it.movieId === newData.id && it !== movieController);
-          showedSameMovieControllers.forEach((it) => {
-            it.forceRender = true;
-            it.render(newData);
-            it.forceRender = false;
+              if (this._activeMode === Mode.DETAIL) {
+                this._getComments(movieController);
+              }
+            }
+          })
+          .catch(() => {
+            switch (dataChangeType.detail) {
+              case UpdateKind.WATCH_LIST:
+                movieController.toggleFilmCardButtonClass(`add-to-watchlist`);
+                break;
+              case UpdateKind.WATCHED:
+                movieController.toggleFilmCardButtonClass(`mark-as-watched`);
+                break;
+              default:
+                movieController.toggleFilmCardButtonClass(`favorite`);
+            }
+            movieController.render(oldData);
           });
-          this._statsComponent.reRender();
-          this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
-
-          if (this._activeMode === Mode.DETAIL) {
-            this._getComments(movieController);
-          }
-        }
-      })
-      .catch(() => {
-        if (oldData.addedToWatchlist !== newData.addedToWatchlist) {
-          movieController.toggleFilmCardButtonClass(`add-to-watchlist`);
-        } else if (oldData.markedAsWatched !== newData.markedAsWatched) {
-          movieController.toggleFilmCardButtonClass(`mark-as-watched`);
-        } else if (oldData.addedToFavorite !== newData.addedToFavorite) {
-          movieController.toggleFilmCardButtonClass(`favorite`);
-        }
-        movieController.render(oldData);
-      });
+        break;
+      case DataChangeKind.DELETE:
+        break;
+      default:
+    }
   }
 
   _getComments(movieController) {
