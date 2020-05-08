@@ -3,7 +3,7 @@ import AbstractRenderComponent from './abstract-render-component';
 import {formatDuration} from '../utils.js';
 import {encode} from 'he';
 
-// Типы Emoji
+// Типы эмоций
 const EmojiType = {
   NONE: ``,
   SMILE: `smile`,
@@ -323,6 +323,10 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
       });
   }
 
+  /**
+   * Установка обработчика клика при удалении комментария
+   * @param {function} handler - Коллбэк функция при удалении комментария
+   */
   setCommentsListClickHandler(handler) {
     this._commentsListClickHandler = handler;
     this.getElement().querySelector(`.film-details__comments-list`)
@@ -364,9 +368,13 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     this._filmCard = filmCard;
   }
 
+  /**
+   * Получение данных формы
+   * @param {boolean} disableElements - Блокировать ли элементы формы
+   * @return {{emoji: FormDataEntryValue, oldMovieData: Object, comment: FormDataEntryValue}}
+   */
   getData(disableElements = false) {
     const form = this.getElement().querySelector(`.film-details__inner`);
-    // debugger;
     const formData = new FormData(form);
     const data = {
       comment: formData.get(`comment`),

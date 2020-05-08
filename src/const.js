@@ -7,12 +7,14 @@ export const FilterType = {
   STATS: `Stats`
 };
 
+// Список сортировки
 export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,
   RATING: `rating`,
 };
 
+// Список периодов статистики
 export const StatisticsPeriod = {
   ALL_TIME: `all-time`,
   TODAY: `today`,

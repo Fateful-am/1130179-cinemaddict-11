@@ -7,12 +7,14 @@ import {SortType} from '../const.js';
 import Statistics from '../components/statistics';
 import {FilterType} from '../const';
 
+// Режим изменения данных
 const DataChangeKind = {
   UPDATE: `update`,
   DELETE: `delete`,
   INSERT: `insert`
 };
 
+// Тип изменения данных
 const UpdateKind = {
   WATCH_LIST: `watchList`,
   WATCHED: `watched`,
@@ -163,6 +165,12 @@ export default class FilmsBoardController {
     }
   }
 
+  /**
+   * Отрисовка компонента основного списка фильмов
+   * @param {[Object]} movies - Массив данных фильмов для отрисовки
+   * @return {boolean} - Были ли фильмы для отрисовки
+   * @private
+   */
   _renderMainFilmListComponent(movies) {
     this._reset();
 
@@ -177,6 +185,11 @@ export default class FilmsBoardController {
     return true;
   }
 
+  /**
+   * Отрисовка основного списка фильмов
+   * @param {[Object]} movies - Массив данных фильмов для отрисовки
+   * @private
+   */
   _renderMainFilmList(movies) {
     if (!this._renderMainFilmListComponent(movies)) {
       if (this._moviesModel.activeFilterType === FilterType.STATS) {
@@ -288,6 +301,13 @@ export default class FilmsBoardController {
   }
 
 
+  /**
+   * Определение режима изменения данных
+   * @param {Object} oldData - Старые данные
+   * @param {Object} newData - Новые данные
+   * @return {{detail: (*), type: string}|{detail: string, type: string}|{detail: {date: string, emotion, comment}, type: string}} - Объект с подробностями изменения данных
+   * @private
+   */
   _dataChangeType(oldData, newData) {
     if (oldData.comments.length > newData.comments.length) {
       const deleteArray = newData.comments.map((it, i) => it.id !== oldData.comments[i].id ? oldData.comments[i].id : null)
@@ -315,6 +335,15 @@ export default class FilmsBoardController {
     return {type, detail: UpdateKind.FAVORITE};
   }
 
+
+  /**
+   * Рендер при удачно завершивсемся сетевом запросе
+   * @param {MovieController} movieController - Контроллер карточки фильма
+   * @param {String} oldDataId - Id карточки фильма
+   * @param {Object} data - Обновленная карточка фильма
+   * @return {boolean} - Удачно ли прошло обновление
+   * @private
+   */
   _successRender(movieController, oldDataId, data) {
     const isSuccess = this._moviesModel.updateMovie(oldDataId, data);
 
@@ -336,6 +365,14 @@ export default class FilmsBoardController {
     throw new Error(`Not success`);
   }
 
+  /**
+   * Рендер при неудачно завершивсемся сетевом запросе
+   * @param {MovieController} movieController - Контроллер карточки фильма
+   * @param {String} commentId - Id комментария
+   * @param {Object} oldData - Старые данные
+   * @param {boolean} whenCreating - При создании комментария
+   * @private
+   */
   _failureRender(movieController, commentId, oldData, whenCreating = false) {
     movieController.shake(commentId, whenCreating);
     setTimeout(() => {
@@ -399,6 +436,11 @@ export default class FilmsBoardController {
     }
   }
 
+  /**
+   * Запрос комментариев о фильме с сервера
+   * @param {MovieController} movieController - Контроллер фильма
+   * @private
+   */
   _getComments(movieController) {
     const movie = this._moviesModel.getMovieById(movieController.movieId);
     if (movie && movie.comments.length > 0 && !movie.comments[0].id) {
@@ -434,15 +476,25 @@ export default class FilmsBoardController {
     }
   }
 
+  /**
+   * Обработчик при смене сортировки карточек фильмов
+   * @private
+   */
   _onFilterChange() {
     this._sortMenuComponent.setSortType(SortType.DEFAULT);
     this.render();
   }
 
+  /**
+   * Скрывает списки фильмов
+   */
   hide() {
     this._container.hide();
   }
 
+  /**
+   * Показывает списки фильмов
+   */
   show() {
     this._container.show();
   }

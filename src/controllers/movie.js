@@ -3,11 +3,19 @@ import FilmPopupComponent from '../components/film-popup';
 import {RenderPosition} from '../utils/render';
 import Movie from '../models/movie.js';
 
+/**
+ * Режим просмотра
+ * @type {{DETAIL: string, DEFAULT: string}}
+ */
 export const Mode = {
   DEFAULT: `default`,
   DETAIL: `detail`,
 };
 
+/**
+ * Время работы анимации
+ * @type {number}
+ */
 export const SHAKE_ANIMATION_TIMEOUT = 600;
 
 /** Контроллер фильма */
@@ -38,15 +46,28 @@ export default class MovieController {
     this.rerenderPopupComponent = this.rerenderPopupComponent.bind(this);
   }
 
+  /**
+   * Геттер попап-компонента
+   * @return {FilmPopupComponent} - Компонент попапа
+   */
   get filmPopupComponent() {
     return this._filmPopupComponent;
   }
 
+  /**
+   * Переключает класс активности кнопки управления
+   * @param {String} buttonClass - Класс кнопки
+   */
   toggleFilmCardButtonClass(buttonClass) {
     this._filmCardComponent.getElement().querySelector(`.film-card__controls-item--${buttonClass}`)
       .classList.toggle(`film-card__controls-item--active`);
   }
 
+  /**
+   * Устанавливает анимацию "Трясучка" для элемента
+   * @param {Element} element - Элемент для "трясусучки"
+   * @private
+   */
   _shakeElement(element) {
     element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
@@ -54,6 +75,11 @@ export default class MovieController {
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 
+  /**
+   * Установка анимации "трясучка"  при неудачном сетевом взаимодействии
+   * @param {String} commentId - Id комментария
+   * @param {boolean} whenCreating - Ошибка при создании комментария
+   */
   shake(commentId, whenCreating = false) {
     if (commentId) {
       this._shakeElement(this._filmPopupComponent.getElement().querySelector(`.film-details__comment[data-comment-id="${commentId}"]`));
@@ -83,6 +109,7 @@ export default class MovieController {
       return;
     }
 
+    // Отправка формы с новым комментарием
     if (isCtrlEnter) {
       const formData = this._filmPopupComponent.getData(true);
       if (formData.comment && formData.emoji) {
@@ -122,6 +149,10 @@ export default class MovieController {
     this._mode = Mode.DETAIL;
   }
 
+  /**
+   * Перерисовка папапа
+   * @param {Object} movie - Данные с фильмом для перересовки
+   */
   rerenderPopupComponent(movie) {
     this._filmPopupComponent.reRender(movie);
   }
@@ -191,10 +222,17 @@ export default class MovieController {
     }
   }
 
+  /**
+   * Сеттер принудительной перересовки контроллера
+   * @param {boolean} value - Флаг принудительной перересовки контроллера
+   */
   set forceRender(value) {
     this._forceRender = value;
   }
 
+  /**
+   * Деструктор контроллера
+   */
   destroy() {
     this._filmCardComponent.remove();
     this._filmPopupComponent.remove();

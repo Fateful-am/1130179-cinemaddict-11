@@ -36,6 +36,10 @@ export default class FilmsListComponent extends AbstractRenderComponent {
     );
   }
 
+  /**
+   * Получение контейнера для отрисовки карточек фильмов
+   * @return {Element} - Элемент контейнер для отрисовки карточек фильмов
+   */
   get cardContainer() {
     if (!this._cardContainer) {
       this._cardContainer = this._element.querySelector(`.films-list__container`);

@@ -3,12 +3,19 @@ import AbstractRenderComponent from './abstract-render-component';
 import {formatDuration} from '../utils.js';
 import moment from 'moment';
 
+// Класс активного компонента
 const ITEM_ACTIVE_CLASS = `film-card__controls-item--active`;
 
 /** Компонент карточки фильма
  * @extends AbstractRenderComponent
  */
 export default class FilmCardComponent extends AbstractRenderComponent {
+  /**
+   * @constructor
+   * @param {Element} container - Контейнер для компонента
+   * @param {InsertPosition} place - Место вставки компонента
+   * @param {Object} filmCard - Объект с данными о фильме
+   */
   constructor(container, place, filmCard) {
     super(container, place);
     this._filmCard = filmCard;
@@ -124,6 +131,10 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     this.setShowPopupClickHandler(this._showPopupClickHandler);
   }
 
+  /**
+   * Перерендерит компонент
+   * @param {Object} filmCard - Новый объект с данными о фильме
+   */
   reRender(filmCard) {
     this._filmCard = filmCard;
     super.reRender();
