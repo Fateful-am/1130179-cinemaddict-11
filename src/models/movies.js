@@ -30,7 +30,7 @@ export default class Movies {
   /**
    * Получение отфильтрованного массива с фильмами
    * @param {FilterType} filterType - Тип фильтра
-   * @return {Object[]} - Отфильтрованный массив с фильмами
+   * @return {Movie[]} - Отфильтрованный массив с фильмами
    */
   getMoviesByFilter(filterType) {
     const allMovies = this.getMoviesAll();
@@ -50,7 +50,7 @@ export default class Movies {
 
   /**
    * Получение всех фильмов
-   * @return {[]} - Массив со всеми фильмами
+   * @return {[Movie]} - Массив со всеми фильмами
    */
   getMoviesAll() {
     return this._movies;
@@ -58,7 +58,7 @@ export default class Movies {
 
   /**
    * Получение отфильтрованного массива с фильмами по текущему фильтру
-   * @return {Object[]} - Отфильтрованный массив с фильмами
+   * @return {[Movie]} - Отфильтрованный массив с фильмами
    */
   getMovies() {
     return this.getMoviesByFilter(this.activeFilterType);
@@ -66,7 +66,7 @@ export default class Movies {
 
   /**
    * Установка текущего списка фильмов
-   * @param {Object[]} movies - Массив с фильмами
+   * @param {[Movie]} movies - Массив с фильмами
    */
   setMovies(movies) {
     this._movies = Array.from(movies);
@@ -76,7 +76,7 @@ export default class Movies {
   /**
    * Обновление данных о фильме
    * @param {String} id - Id фильма
-   * @param {Object} newMovieData - Новый объект с данными о фильме
+   * @param {Movie} newMovieData - Новый объект с данными о фильме
    * @return {boolean} - Флаг успешности обновления данных
    */
   updateMovie(id, newMovieData) {
@@ -147,7 +147,7 @@ export default class Movies {
   /**
    * Поиск объекта фильма по Id
    * @param {String} id - Id фильма
-   * @return {null|Object} - Объект с данными о фильме
+   * @return {null|Movie} - Объект с данными о фильме
    */
   getMovieById(id) {
     const index = this._movies.findIndex((it) => it.id === id);

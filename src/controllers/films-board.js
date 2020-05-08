@@ -6,6 +6,7 @@ import MovieController, {Mode, SHAKE_ANIMATION_TIMEOUT} from './movie.js';
 import {SortType} from '../const.js';
 import Statistics from '../components/statistics';
 import {FilterType} from '../const';
+import Movie from '../models/movie';
 
 // Режим изменения данных
 const DataChangeKind = {
@@ -71,7 +72,7 @@ export default class FilmsBoardController {
   /**
    * Получение отсортированного списка фильмов
    * @param {string} sortType - Тип сортировки
-   * @return {{}[]} - Массив отсортированных фильмов
+   * @return {[Movie]} - Массив отсортированных фильмов
    * @private
    */
   _getSortedFilms(sortType) {
@@ -92,7 +93,7 @@ export default class FilmsBoardController {
   /**
    * Генеация и рендеринг контроллеров фильмов
    * @param {Element} container - Контайнер для компонента фильма
-   * @param {{}[]} movies - Массив с данными для генерации контроллеров фильмов
+   * @param {[Movie]} movies - Массив с данными для генерации контроллеров фильмов
    * @return {MovieController[]} - Массив с контроллерами фильмов
    * @private
    */
@@ -187,7 +188,7 @@ export default class FilmsBoardController {
 
   /**
    * Отрисовка основного списка фильмов
-   * @param {[Object]} movies - Массив данных фильмов для отрисовки
+   * @param {[Movie]} movies - Массив данных фильмов для отрисовки
    * @private
    */
   _renderMainFilmList(movies) {
@@ -303,8 +304,8 @@ export default class FilmsBoardController {
 
   /**
    * Определение режима изменения данных
-   * @param {Object} oldData - Старые данные
-   * @param {Object} newData - Новые данные
+   * @param {Movie} oldData - Старые данные
+   * @param {Movie} newData - Новые данные
    * @return {{detail: (*), type: string}|{detail: string, type: string}|{detail: {date: string, emotion, comment}, type: string}} - Объект с подробностями изменения данных
    * @private
    */
@@ -340,7 +341,7 @@ export default class FilmsBoardController {
    * Рендер при удачно завершивсемся сетевом запросе
    * @param {MovieController} movieController - Контроллер карточки фильма
    * @param {String} oldDataId - Id карточки фильма
-   * @param {Object} data - Обновленная карточка фильма
+   * @param {Movie} data - Обновленная карточка фильма
    * @return {boolean} - Удачно ли прошло обновление
    * @private
    */
@@ -369,7 +370,7 @@ export default class FilmsBoardController {
    * Рендер при неудачно завершивсемся сетевом запросе
    * @param {MovieController} movieController - Контроллер карточки фильма
    * @param {String} commentId - Id комментария
-   * @param {Object} oldData - Старые данные
+   * @param {Movie} oldData - Старые данные
    * @param {boolean} whenCreating - При создании комментария
    * @private
    */
@@ -389,17 +390,17 @@ export default class FilmsBoardController {
   /**
    * Обработчик изменения данных
    * @param {MovieController} movieController - Контроллер фильма
-   * @param {{}} oldData - Старые данные
-   * @param {{}} newData - Новые данные
+   * @param {Movie} oldData - Старые данные
+   * @param {Movie} newData - Новые данные
    * @private
    */
   _onDataChange(movieController, oldData, newData) {
     const dataChangeType = this._dataChangeType(oldData, newData);
-
     switch (dataChangeType.type) {
       case DataChangeKind.UPDATE:
         this._api.updateMovie(oldData.id, newData)
           .then((movieModel) => {
+            movieModel.restoreComments();
             if (this._successRender(movieController, oldData.id, movieModel)) {
               if (this._activeMode === Mode.DETAIL) {
                 this._getComments(movieController);
@@ -428,8 +429,11 @@ export default class FilmsBoardController {
       default: // INSERT
         this._api.createComment(newData.id, dataChangeType.detail)
           .then((newComments) => {
-            const movieModel = Object.assign({}, oldData, {comments: newComments});
-            this._successRender(movieController, oldData.id, movieModel);
+            const newMovie = Movie.clone(oldData);
+
+            newMovie.comments = newComments;
+            // const movieModel = Object.assign({}, oldData, {comments: newComments});
+            this._successRender(movieController, oldData.id, newMovie);
             movieController.filmPopupComponent.initPopup(true);
           })
           .catch(() => this._failureRender(movieController, null, oldData, true));
@@ -452,7 +456,7 @@ export default class FilmsBoardController {
         })
         .catch(() => {
           movie.comments[0] = Object.assign({}, movie.comments[0], {text: movie.comments.length + ` [Offline...]`});
-          movieController.rerenderPopupComponent();
+          movieController.rerenderPopupComponent(movie);
         });
     }
   }

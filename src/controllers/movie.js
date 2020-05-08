@@ -151,7 +151,7 @@ export default class MovieController {
 
   /**
    * Перерисовка папапа
-   * @param {Object} movie - Данные с фильмом для перересовки
+   * @param {Movie} movie - Данные с фильмом для перересовки
    */
   rerenderPopupComponent(movie) {
     this._filmPopupComponent.reRender(movie);
@@ -159,7 +159,7 @@ export default class MovieController {
 
   /**
    * Отрисовка карточки фильма
-   * @param {{}} filmCard - Данные с фильмом
+   * @param {Movie} filmCard - Данные с фильмом
    */
   render(filmCard) {
     if (!this._filmCardComponent) {
@@ -208,8 +208,11 @@ export default class MovieController {
     this._filmPopupComponent.setCommentsListClickHandler((commentId) => {
       const index = filmCard.comments.findIndex((it) => it.id === commentId);
       const comments = [].concat(filmCard.comments.slice(0, index), filmCard.comments.slice(index + 1));
+      const newMovie = Movie.clone(filmCard);
 
-      this._onDataChange(this, filmCard, Object.assign({}, filmCard, {comments}));
+      newMovie.comments = comments;
+
+      this._onDataChange(this, filmCard, newMovie);
     });
   }
 

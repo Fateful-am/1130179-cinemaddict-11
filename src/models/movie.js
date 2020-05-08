@@ -31,6 +31,14 @@ export default class Movie {
     this.addedToWatchlist = Boolean(userDetails[`watchlist`]);
     this.watchingDate = userDetails[`watching_date`] ? new Date(userDetails[`watching_date`]) : null;
     this.addedToFavorite = Boolean(userDetails[`favorite`]);
+    this._comments = this.comments;
+  }
+
+  /**
+   * Восстанавливает ранее загруженные комментарии
+   */
+  restoreComments() {
+    this.comments = this._comments;
   }
 
   /**
@@ -41,6 +49,7 @@ export default class Movie {
    */
   toRAW() {
     let comments = [];
+    this._comments = this.comments;
     if (this.comments.length > 0) {
       const {commentId} = this.comments[0];
       comments = commentId ? [].concat(commentId, this.comments.slice(1)) : this.comments.map((it) => it.id);

@@ -20,7 +20,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
    * @constructor
    * @param {Element} container - Контейнер для компонента
    * @param {InsertPosition} place - Место вставки компонента
-   * @param {Object} filmCard - Объект с данными фильма
+   * @param {Movie} filmCard - Объект с данными фильма
    */
   constructor(container, place, filmCard) {
     super(container, place);
@@ -362,7 +362,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
 
   /**
    * Устанавливает текущий объект с данными о фильме
-   * @param {Object} filmCard - Объект с данными о фильме
+   * @param {Movie} filmCard - Объект с данными о фильме
    */
   setFilmCard(filmCard) {
     this._filmCard = filmCard;

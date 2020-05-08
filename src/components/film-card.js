@@ -14,7 +14,7 @@ export default class FilmCardComponent extends AbstractRenderComponent {
    * @constructor
    * @param {Element} container - Контейнер для компонента
    * @param {InsertPosition} place - Место вставки компонента
-   * @param {Object} filmCard - Объект с данными о фильме
+   * @param {Movie} filmCard - Объект с данными о фильме
    */
   constructor(container, place, filmCard) {
     super(container, place);
@@ -133,7 +133,7 @@ export default class FilmCardComponent extends AbstractRenderComponent {
 
   /**
    * Перерендерит компонент
-   * @param {Object} filmCard - Новый объект с данными о фильме
+   * @param {Movie} filmCard - Новый объект с данными о фильме
    */
   reRender(filmCard) {
     this._filmCard = filmCard;
