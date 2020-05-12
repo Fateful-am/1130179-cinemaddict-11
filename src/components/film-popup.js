@@ -347,7 +347,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     this.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
     this.setMarkAsWatchedListClickHandler(this._markAsWatchedListClickHandler);
     this.setFavoriteClickHandler(this._favoriteClickHandler);
-    this.setCommentsListClickHandler(this._commentsListClickHandler);
+    // this.setCommentsListClickHandler(this._commentsListClickHandler);
     this._setAddEmojiClickHandler();
 
   }
@@ -381,7 +381,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
       emoji: formData.get(`comment-emoji`),
       oldMovieData: this._filmCard
     };
-    if (disableElements) {
+    if (disableElements && data.comment && data.emoji) {
       form.querySelector(`.film-details__comment-input`).style = ``;
       const qqq = form.querySelectorAll(`input, textarea, button`);
       qqq.forEach((elem) => {

@@ -347,7 +347,6 @@ export default class FilmsBoardController {
    */
   _successRender(movieController, oldDataId, data) {
     const isSuccess = this._moviesModel.updateMovie(oldDataId, data);
-
     if (isSuccess) {
       movieController.render(data);
 
@@ -432,9 +431,8 @@ export default class FilmsBoardController {
             const newMovie = Movie.clone(oldData);
 
             newMovie.comments = newComments;
-            // const movieModel = Object.assign({}, oldData, {comments: newComments});
-            this._successRender(movieController, oldData.id, newMovie);
             movieController.filmPopupComponent.initPopup(true);
+            this._successRender(movieController, oldData.id, newMovie);
           })
           .catch(() => this._failureRender(movieController, null, oldData, true));
     }
