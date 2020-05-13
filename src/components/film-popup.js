@@ -383,8 +383,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     };
     if (disableElements && data.comment && data.emoji) {
       form.querySelector(`.film-details__comment-input`).style = ``;
-      const qqq = form.querySelectorAll(`input, textarea, button`);
-      qqq.forEach((elem) => {
+      form.querySelectorAll(`input, textarea, button`).forEach((elem) => {
         elem.disabled = true;
       });
     }
