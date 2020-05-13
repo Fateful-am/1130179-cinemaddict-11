@@ -1,4 +1,9 @@
+/** Модель фильма */
 export default class Movie {
+  /**
+   * @constructor
+   * @param {Object} data - Объект с сервера с данными фильма
+   */
   constructor(data) {
     const filmInfo = data[`film_info`];
     const userDetails = data[`user_details`];
@@ -26,10 +31,25 @@ export default class Movie {
     this.addedToWatchlist = Boolean(userDetails[`watchlist`]);
     this.watchingDate = userDetails[`watching_date`] ? new Date(userDetails[`watching_date`]) : null;
     this.addedToFavorite = Boolean(userDetails[`favorite`]);
+    this._comments = this.comments;
   }
 
+  /**
+   * Восстанавливает ранее загруженные комментарии
+   */
+  restoreComments() {
+    this.comments = this._comments;
+  }
+
+  /**
+   * Адаптер для преобразования к серверному формату
+   * @return {{comments: [], film_info: {actors, alternative_title, age_rating, director,
+   * release: {date: (*|null), release_country}, genre, runtime, description, total_rating, writers, title, poster},
+   * user_details: {already_watched: boolean, watching_date: (*|null), watchlist: boolean, favorite: boolean}, id}}
+   */
   toRAW() {
     let comments = [];
+    this._comments = this.comments;
     if (this.comments.length > 0) {
       const {commentId} = this.comments[0];
       comments = commentId ? [].concat(commentId, this.comments.slice(1)) : this.comments.map((it) => it.id);
@@ -66,14 +86,32 @@ export default class Movie {
     };
   }
 
+  /**
+   * Парсер карточки фильма с сервера
+   * @static
+   * @param {Object} data - Объект карточки фильма с сервера
+   * @return {Movie} - Модель карточки фильма
+   */
   static parseMovie(data) {
     return new Movie(data);
   }
 
+  /**
+   * Парсер массива карточек фильмов с сервера
+   * @static
+   * @param {[Object]} data - Массив объектов карточек с сервера
+   * @return {[Movie]} - Массив моделей фильмов
+   */
   static parseMovies(data) {
     return data.map(Movie.parseMovie);
   }
 
+  /**
+   * Парсер комментария фильма с сервера
+   * @static
+   * @param {Object} data - Объект комментария фильма с сервера
+   * @return {{date: (*|null), emoji: *, author: *, id: *, text: *}} - Объект комментария фильма
+   */
   static parseComment(data) {
     return {
       id: data[`id`],
@@ -84,10 +122,20 @@ export default class Movie {
     };
   }
 
+  /**
+   * Парсер массива комментариев для фильма
+   * @param {[Object]} data - Массив объектов комментариев к фильму с сервера
+   * @return {[Object]} - Отсортированный по дате комментария массив объектов комментариев
+   */
   static parseComments(data) {
-    return data.map(Movie.parseComment);
+    return data.map(Movie.parseComment).sort((a, b) => a.date - b.date);
   }
 
+  /**
+   * Клонирование объекта
+   * @param {Object} data - Объект с данными о фильме
+   * @return {Movie} - Модель фильма
+   */
   static clone(data) {
     return new Movie(data.toRAW());
   }

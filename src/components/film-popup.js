@@ -3,7 +3,7 @@ import AbstractRenderComponent from './abstract-render-component';
 import {formatDuration} from '../utils.js';
 import {encode} from 'he';
 
-// Типы Emoji
+// Типы эмоций
 const EmojiType = {
   NONE: ``,
   SMILE: `smile`,
@@ -20,7 +20,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
    * @constructor
    * @param {Element} container - Контейнер для компонента
    * @param {InsertPosition} place - Место вставки компонента
-   * @param {Object} filmCard - Объект с данными фильма
+   * @param {Movie} filmCard - Объект с данными фильма
    */
   constructor(container, place, filmCard) {
     super(container, place);
@@ -108,7 +108,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     }
     const text = encode(currentText);
     return `
-    <li class="film-details__comment">
+    <li class="film-details__comment" data-comment-id="${id}">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">
       </span>
@@ -323,6 +323,10 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
       });
   }
 
+  /**
+   * Установка обработчика клика при удалении комментария
+   * @param {function} handler - Коллбэк функция при удалении комментария
+   */
   setCommentsListClickHandler(handler) {
     this._commentsListClickHandler = handler;
     this.getElement().querySelector(`.film-details__comments-list`)
@@ -332,7 +336,8 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
         }
         evt.preventDefault();
         this._elementScrollTop = this.getElement().scrollTop;
-
+        evt.target.innerText = `Deleting...`;
+        evt.target.disabled = true;
         handler(evt.target.dataset.commentId);
       });
   }
@@ -342,7 +347,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     this.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
     this.setMarkAsWatchedListClickHandler(this._markAsWatchedListClickHandler);
     this.setFavoriteClickHandler(this._favoriteClickHandler);
-    this.setCommentsListClickHandler(this._commentsListClickHandler);
+    // this.setCommentsListClickHandler(this._commentsListClickHandler);
     this._setAddEmojiClickHandler();
 
   }
@@ -357,20 +362,32 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
 
   /**
    * Устанавливает текущий объект с данными о фильме
-   * @param {Object} filmCard - Объект с данными о фильме
+   * @param {Movie} filmCard - Объект с данными о фильме
    */
   setFilmCard(filmCard) {
     this._filmCard = filmCard;
   }
 
-  getData() {
+  /**
+   * Получение данных формы
+   * @param {boolean} disableElements - Блокировать ли элементы формы
+   * @return {{emoji: FormDataEntryValue, oldMovieData: Object, comment: FormDataEntryValue}}
+   */
+  getData(disableElements = false) {
     const form = this.getElement().querySelector(`.film-details__inner`);
     const formData = new FormData(form);
-    return {
+    const data = {
       comment: formData.get(`comment`),
       emoji: formData.get(`comment-emoji`),
       oldMovieData: this._filmCard
     };
+    if (disableElements && data.comment && data.emoji) {
+      form.querySelector(`.film-details__comment-input`).style = ``;
+      form.querySelectorAll(`input, textarea, button`).forEach((elem) => {
+        elem.disabled = true;
+      });
+    }
+    return data;
   }
 
 

@@ -6,6 +6,13 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 
 export default class Statistics extends AbstractRenderComponent {
+  /**
+   * Конструктор класса
+   * @constructor
+   * @param {Element} container - Контейнер для компонента
+   * @param {InsertPosition} place - Место вставки компонента
+   * @param {Movies} moviesModel - Модель фильмов
+   */
   constructor(container, place, moviesModel) {
     super(container, place);
 
@@ -16,6 +23,12 @@ export default class Statistics extends AbstractRenderComponent {
     this.hide();
   }
 
+  /**
+   * Генерирует разметку меню периодов статистики
+   * @param {StatisticsPeriod} statisticPeriod - Период статистики
+   * @return {string} - Разметка меню периодов статистики
+   * @private
+   */
   _getStatisticPeriodMarkup(statisticPeriod) {
     const isChecked = statisticPeriod === this._activeStatisticsPeriod ? ` checked` : ``;
     const label = statisticPeriod.charAt(0).toUpperCase() + statisticPeriod.slice(1).replace(`-`, ` `);
@@ -34,7 +47,7 @@ export default class Statistics extends AbstractRenderComponent {
     const durationHours = Math.floor(moment.duration(duration, `m`).asHours());
     const durationMinutes = moment.duration(duration, `m`).minutes();
     return (
-      `<section class="statistic">
+      `<section class="statistic visually-hidden">
       <p class="statistic__rank">
         Your rank
         <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
@@ -80,6 +93,10 @@ export default class Statistics extends AbstractRenderComponent {
     this._chart = this.renderChart();
   }
 
+  /**
+   * Устанавливает обработчик выбора пункта меню сортировки
+   * @private
+   */
   _setFilterItemClick() {
     this.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, (evt) => {
       evt.preventDefault();
@@ -101,10 +118,14 @@ export default class Statistics extends AbstractRenderComponent {
   }
 
   show() {
-    super.show();
     this.reRender();
+    super.show();
   }
 
+  /**
+   * Отрисовывет диаграмму просмотра пользователя в разрезе жанров
+   * @return {Chart|null} - Объект диаграмма
+   */
   renderChart() {
     if (this._chart) {
       this._chart.destroy();
@@ -112,8 +133,6 @@ export default class Statistics extends AbstractRenderComponent {
     const {genresStatistics} = this._moviesModel.getStatistics(this._activeStatisticsPeriod);
     const BAR_HEIGHT = 50;
     const statisticCtx = document.querySelector(`.statistic__chart`);
-
-    // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
 
     if (genresStatistics.length === 1 && genresStatistics[0].name === ``) {
       statisticCtx.height = 0;

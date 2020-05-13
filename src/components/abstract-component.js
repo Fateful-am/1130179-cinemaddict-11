@@ -42,12 +42,18 @@ export default class AbstractComponent {
     this._element = null;
   }
 
+  /**
+   * Показывает компонент на странице
+   */
   show() {
     if (this._element) {
       this._element.classList.remove(HIDDEN_CLASS);
     }
   }
 
+  /**
+   * Скрывает компонент со страницы
+   */
   hide() {
     if (this._element) {
       this._element.classList.add(HIDDEN_CLASS);

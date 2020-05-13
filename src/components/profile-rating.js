@@ -12,7 +12,6 @@ export default class ProfileRatingComponent extends AbstractRenderComponent {
     this.render();
   }
 
-
   getTemplate() {
     const profileRating = getProfileRating(this._watchedCount);
     return (

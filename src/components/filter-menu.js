@@ -59,6 +59,10 @@ export default class FilterMenuComponent extends AbstractRenderComponent {
     this.reRender();
   }
 
+  /**
+   * Установка обработчика смены фильтра
+   * @param {function} handler - Колбэк функция обработчика смены фильтра
+   */
   setFilterChangeHandler(handler) {
     this._filterChangeHandler = handler;
     this.getElement().addEventListener(`click`, (evt) => {
