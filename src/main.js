@@ -1,6 +1,6 @@
 import SiteController from './controllers/site.js';
 import Movies from './models/movies.js';
-import API from "./api.js";
+import API from "./api";
 
 // Строка авторизации
 const AUTHORIZATION = `Basic dXNickBwYXNzd75yZAo=`;
