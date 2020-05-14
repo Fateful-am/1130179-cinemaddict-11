@@ -1,7 +1,8 @@
 import SiteController from './controllers/site.js';
 import Movies from './models/movies.js';
 import Provider from "./api/provider.js";
-import API from "./api";
+import Store from "./api/store.js";
+import API from "./api/index.js";
 
 // Строка авторизации
 const AUTHORIZATION = `Basic dXNickBwYXNzd75yZAo=`;
@@ -9,7 +10,8 @@ const AUTHORIZATION = `Basic dXNickBwYXNzd75yZAo=`;
 const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict/`;
 
 const api = new API(END_POINT, AUTHORIZATION);
-const apiWithProvider = new Provider(api);
+const store = new Store();
+const apiWithProvider = new Provider(api, store);
 
 const moviesModel = new Movies(apiWithProvider);
 

@@ -1,19 +1,28 @@
+import Movie from '../models/movie.js';
+
 const isOnline = () => {
   return window.navigator.onLine;
 };
 
 export default class Provider {
-  constructor(api) {
+  constructor(api, store) {
     this._api = api;
+    this._store = store;
   }
 
   getMovies() {
     if (isOnline()) {
-      return this._api.getMovies();
+      return this._api.getMovies()
+        .then((movies) => {
+          movies.forEach((movie) => this._store.setItem(movie.id, movie.toRAW()));
+
+          return movies;
+        });
     }
 
-    // TODO: Реализовать логику при отсутствии интернета
-    return Promise.reject(`offline logic is not implemented`);
+    const storeMovies = Object.values(this._store.getItems());
+
+    return Promise.resolve(Movie.parseMovies(storeMovies));
   }
 
   getComments(movieId) {
