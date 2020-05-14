@@ -25,7 +25,7 @@ const checkStatus = (response) => {
 export default class API {
   /**
    * @constructor
-   * @param {URL} endPoint - Адрес сервера
+   * @param {String} endPoint - Адрес сервера
    * @param {String} authorization - Строка авторизации
    */
   constructor(endPoint, authorization) {

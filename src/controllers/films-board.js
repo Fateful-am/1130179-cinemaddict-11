@@ -31,7 +31,7 @@ export default class FilmsBoardController {
    * @param {Element} popupContainer - Контейнер для попапа
    * @param {SortMenuComponent} sortMenuComponent - Компонент меню сортировки
    * @param {Movies} moviesModel - Модель с фильмами
-   * @param {API} api - Экземпляр класса API
+   * @param {Provider} api - Экземпляр класса Provider
    */
   constructor(siteController, container, popupContainer, sortMenuComponent, moviesModel, api) {
     this._siteController = siteController;
