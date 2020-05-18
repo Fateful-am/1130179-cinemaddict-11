@@ -1,4 +1,5 @@
 import Movie from '../models/movie.js';
+import {nanoid} from 'nanoid';
 
 const isOnline = () => {
   return window.navigator.onLine;
@@ -25,11 +26,15 @@ export default class Provider {
     return Promise.resolve(Movie.parseMovies(storeMovies));
   }
 
+  _setCommentItems(movieId, comments) {
+    comments.forEach((comment) => this._store.setCommentItem(movieId, comment));
+  }
+
   getComments(movieId) {
     if (isOnline()) {
       return this._api.getComments(movieId)
         .then((comments) => {
-          comments.forEach((comment) => this._store.setCommentItem(movieId, comment));
+          this._setCommentItems(movieId, comments);
 
           return comments;
         });
@@ -42,11 +47,20 @@ export default class Provider {
 
   createComment(filmId, data) {
     if (isOnline()) {
-      return this._api.createComment(filmId, data);
+      return this._api.createComment(filmId, data)
+        .then((comments) => {
+          this._setCommentItems(filmId, comments);
+
+          return comments;
+        });
     }
 
-    // TODO: Реализовать логику при отсутствии интернета
-    return Promise.reject(`offline logic is not implemented`);
+    const localCommentId = nanoid();
+    const newComment = Object.assign({}, data, {id: localCommentId, author: `I am Groot`});
+    this._store.setCommentItem(filmId, Movie.parseComment(newComment));
+    const comments = Object.values(this._store.getMovieComments(filmId));
+
+    return Promise.resolve(comments);
   }
 
   updateMovie(id, data) {
