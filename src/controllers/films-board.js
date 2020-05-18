@@ -453,7 +453,7 @@ export default class FilmsBoardController {
           movieController.rerenderPopupComponent(movie);
         })
         .catch(() => {
-          movie.comments[0] = Object.assign({}, movie.comments[0], {text: movie.comments.length + ` [Offline...]`});
+          movie.comments[0] = Object.assign({}, movie.comments[0], {text: `${movie.comments.length} [Offline...]`});
           movieController.rerenderPopupComponent(movie);
         });
     }
