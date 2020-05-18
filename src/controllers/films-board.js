@@ -421,7 +421,7 @@ export default class FilmsBoardController {
           });
         break;
       case DataChangeKind.DELETE:
-        this._api.deleteComment(dataChangeType.detail)
+        this._api.deleteComment(oldData.id, dataChangeType.detail)
           .then(() => this._successRender(movieController, oldData.id, newData))
           .catch(() => this._failureRender(movieController, dataChangeType.detail, oldData));
         break;

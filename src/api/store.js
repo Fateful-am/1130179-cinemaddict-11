@@ -76,7 +76,19 @@ export default class Store {
     return this._getCommentItems()[movieId] || {};
   }
 
-  removeItem(key) {
-
+  removeCommentItem(movieId, commentId) {
+    const store = this._getItems();
+    const commentItems = this._getCommentItems();
+    if (commentItems[movieId]) {
+      delete commentItems[movieId][commentId];
+      this._storage.setItem(
+          this._storeKey,
+          JSON.stringify(
+              Object.assign({}, store, {
+                [ItemsType.COMMENT]: commentItems
+              })
+          )
+      );
+    }
   }
 }

@@ -65,12 +65,13 @@ export default class Provider {
     return Promise.resolve(localMovie);
   }
 
-  deleteComment(id) {
+  deleteComment(movieId, commentId) {
     if (isOnline()) {
-      return this._api.deleteComment(id);
+      return this._api.deleteComment(commentId)
+        .then(this._store.removeCommentItem(movieId, commentId));
     }
 
-    // TODO: Реализовать логику при отсутствии интернета
-    return Promise.reject(`offline logic is not implemented`);
+    this._store.removeCommentItem(movieId, commentId);
+    return Promise.resolve();
   }
 }
