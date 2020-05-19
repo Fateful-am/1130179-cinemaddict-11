@@ -99,6 +99,17 @@ export default class API {
     return this._load({url: `comments/${id}`, method: Method.DELETE});
   }
 
+  sync(data) {
+    return this._load({
+      url: `movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json());
+  }
+
+
   /**
    * Метод для работы с сетью
    * @param {String} url - URL запроса

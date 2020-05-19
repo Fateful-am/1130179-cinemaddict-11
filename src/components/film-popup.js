@@ -146,8 +146,8 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     const commentsString = this._renderComments(comments);
     let filmDetailsCommentsCount = comments.length;
     if (comments.length > 0) {
-      const {commentId} = comments[0];
-      if (commentId) {
+      const {id: serverCommentId, commentId} = comments[0];
+      if (!serverCommentId && commentId) {
         filmDetailsCommentsCount = comments[0].text;
       }
     }

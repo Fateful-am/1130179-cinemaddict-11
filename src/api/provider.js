@@ -15,7 +15,13 @@ export default class Provider {
     if (isOnline()) {
       return this._api.getMovies()
         .then((movies) => {
-          movies.forEach((movie) => this._store.setMovieItem(movie.id, movie.toRAW()));
+          const movieItems = movies.reduce((acc, current) => {
+            return Object.assign({}, acc, {
+              [current.id]: current.toRAW(),
+            });
+          }, {});
+
+          this._store.setMovieItems(movieItems);
 
           return movies;
         });
@@ -27,7 +33,13 @@ export default class Provider {
   }
 
   _setCommentItems(movieId, comments) {
-    comments.forEach((comment) => this._store.setCommentItem(movieId, comment));
+    const commentItems = comments.reduce((acc, current) => {
+      return Object.assign({}, acc, {
+        [current.id || current.commentId]: current,
+      });
+    }, {});
+
+    this._store.setCommentItems(movieId, commentItems);
   }
 
   getComments(movieId) {

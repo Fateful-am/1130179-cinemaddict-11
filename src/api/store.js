@@ -27,6 +27,35 @@ export default class Store {
     return store[ItemsType.COMMENT] || {};
   }
 
+  setMovieItems(movies) {
+    const comments = Object.values(movies)
+      .reduce((accMovies, currentMovie) => {
+        return Object.assign({}, accMovies, {
+          [currentMovie.id]: currentMovie.comments
+            .reduce((accComments, currentComment) => {
+              const storeComments = this.getMovieComments(currentMovie.id);
+              return Object.assign({}, accComments, {
+                [currentComment]: Object.assign({}, {
+                  commentId: currentComment,
+                  text: `${currentMovie.comments.length} [Offline...]`
+                }, storeComments[currentComment]),
+              });
+            }, {}),
+        });
+      }, {});
+
+    const store = this._getItems();
+    this._storage.setItem(
+        this._storeKey,
+        JSON.stringify(
+            Object.assign({}, store, {
+              [ItemsType.MOVIE]: movies,
+              [ItemsType.COMMENT]: comments,
+            })
+        )
+    );
+  }
+
   setMovieItem(key, value) {
     const store = this._getItems();
     const movieItems = Object.assign({}, this.getMovieItems(), {
@@ -40,21 +69,35 @@ export default class Store {
             })
         )
     );
+  }
 
-    value.comments.forEach((comment) => {
-      this.setCommentItem(value.id, {commentId: comment, text: `${value.comments.length} [Offline...]`});
+  setCommentItems(movieId, comments) {
+    const storeComments = this.getMovieComments(movieId);
+    const newStoreComments = Object.values(comments)
+      .reduce((acc, current) => {
+        return Object.assign({}, acc, {
+          [current.id || current.commentId]: Object.assign({}, storeComments[current.id || current.commentId],
+              comments[current.id || current.commentId])
+        });
+      }, {});
+    const newCommentItems = Object.assign({}, this._getCommentItems(), {
+      [movieId]: newStoreComments
     });
+
+    const store = this._getItems();
+
+    this._storage.setItem(
+        this._storeKey,
+        JSON.stringify(
+            Object.assign({}, store, {
+              [ItemsType.COMMENT]: newCommentItems
+            })
+        )
+    );
   }
 
   setCommentItem(movieId, comment) {
-    const store = this._getItems();
     const commentItems = this._getCommentItems();
-    if (!comment.author
-      && commentItems[movieId]
-      && commentItems[movieId][comment.id || comment.commentId]
-      && commentItems[movieId][comment.id || comment.commentId].author) {
-      return;
-    }
     const movieCommentItems = Object.assign({}, commentItems[movieId] || {}, {
       [comment.id || comment.commentId]: comment
     });
@@ -62,6 +105,7 @@ export default class Store {
       [movieId]: movieCommentItems
     });
 
+    const store = this._getItems();
     this._storage.setItem(
         this._storeKey,
         JSON.stringify(
