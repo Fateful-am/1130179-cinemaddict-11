@@ -1,6 +1,11 @@
 const ItemsType = {
   MOVIE: `movies`,
-  COMMENT: `comments`
+  COMMENT: `comments`,
+  OFFLINE: `offline`
+};
+
+const OfflineItem = {
+  UPDATED_MOVIES: `updatedMovies`
 };
 
 export default class Store {
@@ -56,7 +61,12 @@ export default class Store {
     );
   }
 
-  setMovieItem(key, value) {
+  _getOfflineItem(item) {
+    const offlineItems = this._getItems()[ItemsType.OFFLINE] || {};
+    return offlineItems[item] || {};
+  }
+
+  setMovieItem(key, value, isOnline = true) {
     const store = this._getItems();
     const movieItems = Object.assign({}, this.getMovieItems(), {
       [key]: value
@@ -66,6 +76,36 @@ export default class Store {
         JSON.stringify(
             Object.assign({}, store, {
               [ItemsType.MOVIE]: movieItems
+            })
+        )
+    );
+
+    if (isOnline) {
+      const UpdatedMovies = this._getOfflineItem(OfflineItem.UPDATED_MOVIES);
+      if (UpdatedMovies[key]) {
+        delete UpdatedMovies[key];
+        this._storage.setItem(
+            this._storeKey,
+            JSON.stringify(
+                Object.assign({}, this._getItems(), {
+                  [ItemsType.OFFLINE]: {[OfflineItem.UPDATED_MOVIES]: UpdatedMovies}
+                })
+            )
+        );
+      }
+
+      return;
+    }
+    const updatedMovies = this._getOfflineItem(OfflineItem.UPDATED_MOVIES);
+    const newUpdatedMovies = Object.assign({}, updatedMovies, {
+      [key]: key
+    });
+
+    this._storage.setItem(
+        this._storeKey,
+        JSON.stringify(
+            Object.assign({}, this._getItems(), {
+              [ItemsType.OFFLINE]: {[OfflineItem.UPDATED_MOVIES]: newUpdatedMovies}
             })
         )
     );
@@ -96,7 +136,7 @@ export default class Store {
     );
   }
 
-  setCommentItem(movieId, comment) {
+  setCommentItem(movieId, comment, isOnline = true) {
     const commentItems = this._getCommentItems();
     const movieCommentItems = Object.assign({}, commentItems[movieId] || {}, {
       [comment.id || comment.commentId]: comment
@@ -114,13 +154,17 @@ export default class Store {
             })
         )
     );
+
+    if (isOnline) {
+      return;
+    }
   }
 
   getMovieComments(movieId) {
     return this._getCommentItems()[movieId] || {};
   }
 
-  removeCommentItem(movieId, commentId) {
+  removeCommentItem(movieId, commentId, isOnline = true) {
     const store = this._getItems();
     const commentItems = this._getCommentItems();
     if (commentItems[movieId]) {
@@ -134,5 +178,17 @@ export default class Store {
           )
       );
     }
+
+    if (isOnline) {
+      return;
+    }
+  }
+
+  getOfflineUpdatedMovies() {
+    const store = this._getItems();
+    const updatedMovieIds = Object.values(this._getOfflineItem(OfflineItem.UPDATED_MOVIES));
+    return updatedMovieIds.map((movieId) => {
+      return store[ItemsType.MOVIE][movieId];
+    });
   }
 }

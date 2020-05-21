@@ -106,7 +106,10 @@ export default class API {
       body: JSON.stringify(data),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then((response) => response.json());
+      .then((response) => response.json())
+      .then((response) => {
+        return Movie.parseMovies(response.updated);
+      });
   }
 
 

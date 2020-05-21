@@ -58,7 +58,8 @@ export default class Provider {
   }
 
   createComment(filmId, data) {
-    if (isOnline()) {
+    const isOnlineState = isOnline();
+    if (isOnlineState) {
       return this._api.createComment(filmId, data)
         .then((comments) => {
           this._setCommentItems(filmId, comments);
@@ -69,14 +70,15 @@ export default class Provider {
 
     const localCommentId = nanoid();
     const newComment = Object.assign({}, data, {id: localCommentId, author: `I am Groot`});
-    this._store.setCommentItem(filmId, Movie.parseComment(newComment));
+    this._store.setCommentItem(filmId, Movie.parseComment(newComment), isOnlineState);
     const comments = Object.values(this._store.getMovieComments(filmId));
 
     return Promise.resolve(comments);
   }
 
   updateMovie(id, data) {
-    if (isOnline()) {
+    const isOnlineState = isOnline();
+    if (isOnlineState) {
       return this._api.updateMovie(id, data)
         .then((newMovie) => {
           this._store.setMovieItem(newMovie.id, newMovie.toRAW());
@@ -86,18 +88,35 @@ export default class Provider {
     }
 
     const localMovie = Movie.clone(Object.assign(data, {id}));
-    this._store.setMovieItem(id, localMovie.toRAW());
+    this._store.setMovieItem(id, localMovie.toRAW(), isOnlineState);
 
     return Promise.resolve(localMovie);
   }
 
   deleteComment(movieId, commentId) {
-    if (isOnline()) {
+    const isOnlineState = isOnline();
+    if (isOnlineState) {
       return this._api.deleteComment(commentId)
         .then(this._store.removeCommentItem(movieId, commentId));
     }
 
-    this._store.removeCommentItem(movieId, commentId);
+    this._store.removeCommentItem(movieId, commentId, isOnlineState);
     return Promise.resolve();
+  }
+
+  sync() {
+    if (isOnline()) {
+      const updatedMovies = this._store.getOfflineUpdatedMovies();
+      if (updatedMovies.length === 0) {
+        return Promise.resolve();
+      }
+
+      return this._api.sync(updatedMovies)
+        .then((response) => {
+          response.forEach((movie) => this.updateMovie(movie.id, movie));
+        });
+    }
+
+    return Promise.reject(new Error(`Sync data failed`));
   }
 }
