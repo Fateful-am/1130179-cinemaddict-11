@@ -31,7 +31,7 @@ export default class FilmsBoardController {
    * @param {Element} popupContainer - Контейнер для попапа
    * @param {SortMenuComponent} sortMenuComponent - Компонент меню сортировки
    * @param {Movies} moviesModel - Модель с фильмами
-   * @param {API} api - Экземпляр класса API
+   * @param {Provider} api - Экземпляр класса Provider
    */
   constructor(siteController, container, popupContainer, sortMenuComponent, moviesModel, api) {
     this._siteController = siteController;
@@ -421,7 +421,7 @@ export default class FilmsBoardController {
           });
         break;
       case DataChangeKind.DELETE:
-        this._api.deleteComment(dataChangeType.detail)
+        this._api.deleteComment(oldData.id, dataChangeType.detail)
           .then(() => this._successRender(movieController, oldData.id, newData))
           .catch(() => this._failureRender(movieController, dataChangeType.detail, oldData));
         break;
@@ -453,7 +453,7 @@ export default class FilmsBoardController {
           movieController.rerenderPopupComponent(movie);
         })
         .catch(() => {
-          movie.comments[0] = Object.assign({}, movie.comments[0], {text: movie.comments.length + ` [Offline...]`});
+          movie.comments[0] = Object.assign({}, movie.comments[0], {text: `${movie.comments.length} [Offline...]`});
           movieController.rerenderPopupComponent(movie);
         });
     }

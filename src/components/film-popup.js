@@ -34,6 +34,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
 
     this.initPopup();
     this._setAddEmojiClickHandler();
+    this._onDeleteCommentButtonClick = this._onDeleteCommentButtonClick.bind(this);
   }
 
   /**
@@ -145,8 +146,8 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     const commentsString = this._renderComments(comments);
     let filmDetailsCommentsCount = comments.length;
     if (comments.length > 0) {
-      const {commentId} = comments[0];
-      if (commentId) {
+      const {id: serverCommentId, commentId} = comments[0];
+      if (!serverCommentId && commentId) {
         filmDetailsCommentsCount = comments[0].text;
       }
     }
@@ -324,22 +325,30 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
   }
 
   /**
+   * Обработчик клика по списку комментариев
+   * @param {Event} evt - Объект события
+   * @private
+   */
+  _onDeleteCommentButtonClick(evt) {
+    if (evt.target.tagName !== `BUTTON`) {
+      return;
+    }
+    evt.preventDefault();
+    this._elementScrollTop = this.getElement().scrollTop;
+    evt.target.innerText = `Deleting...`;
+    evt.target.disabled = true;
+    this._commentsListClickHandler(evt.target.dataset.commentId);
+  }
+
+  /**
    * Установка обработчика клика при удалении комментария
    * @param {function} handler - Коллбэк функция при удалении комментария
    */
   setCommentsListClickHandler(handler) {
     this._commentsListClickHandler = handler;
-    this.getElement().querySelector(`.film-details__comments-list`)
-      .addEventListener(`click`, (evt) => {
-        if (evt.target.tagName !== `BUTTON`) {
-          return;
-        }
-        evt.preventDefault();
-        this._elementScrollTop = this.getElement().scrollTop;
-        evt.target.innerText = `Deleting...`;
-        evt.target.disabled = true;
-        handler(evt.target.dataset.commentId);
-      });
+    const commentsList = this.getElement().querySelector(`.film-details__comments-list`);
+    commentsList.removeEventListener(`click`, this._onDeleteCommentButtonClick);
+    commentsList.addEventListener(`click`, this._onDeleteCommentButtonClick);
   }
 
   recoveryListeners() {
@@ -347,7 +356,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
     this.setAddToWatchListClickHandler(this._addToWatchListClickHandler);
     this.setMarkAsWatchedListClickHandler(this._markAsWatchedListClickHandler);
     this.setFavoriteClickHandler(this._favoriteClickHandler);
-    // this.setCommentsListClickHandler(this._commentsListClickHandler);
+    this.setCommentsListClickHandler(this._commentsListClickHandler);
     this._setAddEmojiClickHandler();
 
   }

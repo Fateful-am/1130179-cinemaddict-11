@@ -1,4 +1,4 @@
-import Movie from "./models/movie.js";
+import Movie from "../models/movie.js";
 
 // Методы для запросов по сети
 const Method = {
@@ -25,7 +25,7 @@ const checkStatus = (response) => {
 export default class API {
   /**
    * @constructor
-   * @param {URL} endPoint - Адрес сервера
+   * @param {String} endPoint - Адрес сервера
    * @param {String} authorization - Строка авторизации
    */
   constructor(endPoint, authorization) {
@@ -98,6 +98,20 @@ export default class API {
   deleteComment(id) {
     return this._load({url: `comments/${id}`, method: Method.DELETE});
   }
+
+  sync(data) {
+    return this._load({
+      url: `movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        return Movie.parseMovies(response.updated);
+      });
+  }
+
 
   /**
    * Метод для работы с сетью

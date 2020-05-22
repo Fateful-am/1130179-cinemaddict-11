@@ -5,7 +5,7 @@ import moment from 'moment';
 export default class Movies {
   /**
    * @constructor
-   * @param {API} api - Апи для работы с сетью
+   * @param {Provider} api - Апи для работы с сетью
    */
   constructor(api) {
     this._api = api;

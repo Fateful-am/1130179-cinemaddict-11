@@ -9,6 +9,11 @@ import {RenderPosition} from '../utils/render';
 
 /** Контроллер индексной страницы */
 export default class SiteController {
+  /**
+   * @constructor
+   * @param {Movies} moviesModel - Модель фильмов
+   * @param {Provider} api - Правайдер с api
+   */
   constructor(moviesModel, api) {
     this._moviesModel = moviesModel;
     this._api = api;
