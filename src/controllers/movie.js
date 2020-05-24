@@ -35,7 +35,7 @@ export default class MovieController {
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
 
-    this._mode = Mode.DEFAULT;
+    this.mode = Mode.DEFAULT;
     this._filmCardComponent = null;
     this._filmPopupComponent = null;
     this._forceRender = false;
@@ -85,7 +85,7 @@ export default class MovieController {
       this._shakeElement(this._filmPopupComponent.getElement().querySelector(`.film-details__comment[data-comment-id="${commentId}"]`));
       return;
     }
-    if (this._mode === Mode.DEFAULT) {
+    if (this.mode === Mode.DEFAULT) {
       this._shakeElement(this._filmCardComponent.getElement());
       return;
     }
@@ -133,7 +133,7 @@ export default class MovieController {
     this._popupContainer.removeChild(this._filmPopupComponent.getElement());
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._onViewChange(Mode.DEFAULT);
-    this._mode = Mode.DEFAULT;
+    this.mode = Mode.DEFAULT;
   }
 
   /**
@@ -146,7 +146,7 @@ export default class MovieController {
     this._filmPopupComponent.initPopup();
     this.rerenderPopupComponent();
     document.addEventListener(`keydown`, this._onEscKeyDown);
-    this._mode = Mode.DETAIL;
+    this.mode = Mode.DETAIL;
   }
 
   /**
@@ -170,7 +170,7 @@ export default class MovieController {
       this._filmPopupComponent.setClosePopupClickHandler(this._closePopup);
 
     } else {
-      if (this._mode === Mode.DETAIL) {
+      if (this.mode === Mode.DETAIL) {
         this._filmCardComponent.reRender(filmCard);
         this._filmPopupComponent.reRender(filmCard);
       } else {
@@ -220,7 +220,7 @@ export default class MovieController {
    * Установка вида по умолчанию
    */
   setDefaultView() {
-    if (this._mode !== Mode.DEFAULT) {
+    if (this.mode !== Mode.DEFAULT) {
       this._closePopup();
     }
   }

@@ -5,7 +5,9 @@ const ItemsType = {
 };
 
 const OfflineItem = {
-  UPDATED_MOVIES: `updatedMovies`
+  UPDATED_MOVIES: `updatedMovies`,
+  DELETED_COMMENTS: `deletedComments`,
+  CREATED_COMMENTS: `createdComments`
 };
 
 export default class Store {
@@ -81,34 +83,41 @@ export default class Store {
     );
 
     if (isOnline) {
-      const UpdatedMovies = this._getOfflineItem(OfflineItem.UPDATED_MOVIES);
-      if (UpdatedMovies[key]) {
-        delete UpdatedMovies[key];
-        this._storage.setItem(
-            this._storeKey,
-            JSON.stringify(
-                Object.assign({}, this._getItems(), {
-                  [ItemsType.OFFLINE]: {[OfflineItem.UPDATED_MOVIES]: UpdatedMovies}
-                })
-            )
-        );
+      const [offlineItems, updatedMovies] = this._getOfflineItems(OfflineItem.UPDATED_MOVIES);
+      if (updatedMovies[key]) {
+        delete updatedMovies[key];
+        this._setOfflineItems(OfflineItem.UPDATED_MOVIES, offlineItems, updatedMovies);
       }
 
       return;
     }
-    const updatedMovies = this._getOfflineItem(OfflineItem.UPDATED_MOVIES);
+
+    const [offlineItems, updatedMovies] = this._getOfflineItems(OfflineItem.UPDATED_MOVIES);
     const newUpdatedMovies = Object.assign({}, updatedMovies, {
       [key]: key
     });
 
+    this._setOfflineItems(OfflineItem.UPDATED_MOVIES, offlineItems, newUpdatedMovies);
+  }
+
+  _setOfflineItems(itemType, offlineItems, items) {
+    const newOfflineItems = Object.assign({}, offlineItems, {
+      [itemType]: items
+    });
     this._storage.setItem(
         this._storeKey,
         JSON.stringify(
             Object.assign({}, this._getItems(), {
-              [ItemsType.OFFLINE]: {[OfflineItem.UPDATED_MOVIES]: newUpdatedMovies}
+              [ItemsType.OFFLINE]: newOfflineItems
             })
         )
     );
+  }
+
+  _getOfflineItems(itemType) {
+    const offlineItems = this._getItems()[ItemsType.OFFLINE] || {};
+    const items = offlineItems[itemType] || {};
+    return [offlineItems, items];
   }
 
   setCommentItems(movieId, comments) {
@@ -158,6 +167,17 @@ export default class Store {
     if (isOnline) {
       return;
     }
+
+    const [offlineItems, createdComments] = this._getOfflineItems(OfflineItem.CREATED_COMMENTS);
+    const movieCreatedComments = createdComments[movieId] || {};
+    const newCreatedComments = Object.assign({}, movieCreatedComments, {
+      [comment.id]: movieId
+    });
+    const newMovieCreatedComments = Object.assign({}, createdComments, {
+      [movieId]: newCreatedComments
+    });
+
+    this._setOfflineItems(OfflineItem.CREATED_COMMENTS, offlineItems, newMovieCreatedComments);
   }
 
   getMovieComments(movieId) {
@@ -182,6 +202,20 @@ export default class Store {
     if (isOnline) {
       return;
     }
+
+    const createdComments = this.getOfflineCreatedComments(false)
+      .filter((it) => commentId === it.commentId);
+    if (createdComments.length > 0) {
+      this.deleteCreatedOfflineComment(movieId, commentId);
+      return;
+    }
+
+    const [offlineItems, deletedComments] = this._getOfflineItems(OfflineItem.DELETED_COMMENTS);
+    const newDeletedComments = Object.assign({}, deletedComments, {
+      [commentId]: movieId
+    });
+
+    this._setOfflineItems(OfflineItem.DELETED_COMMENTS, offlineItems, newDeletedComments);
   }
 
   getOfflineUpdatedMovies() {
@@ -190,5 +224,76 @@ export default class Store {
     return updatedMovieIds.map((movieId) => {
       return store[ItemsType.MOVIE][movieId];
     });
+  }
+
+  getOfflineCreatedComments(doDelete = true) {
+    const newComments = [];
+    const createdComments = Object.values(this._getOfflineItem(OfflineItem.CREATED_COMMENTS));
+    createdComments.forEach((it) => {
+      const commentsIds = Object.keys(it);
+      commentsIds.forEach((commentId) => {
+        const movieId = it[commentId];
+        const movieComments = this.getMovieComments(movieId);
+        const comment = movieComments[commentId];
+        if (comment) {
+          newComments.push({movieId,
+            commentObject: {
+              comment: comment.text,
+              date: new Date(comment.date).toISOString(),
+              emotion: comment.emoji
+            },
+            commentId});
+        } else {
+          if (doDelete) {
+            this.deleteCreatedOfflineComment(movieId, commentId);
+          } else {
+            newComments.push({commentId});
+          }
+        }
+      });
+    });
+    return newComments;
+  }
+
+  getOfflineDeletedComments() {
+    const deletedComments = this._getOfflineItem(OfflineItem.DELETED_COMMENTS);
+    return Object.keys(deletedComments)
+      .map((it) => {
+        return {movieId: deletedComments[it],
+          commentId: it};
+      });
+  }
+
+  deleteCreatedOfflineComment(movieId, commentId) {
+    const [offlineItems, createdComments] = this._getOfflineItems(OfflineItem.CREATED_COMMENTS);
+    const movieCreatedComments = createdComments[movieId] || {};
+    if (movieCreatedComments[commentId]) {
+      delete movieCreatedComments[commentId];
+      if (Object.keys(movieCreatedComments).length === 0) {
+        delete createdComments[movieId];
+      }
+      this._storage.setItem(
+          this._storeKey,
+          JSON.stringify(
+              Object.assign({}, this._getItems(), {
+                [ItemsType.OFFLINE]: offlineItems
+              })
+          )
+      );
+    }
+  }
+
+  deleteDeletedOfflineComment(commentId) {
+    const offlineItems = this._getItems()[ItemsType.OFFLINE] || {};
+    delete offlineItems[OfflineItem.DELETED_COMMENTS][commentId];
+    this._storage.setItem(
+        this._storeKey,
+        JSON.stringify(
+            Object.assign({}, this._getItems(), {
+              [ItemsType.OFFLINE]: offlineItems
+            })
+        )
+    );
+
   }
 }

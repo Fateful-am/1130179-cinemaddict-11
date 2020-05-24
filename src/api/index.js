@@ -96,7 +96,8 @@ export default class API {
    * @return {Promise<Response | Error | void>} - Промис обработки удаления комментария
    */
   deleteComment(id) {
-    return this._load({url: `comments/${id}`, method: Method.DELETE});
+    return this._load({url: `comments/${id}`, method: Method.DELETE})
+      .then(() => id);
   }
 
   sync(data) {

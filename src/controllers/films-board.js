@@ -65,8 +65,12 @@ export default class FilmsBoardController {
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
+    this._onOnlineListener = this._onOnlineListener.bind(this);
 
     this._moviesModel.setFilterChangeHandler(this._onFilterChange);
+
+    // Обработчик появления интеренета
+    window.addEventListener(`online`, this._onOnlineListener);
   }
 
   /**
@@ -336,6 +340,69 @@ export default class FilmsBoardController {
     return {type, detail: UpdateKind.FAVORITE};
   }
 
+  /**
+   * Обработчик коннекта к интернету
+   * @private
+   */
+  _onOnlineListener() {
+    document.title = document.title.replace(` [offline]`, ``);
+
+    // Синхронизация обновлений фильмов
+    this._api.sync()
+      .then((movies) => {
+        if (movies) {
+          movies.forEach((movie) => {
+            const movieController = this._getShowedMovieController(movie.id);
+            this._updateMovieProcessing(movieController, movie);
+          });
+        }
+      });
+
+    // Синхронизация созданных комментариев
+    this._api.syncCreatedComments()
+      .then((comments) => {
+        if (comments) {
+          comments.forEach((newComments) => {
+            const movieController = this._getShowedMovieController(newComments.movieId);
+            this._createCommentProcessing(movieController, newComments.movieId, newComments.comments);
+          });
+        }
+      });
+
+    // Синхронизация удаленных комментариев
+    this._api.syncDeletedComments()
+      .then((movies) => {
+        if (movies) {
+          movies.forEach((movieId) => {
+            const movie = this._moviesModel.getMovieById(movieId);
+            const movieController = this._getShowedMovieController(movieId);
+            this._deleteCommentProcessing(movieController, movieId, movie);
+          });
+        }
+      });
+
+    // Обновление комментариев для открытого попапа
+    const popupControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
+        this._showedTopRatedMovieControllers).filter((it) => it.mode === Mode.DETAIL);
+    if (popupControllers.length > 0) {
+      this._getComments(popupControllers[0]);
+    }
+  }
+
+  /**
+   * Ищет контроллер по Id фильма
+   * @param {string} movieId - Id фильма
+   * @return {null|MovieController} - контроллер фильма
+   * @private
+   */
+  _getShowedMovieController(movieId) {
+    const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
+        this._showedTopRatedMovieControllers).filter((it) => it.movieId === movieId);
+    if (showedSameMovieControllers.length > 0) {
+      return showedSameMovieControllers[0];
+    }
+    return null;
+  }
 
   /**
    * Рендер при удачно завершивсемся сетевом запросе
@@ -348,16 +415,18 @@ export default class FilmsBoardController {
   _successRender(movieController, oldDataId, data) {
     const isSuccess = this._moviesModel.updateMovie(oldDataId, data);
     if (isSuccess) {
-      movieController.render(data);
+      if (movieController) {
+        movieController.render(data);
 
-      // Перерисовываем карточки в других списках
-      const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
-          this._showedTopRatedMovieControllers).filter((it) => it.movieId === data.id && it !== movieController);
-      showedSameMovieControllers.forEach((it) => {
-        it.forceRender = true;
-        it.render(data);
-        it.forceRender = false;
-      });
+        // Перерисовываем карточки в других списках
+        const showedSameMovieControllers = [].concat(this._showedMainMovieControllers, this._showedMostCommentedMovieControllers,
+            this._showedTopRatedMovieControllers).filter((it) => it.movieId === data.id && it !== movieController);
+        showedSameMovieControllers.forEach((it) => {
+          it.forceRender = true;
+          it.render(data);
+          it.forceRender = false;
+        });
+      }
       this._statsComponent.reRender();
       this._siteController.profileRatingComponent.watchedCount = this._moviesModel.getWatchedCount();
       return true;
@@ -387,6 +456,51 @@ export default class FilmsBoardController {
   }
 
   /**
+   * Обработка обновленных данных о фильме
+   * @param {MovieController} movieController - Контроллер фильма
+   * @param {Movie} newMovieModel - Данные о фильме
+   * @private
+   */
+  _updateMovieProcessing(movieController, newMovieModel) {
+    newMovieModel.restoreComments();
+    if (this._successRender(movieController, newMovieModel.id, newMovieModel)) {
+      if (this._activeMode === Mode.DETAIL) {
+        this._getComments(movieController);
+      }
+    }
+  }
+
+  /**
+   * Обработка добавления комментария
+   * @param {MovieController} movieController - Контроллер фильма
+   * @param {String} movieId - Id фильма
+   * @param {[Object]} newComments - Массив новых комментариев
+   * @private
+   */
+  _createCommentProcessing(movieController, movieId, newComments) {
+    const movie = this._moviesModel.getMovieById(movieId);
+    const newMovie = Movie.clone(movie);
+
+    newMovie.comments = newComments;
+    if (movieController) {
+      movieController.filmPopupComponent.initPopup(true);
+    }
+
+    this._successRender(movieController, movieId, newMovie);
+  }
+
+  /**
+   * Обработка удаление комментария
+   * @param {MovieController} movieController - Контроллер фильма
+   * @param {String} movieId - Id фильма
+   * @param {Movie} movie - данные фильма
+   * @private
+   */
+  _deleteCommentProcessing(movieController, movieId, movie) {
+    this._successRender(movieController, movieId, movie);
+  }
+
+  /**
    * Обработчик изменения данных
    * @param {MovieController} movieController - Контроллер фильма
    * @param {Movie} oldData - Старые данные
@@ -399,12 +513,7 @@ export default class FilmsBoardController {
       case DataChangeKind.UPDATE:
         this._api.updateMovie(oldData.id, newData)
           .then((movieModel) => {
-            movieModel.restoreComments();
-            if (this._successRender(movieController, oldData.id, movieModel)) {
-              if (this._activeMode === Mode.DETAIL) {
-                this._getComments(movieController);
-              }
-            }
+            this._updateMovieProcessing(movieController, movieModel);
           })
           .catch(() => {
             switch (dataChangeType.detail) {
@@ -422,17 +531,13 @@ export default class FilmsBoardController {
         break;
       case DataChangeKind.DELETE:
         this._api.deleteComment(oldData.id, dataChangeType.detail)
-          .then(() => this._successRender(movieController, oldData.id, newData))
+          .then(() => this._deleteCommentProcessing(movieController, oldData.id, newData))
           .catch(() => this._failureRender(movieController, dataChangeType.detail, oldData));
         break;
       default: // INSERT
         this._api.createComment(newData.id, dataChangeType.detail)
           .then((newComments) => {
-            const newMovie = Movie.clone(oldData);
-
-            newMovie.comments = newComments;
-            movieController.filmPopupComponent.initPopup(true);
-            this._successRender(movieController, oldData.id, newMovie);
+            this._createCommentProcessing(movieController, oldData.id, newComments.comments);
           })
           .catch(() => this._failureRender(movieController, null, oldData, true));
     }
