@@ -100,6 +100,11 @@ export default class API {
       .then(() => id);
   }
 
+  /**
+   * Синхронизирует данные о фильмах
+   * @param {[Object]} data - массив с измененными данными о фильмах
+   * @return {Promise<Movie[]>}
+   */
   sync(data) {
     return this._load({
       url: `movies/sync`,

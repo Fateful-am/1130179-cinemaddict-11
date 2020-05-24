@@ -1,21 +1,34 @@
+// Тип ключа в хранилище
 const ItemsType = {
   MOVIE: `movies`,
   COMMENT: `comments`,
   OFFLINE: `offline`
 };
 
+// Тип Офлайн-действия
 const OfflineItem = {
   UPDATED_MOVIES: `updatedMovies`,
   DELETED_COMMENTS: `deletedComments`,
   CREATED_COMMENTS: `createdComments`
 };
 
+/** Класс для работы с хранилищем */
 export default class Store {
+  /**
+   * @constructor
+   * @param {String} key - Ключ для хранения
+   * @param {Storage} storage - Хранилище
+   */
   constructor(key, storage) {
     this._storage = storage;
     this._storeKey = key;
   }
 
+  /**
+   * Чтение данных хранилища
+    * @return {any|{}}
+   * @private
+   */
   _getItems() {
     try {
       return JSON.parse(this._storage.getItem(this._storeKey)) || {};
@@ -24,16 +37,29 @@ export default class Store {
     }
   }
 
+  /**
+   * Чтение данных о фильмах
+   * @return {*|{}}
+   */
   getMovieItems() {
     const store = this._getItems();
     return store[ItemsType.MOVIE] || {};
   }
 
+  /**
+   * Чтение данных о комментариях
+   * @return {*|{}}
+   * @private
+   */
   _getCommentItems() {
     const store = this._getItems();
     return store[ItemsType.COMMENT] || {};
   }
 
+  /**
+   * Запись массива данных о фильмах
+   * @param {[Object]} movies - Массив с фильмами
+   */
   setMovieItems(movies) {
     const comments = Object.values(movies)
       .reduce((accMovies, currentMovie) => {
@@ -63,11 +89,23 @@ export default class Store {
     );
   }
 
+  /**
+   * Чтение блока данных о работе в офлайн
+   * @param {OfflineItem} item - Тип Офлайн-действия
+   * @return {*|{}}
+   * @private
+   */
   _getOfflineItem(item) {
     const offlineItems = this._getItems()[ItemsType.OFFLINE] || {};
     return offlineItems[item] || {};
   }
 
+  /**
+   * Запись информации о фильме
+   * @param {String} key - Id фильма
+   * @param {Object} value - Данные фильма
+   * @param {boolean} isOnline - Признак наличия интеренета
+   */
   setMovieItem(key, value, isOnline = true) {
     const store = this._getItems();
     const movieItems = Object.assign({}, this.getMovieItems(), {
@@ -100,6 +138,13 @@ export default class Store {
     this._setOfflineItems(OfflineItem.UPDATED_MOVIES, offlineItems, newUpdatedMovies);
   }
 
+  /**
+   * Запись блока данных при работе в офлайн
+   * @param {OfflineItem} itemType - Тип Офлайн-действия
+   * @param {Object} offlineItems - Объект с данными Офлайн
+   * @param {Object} items - новые данные
+   * @private
+   */
   _setOfflineItems(itemType, offlineItems, items) {
     const newOfflineItems = Object.assign({}, offlineItems, {
       [itemType]: items
@@ -114,12 +159,23 @@ export default class Store {
     );
   }
 
+  /**
+   * Чтение Офлайн данных
+   * @param {OfflineItem} itemType - Тип Офлайн-действия
+   * @return {(*|{})[]}
+   * @private
+   */
   _getOfflineItems(itemType) {
     const offlineItems = this._getItems()[ItemsType.OFFLINE] || {};
     const items = offlineItems[itemType] || {};
     return [offlineItems, items];
   }
 
+  /**
+   * Запись массива комментариев
+   * @param {string} movieId - Id фильма
+   * @param {[Object]} comments - массив с комментариями
+   */
   setCommentItems(movieId, comments) {
     const storeComments = this.getMovieComments(movieId);
     const newStoreComments = Object.values(comments)
@@ -145,6 +201,12 @@ export default class Store {
     );
   }
 
+  /**
+   * Запись данных о комментарии
+   * @param {String} movieId - Id фильма
+   * @param {Object} comment - Данные комментария
+   * @param {boolean} isOnline - Признак наличия интернета
+   */
   setCommentItem(movieId, comment, isOnline = true) {
     const commentItems = this._getCommentItems();
     const movieCommentItems = Object.assign({}, commentItems[movieId] || {}, {
@@ -180,10 +242,21 @@ export default class Store {
     this._setOfflineItems(OfflineItem.CREATED_COMMENTS, offlineItems, newMovieCreatedComments);
   }
 
+  /**
+   * Чтение комментариев у фильму
+   * @param {string} movieId - Id фильма
+   * @return {*|{}}
+   */
   getMovieComments(movieId) {
     return this._getCommentItems()[movieId] || {};
   }
 
+  /**
+   * Удаление комментария
+   * @param {String} movieId - Id фильма
+   * @param {String} commentId - Id комментария
+   * @param {boolean} isOnline - Признак наличия интернета
+   */
   removeCommentItem(movieId, commentId, isOnline = true) {
     const store = this._getItems();
     const commentItems = this._getCommentItems();
@@ -218,6 +291,10 @@ export default class Store {
     this._setOfflineItems(OfflineItem.DELETED_COMMENTS, offlineItems, newDeletedComments);
   }
 
+  /**
+   * Чтение списка обновленных данных о фильме
+   * @return {*[]}
+   */
   getOfflineUpdatedMovies() {
     const store = this._getItems();
     const updatedMovieIds = Object.values(this._getOfflineItem(OfflineItem.UPDATED_MOVIES));
@@ -226,6 +303,11 @@ export default class Store {
     });
   }
 
+  /**
+   * Чтение списка созданных в офлайн комментариев
+   * @param {boolean} doDelete - Удалять или нет не существующий комментарий
+   * @return {[]}
+   */
   getOfflineCreatedComments(doDelete = true) {
     const newComments = [];
     const createdComments = Object.values(this._getOfflineItem(OfflineItem.CREATED_COMMENTS));
@@ -255,6 +337,10 @@ export default class Store {
     return newComments;
   }
 
+  /**
+   * Чтение списка удаленных в офлайн комментариев
+   * @return {{commentId: string, movieId: *}[]}
+   */
   getOfflineDeletedComments() {
     const deletedComments = this._getOfflineItem(OfflineItem.DELETED_COMMENTS);
     return Object.keys(deletedComments)
@@ -264,6 +350,11 @@ export default class Store {
       });
   }
 
+  /**
+   * Удаление из списка созданных в офлайн комментариев
+   * @param {String} movieId - Id фильма
+   * @param {String} commentId - Id комментария
+   */
   deleteCreatedOfflineComment(movieId, commentId) {
     const [offlineItems, createdComments] = this._getOfflineItems(OfflineItem.CREATED_COMMENTS);
     const movieCreatedComments = createdComments[movieId] || {};
@@ -283,6 +374,10 @@ export default class Store {
     }
   }
 
+  /**
+   * Удаление из списка удалленных в офлайн комментариев
+   * @param {String} commentId -Id комментария
+   */
   deleteDeletedOfflineComment(commentId) {
     const offlineItems = this._getItems()[ItemsType.OFFLINE] || {};
     delete offlineItems[OfflineItem.DELETED_COMMENTS][commentId];

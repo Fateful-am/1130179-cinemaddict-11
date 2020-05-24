@@ -3,18 +3,28 @@ import {nanoid} from 'nanoid';
 
 /**
  * Проверка доступности интеренета
- * @return {boolean}
+ * @return {boolean} - true интернет доступен
  */
 const isOnline = () => {
   return window.navigator.onLine;
 };
 
+/** Провайдер между API и Store */
 export default class Provider {
+  /**
+   * @constructor
+   * @param {API} api - Экземпляр класса для работы с сетью
+   * @param {Store} store - Экземпляр класса для работы с хранилищем
+   */
   constructor(api, store) {
     this._api = api;
     this._store = store;
   }
 
+  /**
+   * Получение данных о фильмах
+   * @return {Promise<Movie[]>|Promise<*>}
+   */
   getMovies() {
     if (isOnline()) {
       return this._api.getMovies()
@@ -36,6 +46,12 @@ export default class Provider {
     return Promise.resolve(Movie.parseMovies(storeMovies));
   }
 
+  /**
+   * Запись в хранилище массива комментариев для фильма
+   * @param {string} movieId - Id фильма
+   * @param {[Object]} comments - Массив комментариев
+   * @private
+   */
   _setCommentItems(movieId, comments) {
     const commentItems = comments.reduce((acc, current) => {
       return Object.assign({}, acc, {
@@ -46,6 +62,11 @@ export default class Provider {
     this._store.setCommentItems(movieId, commentItems);
   }
 
+  /**
+   * Получение комментариев для фильма
+   * @param {String} movieId - Id фильма
+   * @return {Promise<*[]>|Promise<*>}
+   */
   getComments(movieId) {
     if (isOnline()) {
       return this._api.getComments(movieId)
@@ -61,6 +82,12 @@ export default class Provider {
     return Promise.resolve(storeComments);
   }
 
+  /**
+   * Создание комментария к фильму
+   * @param {String} filmId - Id фильма
+   * @param {[Object]} data - Данные комментария
+   * @return {Promise<{comments: *[], movieId: *}>|Promise<{comments: Object[], movieId: *}>}
+   */
   createComment(filmId, data) {
     const isOnlineState = isOnline();
     if (isOnlineState) {
@@ -82,6 +109,12 @@ export default class Provider {
       comments});
   }
 
+  /**
+   * Обновление данных о фильме
+   * @param {String} id - Id фильма
+   * @param {[Object]} data - Данные фильма
+   * @return {Promise<Movie>|Promise<*>}
+   */
   updateMovie(id, data) {
     const isOnlineState = isOnline();
     if (isOnlineState) {
@@ -99,6 +132,12 @@ export default class Provider {
     return Promise.resolve(localMovie);
   }
 
+  /**
+   * Удаление комментария к фильму
+   * @param {String} movieId - Id фильма
+   * @param {String} commentId - Id комментария
+   * @return {Promise<Response | Error | void>|Promise<void>}
+   */
   deleteComment(movieId, commentId) {
     const isOnlineState = isOnline();
     if (isOnlineState) {
@@ -110,6 +149,10 @@ export default class Provider {
     return Promise.resolve();
   }
 
+  /**
+   * Синхраниязция данных о фильме при работе в офлайне
+   * @return {Promise<never>|Promise<void>|Promise<Movie[]>}
+   */
   sync() {
     if (isOnline()) {
       const updatedMovies = this._store.getOfflineUpdatedMovies();
@@ -128,6 +171,10 @@ export default class Provider {
     return Promise.reject(new Error(`Sync data failed`));
   }
 
+  /**
+   * Синхронизация созданных в офлайне комментариев
+   * @return {Promise<({comments: *[], movieId: *}|{comments: Object[], movieId: *})[]>|Promise<never>|Promise<void>}
+   */
   syncCreatedComments() {
     if (isOnline()) {
       const createdComments = this._store.getOfflineCreatedComments();
@@ -150,6 +197,10 @@ export default class Provider {
     return Promise.reject(new Error(`Sync createdCommentsData failed`));
   }
 
+  /**
+   * Синхронизация удаленных в офлайне комментариев
+   * @return {Promise<*[]>|Promise<never>|Promise<void>}
+   */
   syncDeletedComments() {
     if (isOnline()) {
       const deletedComments = this._store.getOfflineDeletedComments();
