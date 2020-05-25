@@ -23,7 +23,8 @@ export default class FilmsListComponent extends AbstractRenderComponent {
   }
 
   getTemplate() {
-    let [filmsListClass, filmsListTitleClass] = this._isExtra ? [`--extra`, ``] : [``, `visually-hidden`];
+    const filmsListClass = this._isExtra ? `--extra` : ``;
+    let filmsListTitleClass = this._isExtra ? `` : `visually-hidden`;
     const filmsListHeader = this._header;
     let makeFilmListContainer = true;
     [filmsListTitleClass, makeFilmListContainer] = this._isNoMovies ? [``, false] : [filmsListTitleClass, makeFilmListContainer];

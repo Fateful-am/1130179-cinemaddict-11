@@ -21,7 +21,7 @@ export default class SortMenuComponent extends AbstractRenderComponent {
    */
   _getSortMenuItemsTemplate() {
     const items = [];
-    for (let item in SortType) {
+    for (const item in SortType) {
       if (SortType.hasOwnProperty(item)) {
         const sortActive = this._currenSortType === SortType[item] ? `sort__button--active` : ``;
         items.push(`<li><a href="#" data-sort-type="${SortType[item]}" class="sort__button ${sortActive}">Sort by ${SortType[item]}</a></li>`);

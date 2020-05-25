@@ -55,7 +55,7 @@ export default class FilmPopupComponent extends AbstractRenderComponent {
    */
   _getEmojiListItemsTemplate() {
     const items = [];
-    for (let item in EmojiType) {
+    for (const item in EmojiType) {
       if (EmojiType[item] === EmojiType.NONE) {
         continue;
       }
