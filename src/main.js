@@ -43,12 +43,6 @@ window.addEventListener(`load`, () => {
 moviesModel.setMovies([]);
 siteController.renderFilms();
 
-// window.addEventListener(`online`, () => {
-//   document.title = document.title.replace(` [offline]`, ``);
-//   apiWithProvider.sync();
-//   apiWithProvider.syncCreatedComments();
-// });
-
 window.addEventListener(`offline`, () => {
   document.title += ` [offline]`;
 });
