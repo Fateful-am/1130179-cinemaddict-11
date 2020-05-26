@@ -35,7 +35,7 @@ export default class FilmCardComponent extends AbstractRenderComponent {
     const shortDescription = description.length > MAX_DESCRIPTION_LENGTH ? `${description.substr(0, MAX_DESCRIPTION_LENGTH - 1)}…` : description;
     const formattedDuration = formatDuration(duration);
     const filmCardYear = moment(releaseDate).format(`YYYY`);
-    const filmCardGenre = genres[0];
+    const filmCardGenre = genres[0] || ``;
 
     return (
       `<article class="film-card">

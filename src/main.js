@@ -9,9 +9,14 @@ const AUTHORIZATION = `Basic dXNickBwYXNzd75yZAo=`;
 // Точка доступа в сети
 const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict/`;
 
-const STORE_PREFIX = `cinemaddict-localstorage`;
-const STORE_VER = `v1`;
-const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+// Параметры хранилища
+const StoreParam = {
+  PREFIX: `cinemaddict-localstorage`,
+  VERSION: `v1`,
+};
+
+// Имя ключа хранилища
+const STORE_NAME = `${StoreParam.PREFIX}-${StoreParam.VERSION}`;
 
 const api = new API(END_POINT, AUTHORIZATION);
 const store = new Store(STORE_NAME, window.localStorage);

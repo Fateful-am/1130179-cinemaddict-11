@@ -8,13 +8,19 @@ const Method = {
   DELETE: `DELETE`
 };
 
+// Статусы ответа сервера
+const HttpStatus = {
+  SUCCESS: 200,
+  REDIRECTION: 300
+};
+
 /**
  * Проверка ответа сервера
  * @param {Response} response - Ответ сервера
- * @return {Response|Error} -Обработанный статус ответа сервера
+ * @return {Response|Error} - Обработанный статус ответа сервера
  */
 const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
+  if (response.status >= HttpStatus.SUCCESS && response.status < HttpStatus.REDIRECTION) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
